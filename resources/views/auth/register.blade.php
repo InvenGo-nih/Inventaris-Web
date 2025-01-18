@@ -1,52 +1,105 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <section class="bg-light vh-100 d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+                    <div class="card border border-light-subtle rounded-3 shadow-sm" data-aos="zoom-in-down">
+                        <div class="card-body p-3">
+                            <div class="text-center mb-2">
+                                <a href="#!" class="d-flex justify-content-center">
+                                    <img src="{{ asset('assets/img/icon-rps.png') }}" alt="Logo RPS" width="180" height="60" style="padding: 5px">
+                                </a>
+                            </div>
+                            <h2 class="fs-6 fw-normal text-center text-secondary mb-3">Daftar Akun Baru</h2>
+                            
+                            <form method="POST" action="{{ route('register') }}">
+                                @csrf
+                                <div class="row gy-2 overflow-hidden">
+                                    <!-- Name -->
+                                    <div class="col-12">
+                                        <div class="form-floating mb-2">
+                                            <x-text-input id="name" 
+                                                class="form-control" 
+                                                type="text" 
+                                                name="name" 
+                                                :value="old('name')" 
+                                                required 
+                                                autofocus 
+                                                autocomplete="name"
+                                                placeholder="Nama Lengkap" />
+                                            <x-input-label for="name" :value="__('Nama')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('name')" class="mt-1" />
+                                        </div>
+                                    </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                                    <!-- Email Address -->
+                                    <div class="col-12">
+                                        <div class="form-floating mb-2">
+                                            <x-text-input id="email" 
+                                                class="form-control" 
+                                                type="email" 
+                                                name="email" 
+                                                :value="old('email')" 
+                                                required 
+                                                autocomplete="username"
+                                                placeholder="name@example.com" />
+                                            <x-input-label for="email" :value="__('Email')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="col-12">
+                                        <div class="form-floating mb-2">
+                                            <x-text-input id="password" 
+                                                class="form-control"
+                                                type="password"
+                                                name="password"
+                                                required 
+                                                autocomplete="new-password"
+                                                placeholder="Password" />
+                                            <x-input-label for="password" :value="__('Password')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Confirm Password -->
+                                    <div class="col-12">
+                                        <div class="form-floating mb-2">
+                                            <x-text-input id="password_confirmation" 
+                                                class="form-control"
+                                                type="password"
+                                                name="password_confirmation" 
+                                                required 
+                                                autocomplete="new-password"
+                                                placeholder="Konfirmasi Password" />
+                                            <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="d-grid mb-2">
+                                            <x-primary-button>
+                                                {{ __('Daftar') }}
+                                            </x-primary-button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <p class="m-0 text-secondary text-center">
+                                            Sudah punya akun? 
+                                            <a href="{{ route('login') }}" class="link-primary text-decoration-none">
+                                                Masuk
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </section>
 </x-guest-layout>

@@ -1,6 +1,91 @@
 <x-guest-layout>
-    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    <section class="bg-light vh-100 d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+                    <div class="card border border-light-subtle rounded-3 shadow-sm" data-aos="zoom-in-up">
+                        <div class="card-body p-3">
+                            <div class="text-center mb-2">
+                                <a href="#!" class="d-flex justify-content-center">
+                                    <img src="{{ asset('assets/img/icon-rps.png') }}" alt="Logo RPS" width="180" height="60" style="padding: 5px">
+                                </a>
+                            </div>
+                            <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Masuk ke akun Anda</h2>
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
+                                <div class="row gy-2 overflow-hidden">
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            {{-- email --}}
+                                            <x-text-input id="email" 
+                                                class="form-control" 
+                                                type="email" 
+                                                name="email" 
+                                                :value="old('email')" 
+                                                required 
+                                                autofocus 
+                                                autocomplete="username"
+                                                placeholder="name@example.com" />
+                                            <x-input-label for="email" :value="__('Email')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating mb-3">
+                                            <x-text-input id="password" 
+                                                class="form-control"
+                                                type="password"
+                                                name="password"
+                                                required 
+                                                autocomplete="current-password"
+                                                placeholder="Password" />
+                                            <x-input-label for="password" :value="__('Password')" class="form-label" />
+                                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2 justify-content-between">
+                                            <div class="form-check">
+                                                {{-- <input class="form-check-input" type="checkbox" value="" name="rememberMe" id="rememberMe">
+                                                <label class="form-check-label text-secondary" for="rememberMe">
+                                                    Keep me logged in
+                                                </label> --}}
+                                                <label for="remember_me" class="form-check-label text-secondary">
+                                                    <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
+                                                    <span>{{ __('Ingat Saya') }}</span>
+                                                </label>
+                                            </div>
+                                            {{-- <a href="#!" class="link-primary text-decoration-none">Forgot password?</a> --}}
+                                            @if (Route::has('password.request'))
+                                                <a class="link-primary text-decoration-none" href="{{ route('password.request') }}">
+                                                    {{ __('Lupa Password?') }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-grid my-3">
+                                            {{-- <button class="btn btn-primary btn-lg" type="submit">Log in</button> --}}
+                                            <x-primary-button >
+                                                {{ __('Log in') }}
+                                            </x-primary-button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="m-0 text-secondary text-center">Belum punya akun? <a href="{{route('register')}}" class="link-primary text-decoration-none">Register</a></p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Session Status -->
+
+    {{-- 
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
@@ -43,5 +128,5 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
-    </form>
+    </form> --}}
 </x-guest-layout>

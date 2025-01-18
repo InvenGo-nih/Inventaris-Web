@@ -24,6 +24,12 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">Action</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                Logout
+                            </button>
+                        </form>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
