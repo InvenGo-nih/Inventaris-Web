@@ -1,4 +1,5 @@
 @extends('layouts.app')
 @section('content')
-    <p>HIHDeau</p>
+{{-- ini isi --}}
+<h1></h1>
 @endsection
