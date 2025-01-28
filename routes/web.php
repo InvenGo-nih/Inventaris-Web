@@ -1,20 +1,35 @@
 <?php
 
+use App\Http\Controllers\InventarisController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QrCodeController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::get('/dashboard', function () {
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
-    
+
+Route::get('/test/qr/{id?}', [InventarisController::class, 'show'])->name('test_qr');
+
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
+    Route::get('/', [InventarisController::class, 'index'])->name('home');
+
+    Route::get('/scan', [QrCodeController::class, 'showScanPage'])->name('qr.scan');
+    Route::post('/process-scan', [QrCodeController::class, 'processScan'])->name('qr.process');
+
+    Route::group(['prefix' => '/inventaris', 'as' => 'inventaris.'], function () {
+        Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form');
+        Route::post('/store', [InventarisController::class, 'store'])->name('store');
+        Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update');
+        Route::get('/delete/{id}', [InventarisController::class, 'delete'])->name('delete');
     });
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::group(['prefix' => '/profile', 'as' => 'profile.'], function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
 });
 
 require __DIR__.'/auth.php';
