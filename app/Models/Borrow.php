@@ -14,4 +14,14 @@ class Borrow extends Model
         'status',
         'date_back'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function inventaris()
+    {
+        return $this->belongsTo(Inventaris::class);
+    }
 }

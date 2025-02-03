@@ -33,7 +33,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => '/borrow', 'as' => 'borrow.'], function (){
-        Route::get('/', [BorrowController::class, 'index']);
+        Route::get('/', [BorrowController::class, 'index'])->name('index');
+        Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form');
     });
 });
 

@@ -15,4 +15,7 @@ class Inventaris extends Model
         'qr_link'
     ];
 
+    public function borrow(){
+        return $this->hasMany(Borrow::class);
+    }
 }
