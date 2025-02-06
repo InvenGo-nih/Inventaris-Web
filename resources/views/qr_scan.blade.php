@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan QR Code</title>
-    {{-- <script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script> --}}
-</head>
-<body>
+@extends('layouts.app')
+@section('content')
     <h1>Scan QR Code</h1>
     <div id="reader" style="width: 500px; margin: auto;"></div>
     
@@ -45,6 +38,4 @@
             });
         });
     </script>
-
-</body>
-</html>
+@endsection

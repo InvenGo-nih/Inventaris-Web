@@ -12,21 +12,21 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('home') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Inventaris</span></a>
     </li>
 
     <!-- Nav Item - Peminjaman -->
-    <li class="nav-item">
+    <li class="nav-item {{ request()->routeIs('borrow.index') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('borrow.index') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Peminjaman</span></a>
     </li>
 
     <!-- Nav Item - Scan -->
-    <li class="nav-item">
+    <li class="nav-item {{ request()->routeIs('qr.scan') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('qr.scan') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Scan</span></a>
