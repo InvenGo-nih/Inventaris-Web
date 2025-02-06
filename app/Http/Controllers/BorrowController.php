@@ -17,10 +17,9 @@ class BorrowController extends Controller
     }
 
     public function form(Request $request, $id = null){
-        $data = $id ? Borrow::findorfail($request->id) : new Borrow();
-        $users = User::all();
-        $inventaris = Inventaris::where('is_borrow', 0)->get(); 
-        return view('borrow.form',compact('data', 'inventaris', 'users'));
+        $data = $id ? Borrow::with('inventaris', 'user')->findorfail($id) : new Borrow();
+        $inventaris = Inventaris::where('is_borrow', 0)->get();
+        return view('borrow.form',compact('data', 'inventaris'));
     }
 
     public function store(Request $request)

@@ -1,5 +1,5 @@
-@forelse ($inventaris as $item)
-    <p>{{ $item->name }}</p>
+@forelse ($data as $item)
+    <p>{{ $item->user->name }}</p>
 @empty
     <p>gada data</p>
 @endforelse
