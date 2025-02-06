@@ -11,6 +11,11 @@ Route::get('/dashboard', function () {
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/offline', function () {
+    return view('vendor.laravelpwa.offline');
+});
+    
+
 Route::get('/test/qr/{id?}', [InventarisController::class, 'show'])->name('test_qr');
 
 Route::middleware('auth')->group(function () {

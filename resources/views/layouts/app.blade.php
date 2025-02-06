@@ -37,6 +37,7 @@
             margin: 0;
         }
     </style>
+    @laravelPWA
 </head>
 
 <body id="page-top">
