@@ -117,4 +117,21 @@ class InventarisController extends Controller
         $data = Inventaris::findOrFail($id);
         return view('inventaris.show', compact('data'));
     }
+
+     public function destroy($id)
+    {
+        $data = Inventaris::findOrFail($id);
+
+         // Hapus gambar jika ada
+    if ($data->image && Storage::disk('public')->exists($data->image)) {
+        Storage::disk('public')->delete($data->image);
+    }
+
+    // Hapus data inventaris
+    $data->delete();
+
+    return redirect()->route('home')->with('success', 'Data inventaris berhasil dihapus');
+
+        
+    }
 }
