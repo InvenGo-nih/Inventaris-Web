@@ -12,11 +12,15 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
+    @hasPermission('VIEW_INVENTARIS')
     <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('home') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Inventaris</span></a>
+            <span>Inventaris</span>
+        </a>
     </li>
+    @endhasPermission
+
 
     <!-- Nav Item - Peminjaman -->
     <li class="nav-item {{ request()->routeIs('borrow.index') ? 'active' : '' }}">
@@ -41,7 +45,7 @@
     </div>
 
     <!-- Nav Item - Pengaturan -->
-    <li class="nav-item">
+    <li class="nav-item {{ request()->routeIs('users.index') || request()->routeIs('roles.index') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
@@ -49,9 +53,9 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="buttons.html">Buttons</a>
-                <a class="collapse-item" href="cards.html">Cards</a>
+                {{-- <h6 class="collapse-header">Custom Components:</h6> --}}
+                <a class="collapse-item {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">Pengguna</a>
+                <a class="collapse-item {{ request()->routeIs('roles.index') ? 'active' : '' }}" href="{{ route('roles.index') }}">Jabatan</a>
             </div>
         </div>
     </li>

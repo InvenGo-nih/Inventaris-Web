@@ -1,34 +1,24 @@
 <?php
 
-namespace App\Providers;
+namespace App\Http\Middleware;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\DB;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 
-class AppServiceProvider extends ServiceProvider
+class CheckPermission
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
+    public function handle(Request $request, Closure $next, $permission)
     {
-        //
-    }
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized');
+        }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Blade::if('hasPermission', function ($permission) {
-            if (!Auth::check()) {
-                return false;
-            }
-    
-            $user = Auth::user();
-    
+        $user = Auth::user();
+
         // Ambil role ID user dari tabel users (pastikan ada kolom role_id di tabel users)
         $roleId = DB::table('users')->where('id', $user->id)->value('role_id');
 
@@ -37,11 +27,16 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Cek apakah role memiliki permission yang dibutuhkan
-        return DB::table('role_has_permissions')
+        $hasPermission = DB::table('role_has_permissions')
             ->join('permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
             ->where('role_has_permissions.role_id', $roleId)
             ->where('permissions.name', $permission)
             ->exists();
-        });
+
+        if (!$hasPermission) {
+            return redirect()->back()->with('error', 'You do not have permission to access this page.');
+        }
+
+        return $next($request);
     }
 }
