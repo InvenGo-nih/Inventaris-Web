@@ -1,6 +1,10 @@
 @extends('layouts.app')
+
+@section('title')
+    Scan Qr Code
+@endsection
+
 @section('content')
-    <h1>Scan QR Code</h1>
     <div id="reader" style="width: 500px; margin: auto;"></div>
     
     <form id="qrForm" method="POST" action="{{ route('qr.process') }}">

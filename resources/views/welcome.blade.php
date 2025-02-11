@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+    Inventaris
+@endsection
+
 @section('content')
 <div class="container">
 

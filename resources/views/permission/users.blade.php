@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
+@section('title')
+    Kelola User & Jabatan
+@endsection
+
 @section('content')
 <div class="container">
-    <h2>Kelola User & Role</h2>
     <a href="{{ route('users.form') }}" class="btn btn-primary">Tambah Pengguna</a>
     <table class="table">
         <thead>

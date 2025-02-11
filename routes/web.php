@@ -9,9 +9,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/offline', function () {
     return view('vendor.laravelpwa.offline');
@@ -23,44 +23,44 @@ Route::get('/test/qr/{id?}', [InventarisController::class, 'show'])->name('test_
 Route::middleware('auth')->group(function () {
     Route::get('/', [InventarisController::class, 'index'])->name('home')->middleware('permission:VIEW_INVENTARIS');
 
-    Route::get('/scan', [QrCodeController::class, 'showScanPage'])->name('qr.scan');
-    Route::post('/process-scan', [QrCodeController::class, 'processScan'])->name('qr.process');
+    Route::get('/scan', [QrCodeController::class, 'showScanPage'])->name('qr.scan')->middleware('permission:VIEW_SCAN');
+    Route::post('/process-scan', [QrCodeController::class, 'processScan'])->name('qr.process')->middleware('permission:SCAN_PROCESS');
 
     Route::group(['prefix' => '/inventaris', 'as' => 'inventaris.'], function () {
-        Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form');
-        Route::post('/store', [InventarisController::class, 'store'])->name('store');
-        Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update');
-        Route::get('/delete/{id}', [InventarisController::class, 'destroy'])->name('delete');
+        Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form')->middleware('permission:CREATE_INVENTARIS', 'permission:EDIT_INVENTARIS');
+        Route::post('/store', [InventarisController::class, 'store'])->name('store')->middleware('permission:CREATE_INVENTARIS');
+        Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update')->middleware('permission:EDIT_INVENTARIS');
+        Route::get('/delete/{id}', [InventarisController::class, 'destroy'])->name('delete')->middleware('permission:DELETE_INVENTARIS');
     });
 
     Route::group(['prefix' => '/profile', 'as' => 'profile.'], function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit')->middleware('permission:VIEW_PROFILE');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update')->middleware('permission:EDIT_PROFILE');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_PROFILE');
     });
 
     Route::group(['prefix' => '/borrow', 'as' => 'borrow.'], function (){
-         Route::get('/', [BorrowController::class, 'index'])->name('index'); // Menampilkan daftar peminjaman
-    Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form'); // Form tambah/edit peminjaman
-    Route::post('/store', [BorrowController::class, 'store'])->name('store'); // Simpan data baru
-    Route::put('/update/{id}', [BorrowController::class, 'update'])->name('update'); // Update data peminjaman
-    Route::delete('/delete/{id}', [BorrowController::class, 'destroy'])->name('delete'); // Hapus data peminjaman
+         Route::get('/', [BorrowController::class, 'index'])->name('index')->middleware('permission:VIEW_BORROW'); // Menampilkan daftar peminjaman
+    Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form')->middleware('permission:CREATE_BORROW', 'permission:EDIT_BORROW'); // Form tambah/edit peminjaman
+    Route::post('/store', [BorrowController::class, 'store'])->name('store')->middleware('permission:CREATE_BORROW'); // Simpan data baru
+    Route::put('/update/{id}', [BorrowController::class, 'update'])->name('update')->middleware('permission:EDIT_BORROW'); // Update data peminjaman
+    Route::delete('/delete/{id}', [BorrowController::class, 'destroy'])->name('delete')->middleware('permission:DELETE_BORROW'); // Hapus data peminjaman
     });
 
     Route::group(['prefix' => '/users', 'as' => 'users.'], function (){
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/form/{id?}', [UserController::class, 'form'])->name('form');
-        Route::put('/{id}/update-role', [UserController::class, 'update'])->name('update');
-        Route::post('/store', [UserController::class, 'store'])->name('store');
-        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
+        Route::get('/', [UserController::class, 'index'])->name('index')->middleware('permission:VIEW_USERS');
+        Route::get('/form/{id?}', [UserController::class, 'form'])->name('form')->middleware('permission:CREATE_USERS', 'permission:EDIT_USERS');
+        Route::put('/{id}/update-role', [UserController::class, 'update'])->name('update')->middleware('permission:EDIT_USERS');
+        Route::post('/store', [UserController::class, 'store'])->name('store')->middleware('permission:CREATE_USERS');
+        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_USERS');
     });
 
     Route::group(['prefix' => '/roles', 'as' => 'roles.'], function (){
-        Route::get('/', [RolePermissionController::class, 'manageRoles'])->name('index');
-        Route::get('/form/{id?}', [RolePermissionController::class, 'form'])->name('form');
-        Route::put('/{role}/update-permissions', [RolePermissionController::class, 'updateRolePermissions'])->name('update');
-        Route::post('/store', [RolePermissionController::class, 'store'])->name('store');
-        Route::delete('/delete/{role}', [RolePermissionController::class, 'destroy'])->name('destroy');
+        Route::get('/', [RolePermissionController::class, 'manageRoles'])->name('index')->middleware('permission:VIEW_ROLES');
+        Route::get('/form/{id?}', [RolePermissionController::class, 'form'])->name('form')->middleware('permission:CREATE_ROLES', 'permission:EDIT_ROLES');
+        Route::put('/{role}/update-permissions', [RolePermissionController::class, 'updateRolePermissions'])->name('update')->middleware('permission:EDIT_ROLES');
+        Route::post('/store', [RolePermissionController::class, 'store'])->name('store')->middleware('permission:CREATE_ROLES');
+        Route::delete('/delete/{role}', [RolePermissionController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_ROLES');
     });
 });
 

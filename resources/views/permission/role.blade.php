@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
+@section('title')
+    Kelola Role & Permission
+@endsection
+
 @section('content')
     <div class="container">
-        <h2>Kelola Role & Permission</h2>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoleModal">Tambah
             Jabatan</button>
         <table class="table">

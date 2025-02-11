@@ -1,4 +1,9 @@
 @extends('layouts.app')
+
+@section('title')
+    {{ request()->route('id') ? 'Edit' : 'Tambah' }} Inventaris
+@endsection
+
 @section('content')
 
 @php
@@ -18,9 +23,6 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">{{ request()->route('id') ? 'Edit' : 'Tambah' }} Inventaris</h4>
-                </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name">Name</label>

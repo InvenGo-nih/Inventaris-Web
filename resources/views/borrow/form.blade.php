@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
+@section('title')
+    {{ $data->id ? 'Edit Peminjaman' : 'Tambah Peminjaman' }}
+@endsection
+
 @section('content')
 <div class="container">
-    <h2 class="mb-4">{{ $data->id ? 'Edit Peminjaman' : 'Tambah Peminjaman' }}</h2>
 
     <!-- Flash Message -->
     @if ($errors->any())

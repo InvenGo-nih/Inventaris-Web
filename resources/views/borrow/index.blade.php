@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
+@section('title')
+    Peminjaman
+@endsection
+
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Daftar Peminjaman</h2>
-
     <!-- Flash Message -->
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

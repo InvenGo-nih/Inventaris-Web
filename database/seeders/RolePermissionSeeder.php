@@ -36,13 +36,26 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'CREATE_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'READ_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'UPDATE_INVENTARIS', 'permission_group' => 'inventaris'],
+            ['name' => 'EDIT_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'DELETE_INVENTARIS', 'permission_group' => 'inventaris'],
+            ['name' => 'VIEW_BORROW', 'permission_group' => 'peminjaman'],
             ['name' => 'CREATE_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'READ_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'UPDATE_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'DELETE_BORROW', 'permission_group' => 'peminjaman']];
+            ['name' => 'EDIT_BORROW', 'permission_group' => 'peminjaman'],
+            ['name' => 'DELETE_BORROW', 'permission_group' => 'peminjaman'],
+            ['name' => 'VIEW_SCAN', 'permission_group' => 'scan'],
+            ['name' => 'SCAN_PROCESS', 'permission_group' => 'scan'],
+            ['name' => 'VIEW_PROFILE', 'permission_group' => 'profile'],
+            ['name' => 'EDIT_PROFILE', 'permission_group' => 'profile'],
+            ['name' => 'DELETE_PROFILE', 'permission_group' => 'profile'],
+            ['name' => 'VIEW_USERS', 'permission_group' => 'user'],
+            ['name' => 'CREATE_USERS', 'permission_group' => 'user'],
+            ['name' => 'EDIT_USERS', 'permission_group' => 'user'],
+            ['name' => 'DELETE_USERS', 'permission_group' => 'user'],
+            ['name' => 'VIEW_ROLES', 'permission_group' => 'role'],
+            ['name' => 'CREATE_ROLES', 'permission_group' => 'role'],
+            ['name' => 'EDIT_ROLES', 'permission_group' => 'role'],
+            ['name' => 'DELETE_ROLES', 'permission_group' => 'role'],
+        ];
     
             foreach ($permissions as $perm) {
                 Permission::updateOrCreate(['name' => $perm['name']], ['permission_group' => $perm['permission_group']]);
