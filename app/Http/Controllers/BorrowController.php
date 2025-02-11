@@ -10,94 +10,96 @@ use Illuminate\Support\Facades\Validator;
 
 class BorrowController extends Controller
 {
-    //
-    public function index(){
-        $data = Borrow::all();
+    public function index()
+    {
+        $data = Borrow::with(['user', 'inventaris'])->get();
         return view('borrow.index', compact('data'));
     }
 
-    public function form(Request $request, $id = null){
-        $data = $id ? Borrow::with('inventaris', 'user')->findorfail($id) : new Borrow();
+    public function form($id = null)
+    {
+        $data = $id ? Borrow::findOrFail($id) : new Borrow();
+        $users = User::all();
         $inventaris = Inventaris::where('is_borrow', 0)->get();
-        return view('borrow.form',compact('data', 'inventaris'));
+        return view('borrow.form', compact('data', 'inventaris', 'users'));
     }
 
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'image' => 'required|image',
-            'specification' => 'required',
-            'condition' => 'required',
-            'status' => 'required',
+            'user_id'       => 'required|exists:users,id',
+            'inventaris_id' => 'required|exists:inventaris,id',
+            'date_borrow'   => 'required|date',
+            'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            'status'        => 'required',
         ]);
 
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         }
 
-        // Upload image ke public/storage/images
-        $image = $request->file('image');
-        $imagePath = $image->store('images', 'public'); // Mengembalikan path lengkap di storage/public
-        
         $data = new Borrow();
-        $data->name = $request->name;
-        $data->image = $imagePath; // Hanya menyimpan nama file
-        $data->specification = $request->specification;
-        $data->condition = $request->condition;
+        $data->user_id = $request->user_id;
+        $data->inventaris_id = $request->inventaris_id;
+        $data->date_borrow = $request->date_borrow;
+        $data->date_back = $request->date_back;
         $data->status = $request->status;
         $data->save();
-        
-        // Perbarui qr_link dengan ID yang baru saja disimpan
-        $data->qr_link = route('test_qr', ['id' => $data->id]);
-        $data->save(); // Simpan kembali dengan qr_link
 
-        return redirect()->route('home')->with('success', 'Data berhasil disimpan');
+        // Update status barang yang dipinjam
+        if ($request->status === 'borrowed') {
+            Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => 1]);
+        } else {
+            Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => 0]);
+        }
+
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
     }
-
 
     public function update(Request $request, $id)
     {
-        // Validasi data yang diterima
+        $data = Borrow::findOrFail($id);
+
         $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'image' => 'image', // Gambar tidak wajib saat update
-            'specification' => 'required',
-            'condition' => 'required',
-            'status' => 'required',
+            'user_id'       => 'required|exists:users,id',
+            'inventaris_id' => 'required|exists:inventaris,id',
+            'date_borrow'   => 'required|date',
+            'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            'status'        => 'required',
         ]);
 
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         }
 
+        // Jika barang dikembalikan, ubah statusnya
+        if ($request->status === 'returned' && $data->status !== 'returned') {
+            Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
+        } elseif ($request->status === 'borrowed' && $data->status !== 'borrowed') {
+            Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 1]);
+        }
+
+        $data->update([
+            'user_id'       => $request->user_id,
+            'inventaris_id' => $request->inventaris_id,
+            'date_borrow'   => $request->date_borrow,
+            'date_back'     => $request->date_back,
+            'status'        => $request->status,
+        ]);
+
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
         $data = Borrow::findOrFail($id);
-        $data->name = $request->name;
 
-        // Periksa apakah ada file gambar baru
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
+        // Pastikan barang yang dikembalikan tidak lagi berstatus "borrowed"
+        if ($data->status === 'borrowed') {
+            Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
+        }
 
-            // Hapus gambar lama jika ada
-            // if ($data->image && Storage::disk('public')->exists($data->image)) {
-            //     Storage::disk('public')->delete($data->image);
-            //     $imagePath = $image->store('images', 'public');
-            //     $data->image = $imagePath;
-            // }
-
-            // Upload gambar baru
-            $imagePath = $image->store('images', 'public'); // Simpan ke storage/app/public/images
-
-            // Simpan path gambar baru ke database
-            $data->image = $imagePath;
-        }            
-
-        $data->specification = $request->specification;
-        $data->condition = $request->condition;
-        $data->status = $request->status;
-        $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
-        $data->save();
-
-        return redirect()->route('home')->with('success', 'Data berhasil disimpan');
+        $data->delete();
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dihapus');
     }
 }

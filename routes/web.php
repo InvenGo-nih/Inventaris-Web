@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form');
         Route::post('/store', [InventarisController::class, 'store'])->name('store');
         Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update');
-        Route::get('/delete/{id}', [InventarisController::class, 'delete'])->name('delete');
+        Route::get('/delete/{id}', [InventarisController::class, 'destroy'])->name('delete');
     });
 
     Route::group(['prefix' => '/profile', 'as' => 'profile.'], function () {
@@ -40,8 +40,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => '/borrow', 'as' => 'borrow.'], function (){
-        Route::get('/', [BorrowController::class, 'index'])->name('index');
-        Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form');
+         Route::get('/', [BorrowController::class, 'index'])->name('index'); // Menampilkan daftar peminjaman
+    Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form'); // Form tambah/edit peminjaman
+    Route::post('/store', [BorrowController::class, 'store'])->name('store'); // Simpan data baru
+    Route::put('/update/{id}', [BorrowController::class, 'update'])->name('update'); // Update data peminjaman
+    Route::delete('/delete/{id}', [BorrowController::class, 'destroy'])->name('delete'); // Hapus data peminjaman
     });
 
     Route::group(['prefix' => '/users', 'as' => 'users.'], function (){

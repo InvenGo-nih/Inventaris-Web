@@ -99,7 +99,7 @@
                                             <td>{{ $item->condition }}</td>
                                             <td>{!! QrCode::size(100)->generate($item->qr_link) !!}</td>
                                             <td><img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->name }}" width="100" height="100"></td>
-                                            <td><button class="btn btn-success "><a class="text-light" style="text-decoration: none" href="{{ route('inventaris.form', ['id' => $item->id]) }}">Edit</a></button> <span> </span><button class="btn btn-danger">Hapus</button></td>
+                                            <td><button class="btn btn-success "><a class="text-light" style="text-decoration: none" href="{{ route('inventaris.form', ['id' => $item->id]) }}">Edit</a></button> <span> </span><button class="btn btn-danger"  ><a class="text-light"  href="{{ route('inventaris.delete', ['id' => $item->id]) }}">Hapus</a></button></td>
                                         </tr>
                                        @empty
                                     <tr>
