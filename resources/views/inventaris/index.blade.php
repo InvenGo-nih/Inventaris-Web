@@ -20,7 +20,7 @@
              <!-- Tombol Create Inventaris -->
              <a href="{{ route('inventaris.form') }}" class="btn btn-primary">Create Inventaris</a>
              <!-- Form Search -->
-             <form action="{{ route('home') }}" method="get" class="d-flex">
+             <form action="{{ route('inventaris.index') }}" method="get" class="d-flex">
                  <input type="text" class="form-control me-2" placeholder="Search" name="search">
                  <button class="btn btn-outline-secondary" type="submit">Search</button>
              </form>

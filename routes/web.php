@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BorrowController;
+use App\Http\Controllers\DasboardController;
 use App\Http\Controllers\InventarisController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QrCodeController;
@@ -9,24 +10,22 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-// Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/offline', function () {
     return view('vendor.laravelpwa.offline');
-});
-    
+});    
 
 Route::get('/test/qr/{id?}', [InventarisController::class, 'show'])->name('test_qr');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [InventarisController::class, 'index'])->name('home')->middleware('permission:VIEW_INVENTARIS');
-
+    Route::get('/', [DasboardController::class, 'index'])->middleware('permission:VIEW_DASHBOARD')->name('dashboard');
+    Route::get('/chart_data', [DasboardController::class, 'chartData'])->middleware('permission:CHART_DATA')->name('chart_data');
+    
     Route::get('/scan', [QrCodeController::class, 'showScanPage'])->name('qr.scan')->middleware('permission:VIEW_SCAN');
     Route::post('/process-scan', [QrCodeController::class, 'processScan'])->name('qr.process')->middleware('permission:SCAN_PROCESS');
-
+    
     Route::group(['prefix' => '/inventaris', 'as' => 'inventaris.'], function () {
+        Route::get('/', [InventarisController::class, 'index'])->name('index')->middleware('permission:VIEW_INVENTARIS');
         Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form')->middleware('permission:CREATE_INVENTARIS', 'permission:EDIT_INVENTARIS');
         Route::post('/store', [InventarisController::class, 'store'])->name('store')->middleware('permission:CREATE_INVENTARIS');
         Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update')->middleware('permission:EDIT_INVENTARIS');

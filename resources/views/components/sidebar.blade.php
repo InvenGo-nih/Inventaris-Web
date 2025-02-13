@@ -12,9 +12,19 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
+    @hasPermission('VIEW_DASHBOARD')
+    <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('dashboard') }}">
+            <i class="fas fa-fw fa-solid fa-cubes"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    @endhasPermission
+
+    <!-- Nav Item - Inventaris -->
     @hasPermission('VIEW_INVENTARIS')
-    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('home') }}">
+    <li class="nav-item {{ request()->routeIs('inventaris.index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('inventaris.index') }}">
             <i class="fas fa-fw fa-solid fa-cubes"></i>
             <span>Inventaris</span>
         </a>

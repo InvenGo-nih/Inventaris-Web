@@ -1,17 +1,30 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+@section('title')
+    Dashboard
+@endsection
+
+@section('content')
+    <div id="chart"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        fetch("{{ route('chart_data') }}") // Ambil data dari backend
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            var options = {
+                chart: { type: 'bar', height: 350 },
+                series: [{
+                    name: 'Jumlah',
+                    data: [data.data.InventarisCount, data.data.BorrowCount] // Ambil nilai dari JSON yang baru
+                }],
+                xaxis: {
+                    categories: ['Jumlah Inventaris', 'Jumlah Peminjaman'] // Label untuk sumbu X
+                }
+            };
+
+            new ApexCharts(document.querySelector("#chart"), options).render();
+        });
+    </script>
+@endsection

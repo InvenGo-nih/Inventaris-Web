@@ -21,10 +21,10 @@ class InventarisController extends Controller
                 ->orWhere('status', 'like', "%$search%")
                 ->paginate(10);
 
-            return view('welcome', compact('data', 'jumlah'));
+            return view('inventaris.index', compact('data', 'jumlah'));
         }
         $data = Inventaris::paginate(5);
-        return view('welcome', compact('data', 'jumlah'));
+        return view('inventaris.index', compact('data', 'jumlah'));
     }
 
     public function form(Request $request, $id = null)
@@ -63,7 +63,7 @@ class InventarisController extends Controller
         $data->qr_link = route('test_qr', ['id' => $data->id]);
         $data->save(); // Simpan kembali dengan qr_link
 
-        return redirect()->route('home')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');
     }
 
 
@@ -109,7 +109,7 @@ class InventarisController extends Controller
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
         $data->save();
 
-        return redirect()->route('home')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');
     }
 
     public function show($id)
@@ -130,7 +130,7 @@ class InventarisController extends Controller
     // Hapus data inventaris
     $data->delete();
 
-    return redirect()->route('home')->with('success', 'Data inventaris berhasil dihapus');
+    return redirect()->route('inventaris.index')->with('success', 'Data inventaris berhasil dihapus');
 
         
     }
