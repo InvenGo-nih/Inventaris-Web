@@ -119,41 +119,45 @@ class InventarisController extends Controller
         $data = Inventaris::findOrFail($id);
         return view('inventaris.show', compact('data'));
     }
+    public function showQr($id)
+    {
+        $data = Inventaris::findOrFail($id);
+        return view('inventaris.showQrData', compact('data'));
+    }
 
-     public function destroy($id)
+    public function destroy($id)
     {
         $data = Inventaris::findOrFail($id);
 
-         // Hapus gambar jika ada
-    if ($data->image && Storage::disk('public')->exists($data->image)) {
-        Storage::disk('public')->delete($data->image);
+        // Hapus gambar jika ada
+        if ($data->image && Storage::disk('public')->exists($data->image)) {
+            Storage::disk('public')->delete($data->image);
+        }
+
+        // Hapus data inventaris
+        $data->delete();
+
+        return redirect()->route('inventaris.index')->with('success', 'Data inventaris berhasil dihapus');
     }
 
-    // Hapus data inventaris
-    $data->delete();
+    public function downloadPDF()
+    {
+        $data = Inventaris::all();
 
-    return redirect()->route('inventaris.index')->with('success', 'Data inventaris berhasil dihapus');
+        foreach ($data as $item) {
+            // Gunakan format SVG agar tidak memerlukan Imagick
+            $qrCode = QrCode::format('svg')
+                ->size(100)
+                ->errorCorrection('H')
+                ->generate($item->qr_link);
 
-        
+            // Simpan QR Code dalam variabel sebagai string (tanpa file)
+            $item->qr_code = $qrCode;
+        }
+
+        // Load view PDF
+        $pdf = Pdf::loadView('inventaris.pdf', compact('data'));
+
+        return $pdf->download('inventaris.pdf');
     }
- public function downloadPDF()
-{
-    $data = Inventaris::all();
-
-    foreach ($data as $item) {
-        // Gunakan format SVG agar tidak memerlukan Imagick
-        $qrCode = QrCode::format('svg')
-            ->size(100)
-            ->errorCorrection('H')
-            ->generate($item->qr_link);
-
-        // Simpan QR Code dalam variabel sebagai string (tanpa file)
-        $item->qr_code = $qrCode;
-    }
-
-    // Load view PDF
-    $pdf = Pdf::loadView('inventaris.pdf', compact('data'));
-
-    return $pdf->download('inventaris.pdf');
-}
 }

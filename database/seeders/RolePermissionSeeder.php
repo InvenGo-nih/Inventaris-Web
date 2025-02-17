@@ -37,6 +37,7 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'CREATE_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'EDIT_INVENTARIS', 'permission_group' => 'inventaris'],
+            ['name' => 'SHOW_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'DELETE_INVENTARIS', 'permission_group' => 'inventaris'],
             ['name' => 'VIEW_BORROW', 'permission_group' => 'peminjaman'],
             ['name' => 'CREATE_BORROW', 'permission_group' => 'peminjaman'],
