@@ -6,6 +6,8 @@ use App\Models\Inventaris;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class InventarisController extends Controller
 {
@@ -134,4 +136,24 @@ class InventarisController extends Controller
 
         
     }
+ public function downloadPDF()
+{
+    $data = Inventaris::all();
+
+    foreach ($data as $item) {
+        // Gunakan format SVG agar tidak memerlukan Imagick
+        $qrCode = QrCode::format('svg')
+            ->size(100)
+            ->errorCorrection('H')
+            ->generate($item->qr_link);
+
+        // Simpan QR Code dalam variabel sebagai string (tanpa file)
+        $item->qr_code = $qrCode;
+    }
+
+    // Load view PDF
+    $pdf = Pdf::loadView('inventaris.pdf', compact('data'));
+
+    return $pdf->download('inventaris.pdf');
+}
 }

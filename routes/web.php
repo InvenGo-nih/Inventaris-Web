@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [InventarisController::class, 'index'])->name('index')->middleware('permission:VIEW_INVENTARIS');
         Route::get('/form/{id?}', [InventarisController::class, 'form'])->name('form')->middleware('permission:CREATE_INVENTARIS', 'permission:EDIT_INVENTARIS');
         Route::post('/store', [InventarisController::class, 'store'])->name('store')->middleware('permission:CREATE_INVENTARIS');
+        Route::get('/pdf', [InventarisController::class, 'downloadPDF'])->name('pdf');
         Route::put('/update/{id}', [InventarisController::class, 'update'])->name('update')->middleware('permission:EDIT_INVENTARIS');
         Route::get('/delete/{id}', [InventarisController::class, 'destroy'])->name('delete')->middleware('permission:DELETE_INVENTARIS');
     });

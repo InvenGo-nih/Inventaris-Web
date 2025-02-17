@@ -18,7 +18,11 @@
          <div class="d-flex justify-content-between align-items-center mb-3">
              
              <!-- Tombol Create Inventaris -->
-             <a href="{{ route('inventaris.form') }}" class="btn btn-primary">Create Inventaris</a>
+             <div class="d-flex">
+                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Create Inventaris</a>
+    
+    <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger">Download PDF</a>
+</div>
              <!-- Form Search -->
              <form action="{{ route('inventaris.index') }}" method="get" class="d-flex">
                  <input type="text" class="form-control me-2" placeholder="Search" name="search">
