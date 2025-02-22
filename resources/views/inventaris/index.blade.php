@@ -93,7 +93,7 @@
         </div>
         </a>
     @endforeach
-    
+    {{$data->links()}}
 </div>
 
 @endsection

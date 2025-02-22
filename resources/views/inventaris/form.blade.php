@@ -32,9 +32,12 @@
                         <label for="specification">Spesifikasi</label>
                         <input type="text" name="specification" class="form-control" value="{{ $data->specification ?? '' }}">
                     </div>
-                    <div class="form-group">
+                     <div class="form-group">
                         <label for="condition">Kondisi</label>
-                        <input type="text" name="condition" class="form-control" value="{{ $data->condition ?? '' }}">
+                        <select name="condition" class="form-control">
+                            <option value="Rusak" {{ isset($data) && $data->condition == 'Rusak' ? 'selected' : '' }}>Rusak</option>
+                            <option value="Normal" {{ isset($data) && $data->condition == 'Normal' ? 'selected' : '' }}>Normal</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
