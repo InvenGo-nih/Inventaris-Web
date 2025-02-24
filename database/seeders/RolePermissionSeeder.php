@@ -32,6 +32,25 @@ class RolePermissionSeeder extends Seeder
         Role::updateOrCreate(['name' => 'teknisi']);
         Role::updateOrCreate(['name' => 'guru']);
 
+        // Tambahkan pengguna baru
+        DB::table('users')->updateOrInsert(
+            ['email' => 'rifkiadi348@gmail.com'], // Kriteria pencarian
+            [
+                'name' => 'rifki',
+                'password' => bcrypt('11111111'), // Enkripsi password
+                'role_id' => 1, // ID untuk role 'admin'
+            ]
+        );
+
+        DB::table('users')->updateOrInsert(
+            ['email' => 'zami123@gmail.com'], // Kriteria pencarian
+            [
+                'name' => 'zami',
+                'password' => bcrypt('11111111'), // Enkripsi password
+                'role_id' => 1, // ID untuk role 'admin'
+            ]
+        );
+
         // Buat Permissions CRUD Inventaris
         $permissions = [
             ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris'],
