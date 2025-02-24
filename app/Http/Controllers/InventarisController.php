@@ -7,7 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Label\Label;
+use Endroid\QrCode\Logo\Logo;
+use Endroid\QrCode\RoundBlockSizeMode;
+use TCPDF;
 use illuminate\Support\Str;
 
 class InventarisController extends Controller
@@ -149,22 +156,72 @@ class InventarisController extends Controller
 
     public function downloadPDF()
     {
-        $data = Inventaris::all();
+        // Ambil semua data dari database
+        $inventaris = Inventaris::all();
 
-        foreach ($data as $item) {
-            // Gunakan format SVG agar tidak memerlukan Imagick
-            $qrCode = QrCode::format('svg')
-                ->size(100)
-                ->errorCorrection('H')
-                ->generate($item->qr_link);
+        // Buat instance TCPDF
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Rifki');
+        $pdf->SetTitle('Laporan Inventaris');
+        $pdf->SetMargins(10, 10, 10);
+        $pdf->SetAutoPageBreak(TRUE, 10); // Auto page break dengan margin bawah 10mm
+        $pdf->AddPage();
 
-            // Simpan QR Code dalam variabel sebagai string (tanpa file)
-            $item->qr_code = $qrCode;
+        // Tambahkan judul
+        $pdf->SetFont('helvetica', 'B', 14);
+        $pdf->Cell(0, 10, 'Laporan Inventaris', 0, 1, 'C');
+        $pdf->Ln(5); // Spasi setelah judul
+
+        // Header tabel
+        $columnWidths = [50, 50, 50, 40]; // Lebar masing-masing kolom
+        $lineHeight = 30; // Tinggi baris header
+
+        $pdf->SetFillColor(200, 200, 200);
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Cell($columnWidths[0], $lineHeight, 'Nama Barang', 1, 0, 'C', true);
+        $pdf->Cell($columnWidths[1], $lineHeight, 'Kondisi', 1, 0, 'C', true);
+        $pdf->Cell($columnWidths[2], $lineHeight, 'Spesifikasi', 1, 0, 'C', true);
+        $pdf->Cell($columnWidths[3], $lineHeight, 'QR Code', 1, 1, 'C', true);
+
+        // Loop data inventaris
+        foreach ($inventaris as $index => $item) {
+            // Jika sudah 7 item di halaman ini, buat halaman baru
+            if (($index > 0) && ($index % 7 == 0)) {
+                $pdf->AddPage();
+        
+                // Tambahkan ulang header di halaman baru
+                $pdf->SetFillColor(200, 200, 200);
+                $pdf->Cell($columnWidths[0], $lineHeight, 'Nama Barang', 1, 0, 'C', true);
+                $pdf->Cell($columnWidths[1], $lineHeight, 'Kondisi', 1, 0, 'C', true);
+                $pdf->Cell($columnWidths[2], $lineHeight, 'Spesifikasi', 1, 0, 'C', true);
+                $pdf->Cell($columnWidths[3], $lineHeight, 'QR Code', 1, 1, 'C', true);
+            }
+        
+            // Isi Data
+            $pdf->SetFont('helvetica', '', 10);
+            $pdf->Cell($columnWidths[0], $lineHeight, $item->name, 1, 0, 'L');
+            $pdf->Cell($columnWidths[1], $lineHeight, $item->condition, 1, 0, 'C');
+            $pdf->Cell($columnWidths[2], $lineHeight, $item->specification, 1, 0, 'L');
+        
+            // Simpan posisi awal untuk QR Code
+            $xPos = $pdf->GetX();
+            $yPos = $pdf->GetY();
+        
+            // Cell kosong untuk QR Code agar kotaknya tetap rapi
+            $pdf->Cell($columnWidths[3], $lineHeight, '', 1, 1, 'C'); // Cell ini hanya untuk kotak
+        
+            // Buat QR Code lebih kecil & di tengah cell
+            $qrSize = 15; // Ukuran QR Code lebih kecil
+            $qrX = $xPos + ($columnWidths[3] - $qrSize) / 2; // Posisi tengah
+            $qrY = $yPos + ($lineHeight - $qrSize) / 2; // Posisi tengah
+            $pdf->write2DBarcode($item->qr_link ?? 'No QR', 'QRCODE,M', $qrX, $qrY, $qrSize, $qrSize);
         }
+        
 
-        // Load view PDF
-        $pdf = Pdf::loadView('inventaris.pdf', compact('data'));
-
-        return $pdf->download('inventaris.pdf');
+        // Output PDF
+        return response($pdf->Output('inventaris.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
     }
+    
 }
