@@ -45,10 +45,16 @@
                 <label for="specification" class="form-label">Spesifikasi</label>
                 <textarea name="specification" class="form-control" rows="3">{{ $data->specification ?? '' }}</textarea>
             </div>
+            
+            <div class="mb-3">
+    <label for="location" class="form-label">Lokasi</label>
+    <input type="text" name="location" class="form-control" value="{{ $data->location ?? '' }}">
+</div>
             <div class="mb-3">
                 <label for="image" class="form-label">Gambar</label>
-                <input type="file" name="image" class="form-control">
+                <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}">
             </div>
+
         </div>
     </div>
 

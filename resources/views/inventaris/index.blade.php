@@ -18,14 +18,14 @@
              
              <!-- Tombol Create Inventaris -->
              <div class="d-flex">
-                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary"zz style="margin-right: 10px">Tambah Inventaris</a>
+                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah Inventaris</a>
     
     <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
 </div>
              <!-- Form Search -->
              <form action="{{ route('inventaris.index') }}" method="get" class="d-flex">
-                 <input type="text" class="form-control me-2" placeholder="Search" name="search">
-                 <button class="btn btn-outline-secondary" type="submit">Search</button>
+                 <input type="text" class="form-control me-2" placeholder="Cari" name="search">
+                 <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
              </form>
     </div>
     
@@ -68,7 +68,7 @@
 
         {{-- new --}}
     @foreach ($data as $item)
-    <a href="{{ route('inventaris.show', $item->id) }}" >
+    <a href="{{ route('inventaris.show', $item->id) }}">
         <div class="card shadow-sm mb-3">
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
@@ -93,7 +93,9 @@
         </div>
         </a>
     @endforeach
-    {{$data->links()}}
+    <div class="d-flex justify-content-center">
+        {{ $data->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 
 @endsection

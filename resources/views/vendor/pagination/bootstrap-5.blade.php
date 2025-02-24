@@ -3,9 +3,9 @@
         <div class="card-body d-flex flex-column flex-sm-row justify-content-between align-items-center">
             <!-- Informasi jumlah data -->
             <p class="small text-muted mb-2 mb-sm-0">
-                Showing <span class="fw-semibold">{{ $paginator->firstItem() }}</span>
-                to <span class="fw-semibold">{{ $paginator->lastItem() }}</span>
-                of <span class="fw-semibold">{{ $paginator->total() }}</span> entries
+                Menampilkan <span class="fw-semibold">{{ $paginator->firstItem() }}</span>
+                hingga <span class="fw-semibold">{{ $paginator->lastItem() }}</span>
+                dari <span class="fw-semibold">{{ $paginator->total() }}</span> entri
             </p>
 
             <!-- Pagination -->
@@ -14,11 +14,11 @@
                     {{-- Previous Page Link --}}
                     @if ($paginator->onFirstPage())
                         <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
+                            <span class="page-link">Sebelumnya</span>
                         </li>
                     @else
                         <li class="page-item">
-                            <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev">Previous</a>
+                            <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev">Sebelumnya</a>
                         </li>
                     @endif
 
@@ -44,11 +44,11 @@
                     {{-- Next Page Link --}}
                     @if ($paginator->hasMorePages())
                         <li class="page-item">
-                            <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next">Next</a>
+                            <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next">Selanjutnya</a>
                         </li>
                     @else
                         <li class="page-item disabled">
-                            <span class="page-link">Next</span>
+                            <span class="page-link">Selanjutnya</span>
                         </li>
                     @endif
                 </ul>
