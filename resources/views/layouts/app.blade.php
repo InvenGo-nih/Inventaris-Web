@@ -27,6 +27,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ asset('assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
+<!-- Aos scroll animate-->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- KALAU MAU PAKAI TAILWIND -->
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     <style>
@@ -60,7 +62,7 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div class="container">
+                    <div class="container" data-aos="fade-right">
                         <h1 class="fw-bold text-primary fst-italic mb-3" style="font-family: Poppins, serif; text-transform: uppercase;">@yield('title', 'INVENGO')</h1>
                     </div>
                     @yield('content')
@@ -82,7 +84,11 @@
     </a>
 
     @include('components.logout-modal')
-
+    {{-- aos scrol animate --}}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+  AOS.init();
+</script>
     <!-- Bootstrap core JavaScript-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">

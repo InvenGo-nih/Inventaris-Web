@@ -7,7 +7,7 @@
 @section('content')
 <div class="container">
 
-    <div class="container p-5 my-5 border text-center shadow">
+    <div class="container p-5 my-5 border text-center shadow" data-aos="zoom-in">
         <div >
             <p>Jumlah Inventaris :</p>
             <p>{{ $jumlah }}</p>
@@ -18,7 +18,7 @@
              
              <!-- Tombol Create Inventaris -->
              <div class="d-flex">
-                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah Inventaris</a>
+                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary"zz style="margin-right: 10px">Tambah Inventaris</a>
     
     <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
 </div>
@@ -68,7 +68,7 @@
 
         {{-- new --}}
     @foreach ($data as $item)
-    <a href="{{ route('inventaris.show', $item->id) }}">
+    <a href="{{ route('inventaris.show', $item->id) }}" >
         <div class="card shadow-sm mb-3">
             <div class="card-body d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
@@ -80,7 +80,7 @@
                     <div>
                         <h6 class="mb-0 fw-bold">{{ $item->name }}</h6>
                         <p class="mb-1 text-muted small">{{ $item->specification }}</p>
-                        <span class="badge {{ $item->condition == 'Berada di Lab' ? 'bg-success' : 'bg-warning text-dark' }}">
+                        <span class="badge {{ $item->condition == 'Normal' ? 'bg-success' : 'bg-warning text-dark' }}">
                             {{ $item->condition }}
                         </span>
                     </div>

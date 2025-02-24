@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use illuminate\Support\Str;
 
 class InventarisController extends Controller
 {
@@ -43,6 +44,7 @@ class InventarisController extends Controller
             'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
+            'location' => 'required'
         ]);
 
         if ($validate->fails()) {
@@ -59,6 +61,7 @@ class InventarisController extends Controller
         $data->specification = $request->specification;
         $data->condition = $request->condition;
         $data->status = $request->status;
+        $data->location = $request->location ?? 'Tidak Diketahui';
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan
@@ -78,6 +81,7 @@ class InventarisController extends Controller
             'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
+            'location' => 'required'
         ]);
 
         if ($validate->fails()) {
@@ -104,11 +108,14 @@ class InventarisController extends Controller
             // Simpan path gambar baru ke database
             $data->image = $imagePath;
         }            
+        
+        $serialNumber = 'SN-' . str::upper(Str::random(10));
 
         $data->specification = $request->specification;
         $data->condition = $request->condition;
         $data->status = $request->status;
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
+        $data->serial_number = $serialNumber ;
         $data->save();
 
         return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');

@@ -23,6 +23,8 @@
         @if ($data->id)
             @method('PUT')
         @endif
+<div class="row">
+    <div class="col-md-6">
 
         <div class="mb-3">
             <label for="user_id" class="form-label">Nama Peminjam</label>
@@ -35,7 +37,7 @@
                 @endforeach
             </select>
         </div>
-
+    
         <div class="mb-3">
             <label for="inventaris_id" class="form-label">Barang</label>
             <select name="inventaris_id" id="inventaris_id" class="form-control" required>
@@ -47,16 +49,16 @@
                 @endforeach
             </select>
         </div>
-
+    
         <div class="mb-3">
             <label for="date_borrow" class="form-label">Tanggal Pinjam</label>
             <input type="date" name="date_borrow" id="date_borrow" class="form-control" value="{{ $data->date_borrow ?? old('date_borrow') }}" required>
         </div>
-        <div class="mb-3">
-            <label for="date_back" class="form-label">Tanggal kembali</label>
-            <input type="date" name="date_back" id="date_back" class="form-control" value="{{ $data->date_back ?? old('date_back') }}" required>
-        </div>
+    </div>
+    <div class="col-md-6">
 
+       
+    
         <div class="mb-3">
             <label for="status" class="form-label">Status</label>
             <select name="status" id="status" class="form-control">
@@ -64,9 +66,17 @@
                 <option value="Dikembalikan" {{ $data->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
             </select>
         </div>
+         <div class="mb-3">
+            <label for="date_back" class="form-label">Tanggal kembali</label>
+            <input type="date" name="date_back" id="date_back" class="form-control" value="{{ $data->date_back ?? old('date_back') }}" required>
+        </div>
+    </div>
 
-        <button type="submit" class="btn btn-success">{{ $data->id ? 'Update' : 'Simpan' }}</button>
-        <a href="{{ route('borrow.index') }}" class="btn btn-secondary">Batal</a>
-    </form>
 </div>
+<div class="d-flex justify-content-center gap-3 mt-3">
+    <button type="submit" class="btn btn-primary px-4">{{ $data->id ? 'Update' : 'Simpan' }}</button>
+    <a href="{{ route('borrow.index') }}"  class="btn btn-primary px-4">Batal</a>
+</div>
+</div>
+</form>
 @endsection

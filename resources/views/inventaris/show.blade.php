@@ -15,9 +15,11 @@
         <div class="card mx-auto" style="max-width: 400px;">
             <div class="card-body  text-center">
                 <p><strong>Nama:</strong> {{ $data->name }}</p>
+                <p><strong>Lokasi:</strong> {{ $data->location }}</p>
                 <p><strong>Spesifikasi:</strong> {{ $data->specification }}</p>
                 <p><strong>Kondisi:</strong> {{ $data->condition }}</p>
                 <p><strong>Status:</strong> {{ $data->status }}</p>
+                <p><strong>No.Serial:</strong> {{ $data->serial_number }}</p>
             </div>
         </div>
 

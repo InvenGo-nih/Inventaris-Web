@@ -17,9 +17,13 @@ class DasboardController extends Controller
     {
         $InventarisCount = Inventaris::count();
         $BorrowCount = Borrow::count();
+        $NormalCount = Inventaris::where('condition','Normal')->count();
+        $RusakCount = Inventaris::where('condition','Rusak')->count();
         $data = [
             'InventarisCount' => $InventarisCount,
             'BorrowCount' => $BorrowCount,
+            'NormalCount' => $NormalCount,
+            'RusakCount' => $RusakCount
         ];
         return response()->json(
             [

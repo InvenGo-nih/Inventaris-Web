@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('inventaris', function (Blueprint $table) {
              $table->text("location");
-            $table->integer("serial_number");
+            $table->string("serial_number");
               
         });
     }

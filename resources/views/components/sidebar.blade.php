@@ -1,11 +1,11 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+    <a class="sidebar-brand d-flex align-items-center justify-content-center mt-5 mb-3" href="">
+        
+           <img class="" src="{{asset('images/logo-invengo.png')}}" alt="" width="150">
+        
+        
     </a>
 
     <!-- Divider -->
@@ -25,7 +25,7 @@
     @hasPermission('VIEW_INVENTARIS')
     <li class="nav-item {{ request()->routeIs('inventaris.index') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('inventaris.index') }}">
-            <i class="fas fa-fw fa-solid fa-cubes"></i>
+           <i class="fa-solid fa-house"></i>
             <span>Inventaris</span>
         </a>
     </li>
