@@ -61,7 +61,8 @@ class InventarisController extends Controller
         // Upload image ke public/storage/images
         $image = $request->file('image');
         $imagePath = $image->store('images', 'public'); // Mengembalikan path lengkap di storage/public
-        
+        $serialNumber = 'SN-' . str::upper(Str::random(10));
+
         $data = new Inventaris();
         $data->name = $request->name;
         $data->image = $imagePath; // Hanya menyimpan nama file
@@ -69,6 +70,7 @@ class InventarisController extends Controller
         $data->condition = $request->condition;
         $data->status = $request->status;
         $data->location = $request->location ?? 'Tidak Diketahui';
+        $data->serial_number = $serialNumber;
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan

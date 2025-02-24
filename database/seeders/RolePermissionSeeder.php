@@ -53,34 +53,35 @@ class RolePermissionSeeder extends Seeder
 
         // Buat Permissions CRUD Inventaris
         $permissions = [
-            ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'CREATE_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'EDIT_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'SHOW_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'DELETE_INVENTARIS', 'permission_group' => 'inventaris'],
-            ['name' => 'VIEW_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'CREATE_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'EDIT_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'DELETE_BORROW', 'permission_group' => 'peminjaman'],
-            ['name' => 'VIEW_SCAN', 'permission_group' => 'scan'],
-            ['name' => 'SCAN_PROCESS', 'permission_group' => 'scan'],
-            ['name' => 'VIEW_PROFILE', 'permission_group' => 'profile'],
-            ['name' => 'EDIT_PROFILE', 'permission_group' => 'profile'],
-            ['name' => 'DELETE_PROFILE', 'permission_group' => 'profile'],
-            ['name' => 'VIEW_USERS', 'permission_group' => 'user'],
-            ['name' => 'CREATE_USERS', 'permission_group' => 'user'],
-            ['name' => 'EDIT_USERS', 'permission_group' => 'user'],
-            ['name' => 'DELETE_USERS', 'permission_group' => 'user'],
-            ['name' => 'VIEW_ROLES', 'permission_group' => 'role'],
-            ['name' => 'CREATE_ROLES', 'permission_group' => 'role'],
-            ['name' => 'EDIT_ROLES', 'permission_group' => 'role'],
-            ['name' => 'DELETE_ROLES', 'permission_group' => 'role'],
-            ['name' => 'VIEW_DASHBOARD', 'permission_group' => 'dashboard'],
-            ['name' => 'CHART_DATA', 'permission_group' => 'dashboard'],
+            ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Lihat Inventaris'],
+            ['name' => 'CREATE_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Buat Inventaris'],
+            ['name' => 'EDIT_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Edit Inventaris'],
+            ['name' => 'SHOW_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Tampilkan Inventaris'],
+            ['name' => 'DELETE_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Hapus Inventaris'],
+            ['name' => 'PDF_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'PDF Inventaris'],
+            ['name' => 'VIEW_BORROW', 'permission_group' => 'peminjaman', 'alias' => 'Lihat Peminjaman'],
+            ['name' => 'CREATE_BORROW', 'permission_group' => 'peminjaman', 'alias' => 'Buat Peminjaman'],
+            ['name' => 'EDIT_BORROW', 'permission_group' => 'peminjaman', 'alias' => 'Edit Peminjaman'],
+            ['name' => 'DELETE_BORROW', 'permission_group' => 'peminjaman', 'alias' => 'Hapus Peminjaman'],
+            ['name' => 'VIEW_SCAN', 'permission_group' => 'scan', 'alias' => 'Lihat Scan'],
+            ['name' => 'SCAN_PROCESS', 'permission_group' => 'scan', 'alias' => 'Proses Scan'],
+            ['name' => 'VIEW_PROFILE', 'permission_group' => 'profile', 'alias' => 'Lihat Profil'],
+            ['name' => 'EDIT_PROFILE', 'permission_group' => 'profile', 'alias' => 'Edit Profil'],
+            ['name' => 'DELETE_PROFILE', 'permission_group' => 'profile', 'alias' => 'Hapus Profil'],
+            ['name' => 'VIEW_USERS', 'permission_group' => 'user', 'alias' => 'Lihat Pengguna'],
+            ['name' => 'CREATE_USERS', 'permission_group' => 'user', 'alias' => 'Buat Pengguna'],
+            ['name' => 'EDIT_USERS', 'permission_group' => 'user', 'alias' => 'Edit Pengguna'],
+            ['name' => 'DELETE_USERS', 'permission_group' => 'user', 'alias' => 'Hapus Pengguna'],
+            ['name' => 'VIEW_ROLES', 'permission_group' => 'role', 'alias' => 'Lihat Role'],
+            ['name' => 'CREATE_ROLES', 'permission_group' => 'role', 'alias' => 'Buat Role'],
+            ['name' => 'EDIT_ROLES', 'permission_group' => 'role', 'alias' => 'Edit Role'],
+            ['name' => 'DELETE_ROLES', 'permission_group' => 'role', 'alias' => 'Hapus Role'],
+            ['name' => 'VIEW_DASHBOARD', 'permission_group' => 'dashboard', 'alias' => 'Lihat Dashboard'],
+            ['name' => 'CHART_DATA', 'permission_group' => 'dashboard', 'alias' => 'Data Grafik'],
         ];
     
             foreach ($permissions as $perm) {
-                Permission::updateOrCreate(['name' => $perm['name']], ['permission_group' => $perm['permission_group']]);
+                Permission::updateOrCreate(['name' => $perm['name']], ['permission_group' => $perm['permission_group'], 'alias' => $perm['alias']]);
             }
 
         // Tambahkan seeder untuk role_has_permissions

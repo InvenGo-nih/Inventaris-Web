@@ -16,18 +16,19 @@
 
          <div class="d-flex justify-content-between align-items-center mb-3">
              
-             <!-- Tombol Create Inventaris -->
-             <div class="d-flex">
-                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah Inventaris</a>
-    
-    <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
-</div>
-             <!-- Form Search -->
-             <form action="{{ route('inventaris.index') }}" method="get" class="d-flex">
-                 <input type="text" class="form-control me-2" placeholder="Cari" name="search">
-                 <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-             </form>
-    </div>
+            <!-- Tombol Create Inventaris -->
+            <div class="d-flex">
+                <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah Inventaris</a>
+                @hasPermission('PDF_INVENTARIS')
+                    <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
+                @endhasPermission
+            </div>
+                    <!-- Form Search -->
+                    <form action="{{ route('inventaris.index') }}" method="get" class="d-flex">
+                        <input type="text" class="form-control me-2" placeholder="Cari" name="search">
+                        <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+            </div>
     
     {{-- old --}}
     {{-- <div class="table-responsive m-5 " >
