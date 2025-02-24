@@ -6,9 +6,9 @@
 
 @section('content')
 <div class="container">
-    <a href="{{ route('users.form') }}" class="btn btn-primary">Tambah Pengguna</a>
-    <table class="table">
-        <thead>
+    <a href="{{ route('users.form') }}" class="btn btn-primary mb-3">Tambah Pengguna</a>
+    <table class="table table-bordered text-center">
+        <thead class="table-primary">
             <tr>
                 <th>Nama</th>
                 <th>Email</th>
@@ -22,12 +22,16 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>{{ ucfirst($user->role->name) }}</td>
-                    <td>
-                        <a href="{{ route('users.form', $user->id) }}" class="btn btn-warning">Edit</a>
+                    <td class="d-flex gap-2">
+                        <a href="{{ route('users.form', $user->id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
                         <form action="{{ route('users.destroy', $user->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </form>
                         {{-- <form action="{{ route('admin.users.updateRole', $user->id) }}" method="POST">
                             @csrf
