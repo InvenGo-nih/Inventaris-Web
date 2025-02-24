@@ -7,8 +7,8 @@
                     <div class="card border border-light-subtle rounded-3 shadow-sm" data-aos="zoom-in-up">
                         <div class="card-body p-3">
                             <div class="text-center mb-2">
-                                <a href="#!" class="d-flex justify-content-center">
-                                    <img src="{{ asset('assets/img/icon-rps.png') }}" alt="Logo RPS" width="180" height="60" style="padding: 5px">
+                                <a href="#" class="d-flex justify-content-center">
+                                    <img src="{{ asset('images/logo-invengo.png') }}" alt="Logo InvenGo" width="180" height="60" style="padding: 5px">
                                 </a>
                             </div>
                             <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Masuk ke akun Anda</h2>

@@ -28,9 +28,9 @@ class RolePermissionSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Buat Role
-        Role::updateOrCreate(['name' => 'admin']);
-        Role::updateOrCreate(['name' => 'teknisi']);
-        Role::updateOrCreate(['name' => 'guru']);
+        Role::updateOrCreate(['name' => 'admin'], ['guard_name' => 'web']);
+        Role::updateOrCreate(['name' => 'teknisi'], ['guard_name' => 'web']);
+        Role::updateOrCreate(['name' => 'guru'], ['guard_name' => 'web']);
 
         // Tambahkan pengguna baru
         DB::table('users')->updateOrInsert(
