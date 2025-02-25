@@ -22,22 +22,22 @@
         <table class="table table-bordered text-center">
             <thead class="table-primary">
                 <tr>
-                    <th>Inventaris</th>
-                    <th>Peminjam</th>
-                    <th>Tanggal Pinjam</th>
-                    <th>Tanggal Kembali</th>
-                    <th>Status</th>
-                    <th>Foto Peminjam</th>
-                    <th>Aksi</th>
+                    <th class="white-space text-nowrap">Nama Inventaris</th>
+                    <th class="white-space text-nowrap">Peminjam</th>
+                    <th class="white-space text-nowrap">Tanggal Pinjam</th>
+                    <th class="white-space text-nowrap">Tanggal Pengembalian</th>
+                    <th class="white-space text-nowrap">Status</th>
+                    <th class="white-space text-nowrap">Foto Peminjam</th>
+                    <th class="white-space text-nowrap">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $borrow)
                 <tr>
-                    <td class="text-wrap">{{ $borrow->inventaris->name }}</td>
-                    <td class="text-wrap">{{ $borrow->user->name }}</td>
+                    <td class="text-nowrap">{{ $borrow->inventaris->name }}</td>
+                    <td class="text-nowrap">{{ $borrow->user->name }}</td>
                     <td>{{ $borrow->date_borrow }}</td>
-                    <td>{{ $borrow->date_back }}</td>
+                    <td>{{ $borrow->date_back ? $borrow->date_back : '-' }}</td>
                     <td>
                         @if ($borrow->status == 'Dikembalikan')
                             <span class="badge bg-success">Dikembalikan</span>
@@ -46,7 +46,7 @@
                         @endif
                     </td>
                     <td><img class="img-fluid" src="{{ asset('storage/' . $borrow->img_borrow) }}" width="100" alt=""></td>
-                    <td>
+                    <td class="white-space text-nowrap">
                         <a href="{{ route('borrow.form', $borrow->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
                         </a>

@@ -1,41 +1,46 @@
 @extends('layouts.app')
 
 @section('title')
-    Kelola Role & Permission
+    Kelola Jabatan & Hak Akses
 @endsection
 
 @section('content')
     <div class="container">
         <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createRoleModal">Tambah
             Jabatan</button>
-        <table class="table table-bordered text-center">
-            <thead class="table-primary">
-                <tr>
-                    <th>Role</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach ($roles as $role)
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-primary">
                     <tr>
-                        <td>{{ ucfirst($role->name) }}</td>
-                        <td class="d-flex gap-2">
-                            <a href="{{ route('roles.form', $role->id) }}" class="btn btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('roles.destroy', $role->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jabatan ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
+                        <th>Jabatan</th>
+                        <th>Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+
+                    @foreach ($roles as $role)
+                        <tr>
+                            <td>{{ ucfirst($role->name) }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{{ route('roles.form', $role->id) }}" class="btn btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('roles.destroy', $role->id) }}" method="post"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus jabatan ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 
     {{-- Modal --}}

@@ -64,16 +64,17 @@
 
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <select name="status" id="status" class="form-control">
+                    <select name="status" id="status" class="form-control" onchange="toggleDateBack()">
+                        <option value="" selected>Pilih Status</option>
                         <option value="Dikembalikan" {{ $data->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
                         <option value="Dipinjam" {{ $data->status == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
                     </select>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" id="dateBackContainer" style="{{ $data->status == 'Dipinjam' || $data->status == '' ? 'display:none;' : '' }}">
                     <label for="date_back" class="form-label">Tanggal Kembali</label>
                     <input type="date" name="date_back" id="date_back" class="form-control" 
-                        value="{{ old('date_back', $data->date_back) }}" required>
+                        value="{{ old('date_back', $data->date_back) }}" {{ $data->status == 'Dipinjam' ? 'value=null' : '' }}>
                 </div>
 
                 <div class="mb-3">
@@ -86,9 +87,22 @@
         </div>
 
         <div class="d-flex justify-content-center gap-3 mt-3">
-            <button type="submit" class="btn btn-primary px-4">{{ $data->id ? 'Update' : 'Simpan' }}</button>
-            <a href="{{ route('borrow.index') }}" class="btn btn-primary px-4">Batal</a>
+            <button type="button" onclick="history.back()" class="btn btn-secondary px-4">Batal</button>
+            <button type="submit" class="btn btn-primary px-4">{{ $data->id ? 'Perbarui' : 'Simpan' }}</button>
         </div>
     </form>
 </div>
+
+<script>
+    function toggleDateBack() {
+        const statusSelect = document.getElementById('status');
+        const dateBackContainer = document.getElementById('dateBackContainer');
+        if (statusSelect.value === 'Dipinjam' || statusSelect.value === '') {
+            dateBackContainer.style.display = 'none';
+            document.getElementById('date_back').value = null; // Set value to null
+        } else {
+            dateBackContainer.style.display = 'block';
+        }
+    }
+</script>
 @endsection

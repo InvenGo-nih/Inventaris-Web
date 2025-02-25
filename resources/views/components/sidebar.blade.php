@@ -2,10 +2,7 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center mt-5 mb-3" href="">
-        
-           <img class="" src="{{asset('images/logo-invengo.png')}}" alt="" width="150">
-        
-        
+        <img class="img-fluid" src="{{asset('images/logo-invengo.png')}}" alt="" width="150">
     </a>
 
     <!-- Divider -->

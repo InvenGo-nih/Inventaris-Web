@@ -9,26 +9,27 @@
         
 
         <div class="d-flex justify-content-center">
-            <img src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->name }}" class="rounded mb-3" width="250" height="180">
+            <img class="img-fluid mb-3 rounded" src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->name }}" class="rounded mb-3" width="350" height="230">
         </div>
 
         <div class="card mx-auto" style="max-width: 400px;">
-            <div class="card-body  text-center">
-                <p><strong>Nama:</strong> {{ $data->name }}</p>
-                <p><strong>Lokasi:</strong> {{ $data->location }}</p>
-                <p><strong>Spesifikasi:</strong> {{ $data->specification }}</p>
-                <p><strong>Kondisi:</strong> {{ $data->condition }}</p>
-                <p><strong>Status:</strong> {{ $data->status }}</p>
-                <p><strong>No.Serial:</strong> {{ $data->serial_number }}</p>
+            <div class="card-body text-start">
+                <p class="mb-2 border-bottom"><strong>Nama:</strong> <span class="float-end">{{ $data->name }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Lokasi:</strong> <span class="float-end">{{ $data->location }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Spesifikasi:</strong> <span class="float-end">{{ $data->specification }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Kondisi:</strong> <span class="float-end">{{ $data->condition }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Status:</strong> <span class="float-end">{{ $data->status }}</span></p>
+                <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p>
             </div>
         </div>
 
         <div class="d-flex justify-content-center gap-2 mt-3">
-            <a href="{{ route('inventaris.form', ['id' => $data->id]) }}" class="btn btn-primary">Edit Inventaris</a>
+            <button onclick="window.history.back()" class="btn btn-secondary white-space text-nowrap"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+            <a href="{{ route('inventaris.form', ['id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
             <form action="{{ route('inventaris.delete', $data->id) }}" method="post">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger">Hapus Inventaris</button>
+                <button type="submit" class="btn btn-danger white-space text-nowrap"><i class="fa-solid fa-trash"></i> Hapus</button>
             </form>
         </div>
     </div>

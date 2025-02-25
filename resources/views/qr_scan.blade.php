@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div id="reader" style="width: 500px; margin: auto;"></div>
+    <div id="reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
     
     <form id="qrForm" method="POST" action="{{ route('qr.process') }}">
         @csrf
