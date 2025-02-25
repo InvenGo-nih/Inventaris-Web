@@ -15,12 +15,12 @@
             <h3>Grup {{ ucfirst($group) }}</h3>
             <div class="d-flex flex-wrap gap-4">
             @foreach ($groupPermissions as $permission)
-                <div class="form-check">
+                <div class="form-check ms-2">
                     <input type="checkbox" name="permissions[]" value="{{ $permission->name }}"
                     class="form-check-input" id="perm_{{ $permission->id }}"
                     {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                     <label class="form-check-label" for="perm_{{ $permission->id }}">
-                        {{ ucfirst($permission->name) }}
+                        {{ ucfirst($permission->alias) }}
                     </label>
                 </div>
                 @endforeach
