@@ -7,6 +7,7 @@ use App\Models\Inventaris;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class BorrowController extends Controller
 {
@@ -32,6 +33,7 @@ class BorrowController extends Controller
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
+            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validate->fails()) {
@@ -44,14 +46,16 @@ class BorrowController extends Controller
         $data->date_borrow = $request->date_borrow;
         $data->date_back = $request->date_back;
         $data->status = $request->status;
+
+        // Upload gambar jika ada
+        if ($request->hasFile('img_borrow')) {
+            $data->img_borrow = $request->file('img_borrow')->store('borrow_images', 'public');
+        }
+
         $data->save();
 
         // Update status barang yang dipinjam
-        if ($request->status === 'borrowed') {
-            Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => 1]);
-        } else {
-            Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => 0]);
-        }
+        Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => $request->status === 'borrowed' ? 1 : 0]);
 
         return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
     }
@@ -66,10 +70,19 @@ class BorrowController extends Controller
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
+            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
+        }
+
+        // Jika ada gambar baru, hapus gambar lama
+        if ($request->hasFile('img_borrow')) {
+            if ($data->img_borrow && Storage::disk('public')->exists($data->img_borrow)) {
+                Storage::disk('public')->delete($data->img_borrow);
+            }
+            $data->img_borrow = $request->file('img_borrow')->store('borrow_images', 'public');
         }
 
         // Jika barang dikembalikan, ubah statusnya
@@ -85,6 +98,7 @@ class BorrowController extends Controller
             'date_borrow'   => $request->date_borrow,
             'date_back'     => $request->date_back,
             'status'        => $request->status,
+            'img_borrow'    => $data->img_borrow
         ]);
 
         return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil diperbarui');
@@ -94,10 +108,13 @@ class BorrowController extends Controller
     {
         $data = Borrow::findOrFail($id);
 
-        // Pastikan barang yang dikembalikan tidak lagi berstatus "borrowed"
-        if ($data->status === 'borrowed') {
-            Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
+        // Hapus gambar jika ada
+        if ($data->img_borrow && Storage::disk('public')->exists($data->img_borrow)) {
+            Storage::disk('public')->delete($data->img_borrow);
         }
+
+        // Pastikan barang yang dikembalikan tidak lagi berstatus "borrowed"
+        Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
 
         $data->delete();
         return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dihapus');

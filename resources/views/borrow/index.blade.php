@@ -3,6 +3,7 @@
 @section('title', 'Peminjaman')
 
 @section('content')
+
 <div class="container">
     <!-- Flash Message -->
     @if (session('success'))
@@ -26,6 +27,7 @@
                     <th>Tanggal Pinjam</th>
                     <th>Tanggal Kembali</th>
                     <th>Status</th>
+                    <th>Foto Peminjam</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -37,12 +39,13 @@
                     <td>{{ $borrow->date_borrow }}</td>
                     <td>{{ $borrow->date_back }}</td>
                     <td>
-                        @if ($borrow->status == 'Sudah Dikembalikan')
-                            <span class="badge bg-success">Sudah Dikembalikan</span>
+                        @if ($borrow->status == 'Dikembalikan')
+                            <span class="badge bg-success">Dikembalikan</span>
                         @else
-                            <span class="badge bg-danger">Belum Dikembalikan</span>
+                            <span class="badge bg-danger">Dipinjam</span>
                         @endif
                     </td>
+                    <td><img class="img-fluid" src="{{ asset('storage/' . $borrow->img_borrow) }}" width="100" alt=""></td>
                     <td>
                         <a href="{{ route('borrow.form', $borrow->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
