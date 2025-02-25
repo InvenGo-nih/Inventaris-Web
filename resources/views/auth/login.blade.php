@@ -51,10 +51,10 @@
                                                 <label class="form-check-label text-secondary" for="rememberMe">
                                                     Keep me logged in
                                                 </label> --}}
-                                                <label for="remember_me" class="form-check-label text-secondary">
+                                                {{-- <label for="remember_me" class="form-check-label text-secondary">
                                                     <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
                                                     <span>{{ __('Ingat Saya') }}</span>
-                                                </label>
+                                                </label> --}}
                                             </div>
                                             {{-- <a href="#!" class="link-primary text-decoration-none">Forgot password?</a> --}}
                                             @if (Route::has('password.request'))
@@ -72,9 +72,9 @@
                                             </x-primary-button>
                                         </div>
                                     </div>
-                                    <div class="col-12">
+                                    {{-- <div class="col-12">
                                         <p class="m-0 text-secondary text-center">Belum punya akun? <a href="{{route('register')}}" class="link-primary text-decoration-none">Register</a></p>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </form>
                         </div>
