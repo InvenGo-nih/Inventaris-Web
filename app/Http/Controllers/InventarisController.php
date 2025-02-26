@@ -3,17 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventaris;
+use App\Models\InventarisLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Label\Label;
-use Endroid\QrCode\Logo\Logo;
-use Endroid\QrCode\RoundBlockSizeMode;
 use TCPDF;
 use illuminate\Support\Str;
 
@@ -40,7 +33,8 @@ class InventarisController extends Controller
     public function form(Request $request, $id = null)
     {
         $data = $id ? Inventaris::findorFail($request->id) : new Inventaris();
-        return view('inventaris.form', compact('data'));
+        $location = InventarisLocation::all();
+        return view('inventaris.form', compact(['data','location']));
     }
 
     public function store(Request $request)
@@ -71,6 +65,7 @@ class InventarisController extends Controller
         $data->status = $request->status;
         $data->location = $request->location ?? 'Tidak Diketahui';
         $data->serial_number = $serialNumber;
+        $data->broken_description = $request->broken_description;
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan
@@ -123,8 +118,10 @@ class InventarisController extends Controller
         $data->specification = $request->specification;
         $data->condition = $request->condition;
         $data->status = $request->status;
+        $data->location = $request->location;
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
         $data->serial_number = $serialNumber ;
+        $data->broken_description = $request->broken_description;
         $data->save();
 
         return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');

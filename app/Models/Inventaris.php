@@ -11,8 +11,10 @@ class Inventaris extends Model
         'image',
         'specification',
         'condition',
+        'broken_description',
         'status',
-        'qr_link'
+        'qr_link',
+        'location',
     ];
 
     public function borrow(){

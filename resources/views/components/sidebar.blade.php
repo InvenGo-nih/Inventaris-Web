@@ -12,7 +12,7 @@
     @hasPermission('VIEW_DASHBOARD')
     <li class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('dashboard') }}">
-            <i class="fas fa-fw fa-solid fa-cubes"></i>
+            <i class="fa-solid fa-house"></i>
             <span>Dashboard</span>
         </a>
     </li>
@@ -22,8 +22,18 @@
     @hasPermission('VIEW_INVENTARIS')
     <li class="nav-item {{ request()->routeIs('inventaris.index') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('inventaris.index') }}">
-           <i class="fa-solid fa-house"></i>
+            <i class="fas fa-fw fa-solid fa-cubes"></i>
             <span>Inventaris</span>
+        </a>
+    </li>
+    @endhasPermission
+
+    <!-- Nav Item - Lokasi Inventaris -->
+    @hasPermission('VIEW_LOCATION_INVENTARIS')
+    <li class="nav-item {{ request()->routeIs('inventaris.location.index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('inventaris.location.index') }}">
+            <i class="fas fa-fw fa-solid fa-location-dot"></i>
+            <span>Lokasi Inventaris</span>
         </a>
     </li>
     @endhasPermission

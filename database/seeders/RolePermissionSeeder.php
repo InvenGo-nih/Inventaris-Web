@@ -78,6 +78,10 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'DELETE_ROLES', 'permission_group' => 'role', 'alias' => 'Hapus Role'],
             ['name' => 'VIEW_DASHBOARD', 'permission_group' => 'dashboard', 'alias' => 'Lihat Dashboard'],
             ['name' => 'CHART_DATA', 'permission_group' => 'dashboard', 'alias' => 'Data Grafik'],
+            ['name' => 'VIEW_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Lihat Lokasi Inventaris'],
+            ['name' => 'CREATE_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Buat Lokasi Inventaris'],
+            ['name' => 'EDIT_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Edit Lokasi Inventaris'],
+            ['name' => 'DELETE_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Hapus Lokasi Inventaris'],
         ];
     
             foreach ($permissions as $perm) {

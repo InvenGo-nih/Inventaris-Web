@@ -3,6 +3,7 @@
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\DasboardController;
 use App\Http\Controllers\InventarisController;
+use App\Http\Controllers\InventarisLocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RolePermissionController;
@@ -15,7 +16,7 @@ Route::get('/offline', function () {
     return view('vendor.laravelpwa.offline');
 });    
 
-Route::get('/test/qr/{id?}', [InventarisController::class, 'showQr'])->name('test_qr');
+Route::get('/qr/{id?}', [InventarisController::class, 'showQr'])->name('test_qr');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [DasboardController::class, 'index'])->middleware('permission:VIEW_DASHBOARD')->name('dashboard');
@@ -34,11 +35,18 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete/{id}', [InventarisController::class, 'destroy'])->name('delete')->middleware('permission:DELETE_INVENTARIS');
     });
 
-    Route::group(['prefix' => '/profile', 'as' => 'profile.'], function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit')->middleware('permission:VIEW_PROFILE');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update')->middleware('permission:EDIT_PROFILE');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_PROFILE');
+    Route::group(['prefix' => '/inventaris-location', 'as' => 'inventaris.location.'], function () {
+        Route::get('/', [InventarisLocationController::class, 'index'])->name('index')->middleware('permission:VIEW_LOCATION_INVENTARIS');
+        Route::post('/store', [InventarisLocationController::class, 'store'])->name('store')->middleware('permission:CREATE_LOCATION_INVENTARIS');
+        Route::put('/update/{id}', [InventarisLocationController::class, 'update'])->name('update')->middleware('permission:EDIT_LOCATION_INVENTARIS');
+        Route::delete('/delete/{id}', [InventarisLocationController::class, 'destroy'])->name('delete')->middleware('permission:DELETE_LOCATION_INVENTARIS');
     });
+
+    // Route::group(['prefix' => '/profile', 'as' => 'profile.'], function () {
+    //     Route::get('/', [ProfileController::class, 'edit'])->name('edit')->middleware('permission:VIEW_PROFILE');
+    //     Route::patch('/', [ProfileController::class, 'update'])->name('update')->middleware('permission:EDIT_PROFILE');
+    //     Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_PROFILE');
+    // });
 
     Route::group(['prefix' => '/borrow', 'as' => 'borrow.'], function (){
          Route::get('/', [BorrowController::class, 'index'])->name('index')->middleware('permission:VIEW_BORROW'); // Menampilkan daftar peminjaman
