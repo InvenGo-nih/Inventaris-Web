@@ -8,7 +8,7 @@
                         <div class="card-body p-3">
                             <div class="text-center mb-2">
                                 <a href="#" class="d-flex justify-content-center">
-                                    <img src="{{ asset('images/logo-invengo.png') }}" alt="Logo InvenGo" width="180" height="60" style="padding: 5px">
+                                    <img src="{{ asset('images/logo-invengo.png') }}" alt="Logo InvenGo" width="180" style="padding: 5px">
                                 </a>
                             </div>
                             <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Masuk ke akun Anda</h2>

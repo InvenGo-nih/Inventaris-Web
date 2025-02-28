@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -28,25 +29,36 @@ class RolePermissionController extends Controller
     
     public function store(Request $request)
     {
-        $request->validate([
+        $validate = Validator::make($request->all(), [
             'name' => 'required',
+        ], [
+            'name.required' => 'Nama jabatan harus diisi.',
         ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        }
 
         $data = new Role();
         $data->name = $request->name;
         $data->guard_name = "web";
         $data->save();
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil disimpan');
+        return redirect()->route('roles.index')->with('success', 'Hak akses berhasil disimpan');
     }
 
     // Update Permission dari Role
     public function updateRolePermissions(Request $request, Role $role)
     {
-        // Validasi input name
-        $request->validate([
+        $validate = Validator::make($request->all(), [
             'name' => 'required',
+        ], [
+            'name.required' => 'Nama jabatan harus diisi.',
         ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        }
         
         // Perbarui nama role
         $role->name = $request->name;
@@ -54,12 +66,12 @@ class RolePermissionController extends Controller
 
         $role->syncPermissions($request->permissions);
 
-        return redirect()->route('roles.index')->with('success', 'Permission role diperbarui');
+        return redirect()->route('roles.index')->with('success', 'Hak akses berhasil diperbarui');
     }
 
     public function destroy(Role $role)
     {
         $role->delete();
-        return redirect()->route('roles.index')->with('success', 'Role berhasil dihapus');
+        return redirect()->route('roles.index')->with('success', 'Jabatan berhasil dihapus');
     }
 }

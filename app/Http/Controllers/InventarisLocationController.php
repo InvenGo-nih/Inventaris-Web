@@ -19,40 +19,44 @@ class InventarisLocationController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'location' => 'required',
+        ], [
+            'location.required' => 'Lokasi harus diisi.',
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         $data = new InventarisLocation();
         $data->location = $request->location;
         $data->save();
 
-        return redirect()->route('inventaris.location.index')->with('success', 'Data inventaris berhasil disimpan');
+        return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil disimpan');
     }
 
     public function update(Request $request, $id)
     {
         $validate = Validator::make($request->all(), [
             'location' => 'required',
+        ], [
+            'location.required' => 'Lokasi harus diisi.',
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         $data = InventarisLocation::findOrFail($id);
         $data->location = $request->location;
         $data->save();  
 
-        return redirect()->route('inventaris.location.index')->with('success', 'Data inventaris berhasil disimpan');
+        return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil diperbarui');
     }
 
     public function destroy($id)
     {
         $data = InventarisLocation::findOrFail($id);
         $data->delete();
-        return redirect()->route('inventaris.location.index')->with('success', 'Data inventaris berhasil dihapus');
+        return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil dihapus');
     }
 }

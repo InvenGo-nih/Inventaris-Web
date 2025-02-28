@@ -33,11 +33,20 @@ class BorrowController extends Controller
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
-            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ], [
+            'user_id.required'       => 'Pengguna harus dipilih.',
+            'inventaris_id.required' => 'Inventaris harus dipilih.',
+            'date_borrow.required'   => 'Tanggal peminjaman harus diisi.',
+            'date_back.after_or_equal' => 'Tanggal pengembalian harus setelah tanggal peminjaman.',
+            'status.required'        => 'Status harus dipilih.',
+            'img_borrow.image'       => 'File yang diunggah harus berupa gambar.',
+            'img_borrow.mimes'       => 'Gambar harus berformat jpeg, png, atau jpg.', 
+            'img_borrow.max'         => 'Ukuran gambar tidak boleh lebih dari 2MB.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         $data = new Borrow();
@@ -71,10 +80,19 @@ class BorrowController extends Controller
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'user_id.required'       => 'Pengguna harus dipilih.',
+            'inventaris_id.required' => 'Inventaris harus dipilih.',
+            'date_borrow.required'   => 'Tanggal peminjaman harus diisi.',
+            'date_back.after_or_equal' => 'Tanggal pengembalian harus setelah tanggal peminjaman.',
+            'status.required'        => 'Status harus dipilih.',
+            'img_borrow.image'       => 'File yang diunggah harus berupa gambar.',
+            'img_borrow.mimes'       => 'Gambar harus berformat jpeg, png, atau jpg.', 
+            'img_borrow.max'         => 'Ukuran gambar tidak boleh lebih dari 2MB.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         // Jika ada gambar baru, hapus gambar lama

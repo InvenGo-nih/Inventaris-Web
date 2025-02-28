@@ -13,6 +13,7 @@
             $url = route('inventaris.store');
         }
     @endphp
+    <div class="container">
 
     <form method="POST" action="{{ $url }}" enctype="multipart/form-data">
         @csrf
@@ -24,7 +25,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="name" class="form-label">Nama</label>
-                    <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}">
+                    <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}" placeholder="Masukkan Nama Inventaris">
                 </div>
                 <div class="mb-3">
                     <label for="condition" class="form-label">Kondisi Inventaris</label>
@@ -38,13 +39,13 @@
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
-                    <input type="text" name="status" class="form-control" value="{{ $data->status ?? '' }}">
+                    <input type="text" name="status" class="form-control" value="{{ $data->status ?? '' }}" placeholder="Masukkan Status">
                 </div>
                 <div class="mb-3">
                     <label for="location" class="form-label">Lokasi</label>
                     {{-- <input type="text" name="location" class="form-control" value="{{ $data->location ?? '' }}"> --}}
                     <select name="location" id="location" class="form-control">
-                        <option value="" selected disabled>Lokasi</option>
+                        <option value="" selected disabled>Pilih Lokasi</option>
                         @foreach ($location as $item)
                             <option value="{{ $item->location }}" {{ (isset($data) && $data->location == $item->location) ? 'selected' : '' }}>{{ $item->location }}</option>
                         @endforeach
@@ -59,12 +60,12 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="specification" class="form-label">Spesifikasi</label>
-                    <textarea name="specification" class="form-control" style="height: 7.8em;">{{ $data->specification ?? '' }}</textarea>
+                    <textarea name="specification" class="form-control" style="height: 7.8em;" placeholder="Masukkan Spesifikasi">{{ $data->specification ?? '' }}</textarea>
                 </div>
 
                 <div class="mb-3" id="brokenDescriptionContainer" style="display: {{ isset($data) && $data->condition == 'Rusak' ? 'block' : 'none' }};">
                     <label for="broken_description" class="form-label">Rincian Rusak</label>
-                    <textarea class="form-control" name="broken_description" id="" style="height: 13em;">{{ $data->broken_description ?? '' }}</textarea>
+                    <textarea class="form-control" name="broken_description" id="" style="height: 13em;" placeholder="Masukkan Rincian Rusak">{{ $data->broken_description ?? '' }}</textarea>
                 </div>
                 <div id="hiddenDescription" style="display: {{ isset($data) && $data->condition == 'Rusak' ? 'none' : 'block' }};">
                     <p class="text-muted">Rincian rusak tidak tersedia.</p>
@@ -79,7 +80,8 @@
             </button>
         </div>
     </form>
-
+        
+    </div>
     <script>
         function toggleBrokenDescription() {
             var condition = document.getElementById('condition').value;

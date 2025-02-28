@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>{{ config('app.name', 'InvenGo') }}</title>
 
     <!-- Fonts -->
@@ -64,6 +64,13 @@
                 <div class="container-fluid">
                     <div class="container" data-aos="fade-right">
                         <h1 class="fw-bold text-primary fst-italic mb-3" style="font-family: Poppins, serif; text-transform: uppercase;">@yield('title', 'INVENGO')</h1>
+                        @if (session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @elseif (session('error'))
+                            @foreach (session('error') as $error)
+                                <div class="alert alert-danger">{{ $error }}</div>
+                            @endforeach
+                        @endif
                     </div>
                     @yield('content')
                 </div>

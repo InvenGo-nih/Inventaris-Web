@@ -23,6 +23,25 @@
             const qrForm = document.getElementById("qrForm");
             const qrDataInput = document.getElementById("qrData");
 
+            const showLoading = () => {
+                qrReader.stop(); // Menghentikan pemindaian QR code
+                qrForm.style.display = 'none'; // Menyembunyikan form
+                const loadingDiv = document.createElement('div');
+                loadingDiv.innerText = 'Loading...';
+                loadingDiv.style.position = 'fixed';
+                loadingDiv.style.top = '0';
+                loadingDiv.style.left = '0';
+                loadingDiv.style.width = '100%';
+                loadingDiv.style.height = '100%';
+                loadingDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                loadingDiv.style.color = 'black';
+                loadingDiv.style.display = 'flex';
+                loadingDiv.style.alignItems = 'center';
+                loadingDiv.style.justifyContent = 'center';
+                loadingDiv.style.zIndex = '9999'; // Pastikan loading di atas elemen lain
+                document.body.appendChild(loadingDiv);
+            };
+
             qrReader.start(
                 { facingMode: "environment" },
                 {
@@ -32,6 +51,7 @@
                 (decodedText) => {
                     console.log(`QR Code detected: ${decodedText}`);
                     qrDataInput.value = decodedText;
+                    showLoading(); // Menampilkan loading
                     qrForm.submit();
                 },
                 (errorMessage) => {

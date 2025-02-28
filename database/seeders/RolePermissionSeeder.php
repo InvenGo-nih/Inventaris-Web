@@ -16,7 +16,7 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // Nonaktifkan foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         // Hapus data lama agar tidak duplikat
         DB::table('model_has_permissions')->truncate();
@@ -25,7 +25,7 @@ class RolePermissionSeeder extends Seeder
         DB::table('roles')->truncate();
 
         // Aktifkan kembali foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Buat Role
         Role::updateOrCreate(['name' => 'admin'], ['guard_name' => 'web']);

@@ -32,10 +32,15 @@ class UserController extends Controller
             'email' => 'required|email',
             'role_id' => 'required',
             'password' => 'nullable|min:8' // Password opsional saat memperbarui
+        ], [
+            'name.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'role_id.required' => 'Jabatan harus dipilih.',
+            'password.min' => 'Password minimal 8 karakter.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         // Mencari pengguna berdasarkan ID
@@ -53,7 +58,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Data pengguna diperbarui');
+        return redirect()->route('users.index')->with('success', 'Data pengguna berhasil diperbarui');
     }
 
     public function store(Request $request)
@@ -63,10 +68,16 @@ class UserController extends Controller
             'email' => 'required|email',
             'role_id' => 'required',
             'password' => 'required|min:8'
+        ], [
+            'name.required' => 'Nama harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'role_id.required' => 'Jabatan harus dipilih.',
+            'password.required' => 'Password harus diisi.',
+            'password.min' => 'Password minimal 8 karakter.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         $data = new User();
@@ -76,9 +87,7 @@ class UserController extends Controller
         $data->password = bcrypt($request->password);
         $data->save();
 
-        
-
-        return redirect()->route('users.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('users.index')->with('success', 'Data pengguna berhasil disimpan');
     }
 
     public function destroy($id)
@@ -88,13 +97,13 @@ class UserController extends Controller
 
         // Memastikan pengguna ditemukan
         if (!$user) {
-            return redirect()->back()->with('error', 'siswa tidak ditemukan');
+            return redirect()->back()->with('error', 'Pengguna tidak ditemukan');
         }
 
         // Menghapus pengguna
         $user->delete();
 
         // Mengembalikan respons sukses
-        return redirect()->route('users.index')->with('success', 'Data berhasil dihapus');
+        return redirect()->route('users.index')->with('success', 'Data pengguna berhasil dihapus');
     }
 }

@@ -10,7 +10,7 @@
         @csrf
         @method('PUT')
         <input type="text" name="name" value="{{ $role->name }}" class="form-control mb-3">
-        <button type="button" class="btn btn-secondary mb-3" id="checkAll">Centang Semua</button>
+        <button type="button" class="btn btn-secondary mb-3" id="checkAll">Pilih Semua</button>
         @foreach ($permissions as $group => $groupPermissions)
             <h3>Grup {{ ucfirst($group) }}</h3>
             <div class="d-flex flex-wrap gap-4">

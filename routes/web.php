@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/offline', function () {
-    return view('vendor.laravelpwa.offline');
-});    
+// Route::get('/offline', function () {
+//     return view('vendor.laravelpwa.offline');
+// });    
 
 Route::get('/qr/{id?}', [InventarisController::class, 'showQr'])->name('test_qr');
 
@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     // });
 
     Route::group(['prefix' => '/borrow', 'as' => 'borrow.'], function (){
-         Route::get('/', [BorrowController::class, 'index'])->name('index')->middleware('permission:VIEW_BORROW'); // Menampilkan daftar peminjaman
+    Route::get('/', [BorrowController::class, 'index'])->name('index')->middleware('permission:VIEW_BORROW'); // Menampilkan daftar peminjaman
     Route::get('/form/{id?}', [BorrowController::class, 'form'])->name('form')->middleware('permission:CREATE_BORROW', 'permission:EDIT_BORROW'); // Form tambah/edit peminjaman
     Route::post('/store', [BorrowController::class, 'store'])->name('store')->middleware('permission:CREATE_BORROW'); // Simpan data baru
     Route::put('/update/{id}', [BorrowController::class, 'update'])->name('update')->middleware('permission:EDIT_BORROW'); // Update data peminjaman

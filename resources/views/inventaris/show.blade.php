@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-center gap-2 mt-3">
+        <div class="d-flex justify-content-center gap-2 my-3">
             <button onclick="window.history.back()" class="btn btn-secondary white-space text-nowrap"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
             <a href="{{ route('inventaris.form', ['id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
             <form action="{{ route('inventaris.delete', $data->id) }}" method="post">

@@ -41,15 +41,25 @@ class InventarisController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'image' => 'required|image',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
             'location' => 'required'
+        ], [
+            'name.required' => 'Nama barang harus diisi.',
+            'image.required' => 'Gambar harus diunggah.',
+            'image.image' => 'File yang diunggah harus berupa gambar.',
+            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'specification.required' => 'Spesifikasi harus diisi.',
+            'condition.required' => 'Kondisi harus diisi.',
+            'status.required' => 'Status harus diisi.',
+            'location.required' => 'Lokasi harus diisi.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         // Upload image ke public/storage/images
@@ -72,7 +82,7 @@ class InventarisController extends Controller
         $data->qr_link = route('test_qr', ['id' => $data->id]);
         $data->save(); // Simpan kembali dengan qr_link
 
-        return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil disimpan');
     }
 
 
@@ -81,15 +91,24 @@ class InventarisController extends Controller
         // Validasi data yang diterima
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'image' => 'image', // Gambar tidak wajib saat update
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048', // Gambar tidak wajib saat update
             'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
             'location' => 'required'
+        ], [
+            'name.required' => 'Nama barang harus diisi.',
+            'image.image' => 'File yang diunggah harus berupa gambar.',
+            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'specification.required' => 'Spesifikasi harus diisi.',
+            'condition.required' => 'Kondisi harus diisi.',
+            'status.required' => 'Status harus diisi.',
+            'location.required' => 'Lokasi harus diisi.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
         $data = Inventaris::findOrFail($id);
@@ -124,7 +143,7 @@ class InventarisController extends Controller
         $data->broken_description = $request->broken_description;
         $data->save();
 
-        return redirect()->route('inventaris.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui');
     }
 
     public function show($id)
@@ -150,7 +169,7 @@ class InventarisController extends Controller
         // Hapus data inventaris
         $data->delete();
 
-        return redirect()->route('inventaris.index')->with('success', 'Data inventaris berhasil dihapus');
+        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus');
     }
 
     public function downloadPDF()
