@@ -2,15 +2,16 @@
     "version": 2,
     "framework": null,
     "functions": {
-        "api/index.php": { "runtime": "vercel-php@0.6.0" }
+        "api/*.php": {
+            "runtime": "vercel-php@0.6.1"
+        }
     },
     "routes": [
-        { "src": "/build/(.*)", "dest": "/public/build/" },
-        { "src": "/(.*)", "dest": "/api/index.php" }
+        {
+            "src": "/(.*)",
+            "dest": "/api/index.php"
+        }
     ],
-    "public": true,
-    "buildCommand": "vite build",
-    "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
@@ -26,7 +27,7 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
         "DB_CONNECTION": "pgsql",
-        "DB_URL" : "postgresql://postgres:C7QxQjn9agHDOUWr@db.vtgompvryxqxirylucui.supabase.co:5432/postgres",
-        "DB_PASSWORD" : "C7QxQjn9agHDOUWr"
+        "DB_URL": "postgresql://postgres:C7QxQjn9agHDOUWr@db.vtgompvryxqxirylucui.supabase.co:5432/postgres",
+        "DB_PASSWORD": "C7QxQjn9agHDOUWr"
     }
 }
