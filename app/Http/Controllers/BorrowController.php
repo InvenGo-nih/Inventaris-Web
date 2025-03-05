@@ -5,12 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Borrow;
 use App\Models\Inventaris;
 use App\Models\User;
+use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 
 class BorrowController extends Controller
 {
+    protected $supabase;
+
+    public function __construct(SupabaseService $supabase)
+    {
+        $this->supabase = $supabase;
+    }
+
     public function index()
     {
         $data = Borrow::with(['user', 'inventaris'])->get();
@@ -34,19 +41,10 @@ class BorrowController extends Controller
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ], [
-            'user_id.required'       => 'Pengguna harus dipilih.',
-            'inventaris_id.required' => 'Inventaris harus dipilih.',
-            'date_borrow.required'   => 'Tanggal peminjaman harus diisi.',
-            'date_back.after_or_equal' => 'Tanggal pengembalian harus setelah tanggal peminjaman.',
-            'status.required'        => 'Status harus dipilih.',
-            'img_borrow.image'       => 'File yang diunggah harus berupa gambar.',
-            'img_borrow.mimes'       => 'Gambar harus berformat jpeg, png, atau jpg.', 
-            'img_borrow.max'         => 'Ukuran gambar tidak boleh lebih dari 2MB.'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+            return redirect()->back()->withErrors($validate)->withInput();
         }
 
         $data = new Borrow();
@@ -58,13 +56,18 @@ class BorrowController extends Controller
 
         // Upload gambar jika ada
         if ($request->hasFile('img_borrow')) {
-            $data->img_borrow = $request->file('img_borrow')->store('borrow_images', 'public');
+            $file = $request->file('img_borrow');
+            $filePath = 'borrow_images/' . time() . '_' . $file->getClientOriginalName();
+            $this->supabase->uploadFile($file, $filePath);
+            $data->img_borrow = $filePath;
         }
 
         $data->save();
 
         // Update status barang yang dipinjam
-        Inventaris::where('id', $request->inventaris_id)->update(['is_borrow' => $request->status === 'borrowed' ? 1 : 0]);
+        Inventaris::where('id', $request->inventaris_id)->update([
+            'is_borrow' => $request->status === 'borrowed' ? 1 : 0
+        ]);
 
         return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
     }
@@ -79,31 +82,26 @@ class BorrowController extends Controller
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
-            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ], [
-            'user_id.required'       => 'Pengguna harus dipilih.',
-            'inventaris_id.required' => 'Inventaris harus dipilih.',
-            'date_borrow.required'   => 'Tanggal peminjaman harus diisi.',
-            'date_back.after_or_equal' => 'Tanggal pengembalian harus setelah tanggal peminjaman.',
-            'status.required'        => 'Status harus dipilih.',
-            'img_borrow.image'       => 'File yang diunggah harus berupa gambar.',
-            'img_borrow.mimes'       => 'Gambar harus berformat jpeg, png, atau jpg.', 
-            'img_borrow.max'         => 'Ukuran gambar tidak boleh lebih dari 2MB.'
+            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+            return redirect()->back()->withErrors($validate)->withInput();
         }
 
-        // Jika ada gambar baru, hapus gambar lama
+        // Hapus gambar lama jika ada gambar baru
         if ($request->hasFile('img_borrow')) {
-            if ($data->img_borrow && Storage::disk('public')->exists($data->img_borrow)) {
-                Storage::disk('public')->delete($data->img_borrow);
+            if ($data->img_borrow) {
+                $this->supabase->deleteFile($data->img_borrow);
             }
-            $data->img_borrow = $request->file('img_borrow')->store('borrow_images', 'public');
+
+            $file = $request->file('img_borrow');
+            $filePath = 'borrow_images/' . time() . '_' . $file->getClientOriginalName();
+            $this->supabase->uploadFile($file, $filePath);
+            $data->img_borrow = $filePath;
         }
 
-        // Jika barang dikembalikan, ubah statusnya
+        // Update status inventaris berdasarkan perubahan status peminjaman
         if ($request->status === 'returned' && $data->status !== 'returned') {
             Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
         } elseif ($request->status === 'borrowed' && $data->status !== 'borrowed') {
@@ -127,11 +125,11 @@ class BorrowController extends Controller
         $data = Borrow::findOrFail($id);
 
         // Hapus gambar jika ada
-        if ($data->img_borrow && Storage::disk('public')->exists($data->img_borrow)) {
-            Storage::disk('public')->delete($data->img_borrow);
+        if ($data->img_borrow) {
+            $this->supabase->deleteFile($data->img_borrow);
         }
 
-        // Pastikan barang yang dikembalikan tidak lagi berstatus "borrowed"
+        // Update status barang
         Inventaris::where('id', $data->inventaris_id)->update(['is_borrow' => 0]);
 
         $data->delete();

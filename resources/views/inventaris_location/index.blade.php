@@ -19,7 +19,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach ($data as $item)
+                    @forelse ($data as $item)
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ ucfirst($item->location) }}</td>
@@ -65,7 +65,11 @@
                             </form>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center">Tidak ada data</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

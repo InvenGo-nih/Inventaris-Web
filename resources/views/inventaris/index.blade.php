@@ -27,14 +27,14 @@
                 <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </div>
-        @foreach ($data as $item)
+        @forelse ($data as $item)
             <a href="{{ route('inventaris.show', $item->id) }}" style="text-decoration: none;">
                 <div class="card shadow-sm mb-3">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                             <!-- Gambar -->
                             <div class="me-3">
-                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="rounded"
+                                <img src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $item->image }}" alt="{{ $item->name }}" class="rounded"
                                     width="60" height="60">
                             </div>
                             <!-- Detail Laptop -->
@@ -54,7 +54,9 @@
                     </div>
                 </div>
             </a>
-        @endforeach
+        @empty
+            <p class="text-center">Tidak ada data</p>
+        @endforelse
         <div class="d-flex justify-content-center">
             {{ $data->links('pagination::bootstrap-5') }}
         </div>

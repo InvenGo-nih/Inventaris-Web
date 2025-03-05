@@ -18,7 +18,7 @@
                 </thead>
                 <tbody>
 
-                    @foreach ($roles as $role)
+                    @forelse ($roles as $role)
                         <tr>
                             <td>{{ ucfirst($role->name) }}</td>
                             <td>
@@ -37,7 +37,11 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="2" class="text-center">Tidak ada data</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

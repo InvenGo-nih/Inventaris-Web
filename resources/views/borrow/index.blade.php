@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($data as $borrow)
+                @forelse ($data as $borrow)
                 <tr>
                     <td class="text-nowrap">{{ $borrow->inventaris->name }}</td>
                     <td class="text-nowrap">{{ $borrow->user->name }}</td>
@@ -41,7 +41,7 @@
                             <span class="badge bg-danger">Dipinjam</span>
                         @endif
                     </td>
-                    <td><img class="img-fluid" src="{{ asset('storage/' . $borrow->img_borrow) }}" width="100" alt=""></td>
+                    <td><img class="img-fluid" src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $borrow->img_borrow }}" width="100" alt=""></td>
                     <td class="white-space text-nowrap">
                         <a href="{{ route('borrow.form', $borrow->id) }}" class="btn btn-warning btn-sm">
                             <i class="fas fa-edit"></i>
@@ -55,7 +55,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak ada data</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

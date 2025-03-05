@@ -9,7 +9,7 @@
         
 
         <div class="d-flex justify-content-center">
-            <img class="img-fluid mb-3 rounded" src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->name }}" class="rounded mb-3" width="350" height="230">
+            <img class="img-fluid mb-3 rounded" src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $data->image }}" alt="{{ $data->name }}" class="rounded mb-3" width="350" height="230">
         </div>
 
         <div class="card mx-auto" style="max-width: 90%;">

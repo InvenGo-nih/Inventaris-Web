@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventaris;
 use App\Models\InventarisLocation;
+use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,12 @@ use illuminate\Support\Str;
 
 class InventarisController extends Controller
 {
+    protected $supabase;
+
+    public function __construct(SupabaseService $supabase)
+    {
+        $this->supabase = $supabase;
+    }
     public function index(Request $request)
     {
         $jumlah = Inventaris::count();
@@ -62,14 +69,15 @@ class InventarisController extends Controller
             return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         }
 
-        // Upload image ke public/storage/images
-        $image = $request->file('image');
-        $imagePath = $image->store('images', 'public'); // Mengembalikan path lengkap di storage/public
+        $file = $request->file('image');
+        $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
+        $this->supabase->uploadFile($file, $filePath);
+
         $serialNumber = 'SN-' . str::upper(Str::random(10));
 
         $data = new Inventaris();
         $data->name = $request->name;
-        $data->image = $imagePath; // Hanya menyimpan nama file
+        $data->image = $filePath; // Hanya menyimpan nama file
         $data->specification = $request->specification;
         $data->condition = $request->condition;
         $data->status = $request->status;
@@ -116,20 +124,14 @@ class InventarisController extends Controller
 
         // Periksa apakah ada file gambar baru
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-
-            // Hapus gambar lama jika ada
-            if ($data->image && Storage::disk('public')->exists($data->image)) {
-                Storage::disk('public')->delete($data->image);
-                $imagePath = $image->store('images', 'public');
-                $data->image = $imagePath;
+            if ($data->image) {
+                $this->supabase->deleteFile($data->image);
             }
 
-            // Upload gambar baru
-            $imagePath = $image->store('images', 'public'); // Simpan ke storage/app/public/images
-
-            // Simpan path gambar baru ke database
-            $data->image = $imagePath;
+            $file = $request->file('image');
+            $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
+            $this->supabase->uploadFile($file, $filePath);
+            $data->image = $filePath;
         }            
         
         $serialNumber = 'SN-' . str::upper(Str::random(10));
@@ -162,8 +164,8 @@ class InventarisController extends Controller
         $data = Inventaris::findOrFail($id);
 
         // Hapus gambar jika ada
-        if ($data->image && Storage::disk('public')->exists($data->image)) {
-            Storage::disk('public')->delete($data->image);
+        if ($data->img_borrow) {
+            $this->supabase->deleteFile($data->img_borrow);
         }
 
         // Hapus data inventaris

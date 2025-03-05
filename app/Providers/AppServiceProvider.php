@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $path = sys_get_temp_dir() . '/views';
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+        View::addLocation($path);
+
         if (env('APP_PRODUCTION') === 'PRODUCTION') {
             URL::forceScheme('https');
         }
