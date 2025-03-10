@@ -61,14 +61,14 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
+    {{-- <div class="sidebar-heading">
         Interface
-    </div>
+    </div> --}}
 
     <!-- Nav Item - Pengaturan -->
     @hasPermission(['VIEW_USERS', 'VIEW_ROLES'])
     <li class="nav-item {{ request()->routeIs('users.index') || request()->routeIs('roles.index') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" 
             aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>Pengaturan</span>
