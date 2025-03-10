@@ -22,30 +22,19 @@ class InventarisController extends Controller
     }
     public function index(Request $request)
     {
-        $jumlah = Cache::remember('inventaris_jumlah', 60, function () {
-            return Inventaris::count();
-        });
-    
-        $search = $request->input('search');
-    
-        if ($search) {
-            $cacheKey = 'inventaris_search_' . md5($search); // Buat cache key unik berdasarkan search query
-    
-            $data = Cache::remember($cacheKey, 60, function () use ($search) {
-                return Inventaris::where('name', 'like', "%$search%")
-                    ->orWhere('specification', 'like', "%$search%")
-                    ->orWhere('condition', 'like', "%$search%")
-                    ->orWhere('status', 'like', "%$search%")
-                    ->paginate(10);
-            });
-    
+        $jumlah = Inventaris::count();
+        if (request()->has('search')) {
+            $search = $request->input('search');
+
+            $data = Inventaris::where('name', 'like', "%$search%")
+                ->orWhere('specification', 'like', "%$search%")
+                ->orWhere('condition', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%")
+                ->paginate(10);
+
             return view('inventaris.index', compact('data', 'jumlah'));
         }
-    
-        $data = Cache::remember('inventaris_paginate_5', 60, function () {
-            return Inventaris::paginate(5);
-        });
-    
+        $data = Inventaris::paginate(5);
         return view('inventaris.index', compact('data', 'jumlah'));
     }
 
