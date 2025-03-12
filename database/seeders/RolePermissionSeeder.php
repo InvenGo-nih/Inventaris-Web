@@ -37,7 +37,7 @@ class RolePermissionSeeder extends Seeder
             ['email' => 'rifkiadi348@gmail.com'], // Kriteria pencarian
             [
                 'name' => 'rifki',
-                'password' => bcrypt('11111111'), // Enkripsi password
+                'password' => bcrypt('11111111'), // Bcrypt password
                 'role_id' => 1, // ID untuk role 'admin'
             ]
         );
@@ -46,7 +46,7 @@ class RolePermissionSeeder extends Seeder
             ['email' => 'zami123@gmail.com'], // Kriteria pencarian
             [
                 'name' => 'zami',
-                'password' => bcrypt('11111111'), // Enkripsi password
+                'password' => bcrypt('11111111'), // Bcrypt password
                 'role_id' => 1, // ID untuk role 'admin'
             ]
         );

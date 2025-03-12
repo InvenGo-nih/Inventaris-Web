@@ -10,7 +10,7 @@
 <body>
     <div class="container my-5">
         <div class="card">
-            <img src="{{ asset('storage/' . $data->image) }}" class="card-img-top" alt="{{ $data->name }}">
+            <img src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $data->image }}" class="card-img-top" alt="{{ $data->name }}">
             <div class="card-body">
                 <p class="mb-2 border-bottom"><strong>Nama:</strong> <span class="float-end">{{ $data->name }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Spesifikasi:</strong> <span class="float-end">{{ $data->specification }}</span></p>
