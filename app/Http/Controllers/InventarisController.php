@@ -30,11 +30,11 @@ class InventarisController extends Controller
                 ->orWhere('specification', 'like', "%$search%")
                 ->orWhere('condition', 'like', "%$search%")
                 ->orWhere('status', 'like', "%$search%")
-                ->paginate(10);
+                ->latest()->paginate(10);
 
             return view('inventaris.index', compact('data', 'jumlah'));
         }
-        $data = Inventaris::paginate(5);
+        $data = Inventaris::latest()->paginate(5);
         return view('inventaris.index', compact('data', 'jumlah'));
     }
 
@@ -50,7 +50,7 @@ class InventarisController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'specification' => 'required',
+            // 'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
             'location' => 'required'
@@ -60,7 +60,7 @@ class InventarisController extends Controller
             'image.image' => 'File yang diunggah harus berupa gambar.',
             'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            'specification.required' => 'Spesifikasi harus diisi.',
+            // 'specification.required' => 'Spesifikasi harus diisi.',
             'condition.required' => 'Kondisi harus diisi.',
             'status.required' => 'Status harus diisi.',
             'location.required' => 'Lokasi harus diisi.'
@@ -101,7 +101,7 @@ class InventarisController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg|max:2048', // Gambar tidak wajib saat update
-            'specification' => 'required',
+            // 'specification' => 'required',
             'condition' => 'required',
             'status' => 'required',
             'location' => 'required'
@@ -110,7 +110,7 @@ class InventarisController extends Controller
             'image.image' => 'File yang diunggah harus berupa gambar.',
             'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            'specification.required' => 'Spesifikasi harus diisi.',
+            // 'specification.required' => 'Spesifikasi harus diisi.',
             'condition.required' => 'Kondisi harus diisi.',
             'status.required' => 'Status harus diisi.',
             'location.required' => 'Lokasi harus diisi.'
@@ -162,17 +162,24 @@ class InventarisController extends Controller
 
     public function destroy($id)
     {
-        $data = Inventaris::findOrFail($id);
+        try {
+            $data = Inventaris::findOrFail($id);
 
-        // Hapus gambar jika ada
-        if ($data->img_borrow) {
-            $this->supabase->deleteFile($data->img_borrow);
+            // Hapus gambar jika ada
+            if ($data->img_borrow) {
+                $this->supabase->deleteFile($data->img_borrow);
+            }
+
+            // Hapus data inventaris
+            $data->delete();
+
+            return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()->route('inventaris.index')->with('error', 'Inventaris tidak dapat dihapus karena masih dalam peminjaman');
+            }
+            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus inventaris');
         }
-
-        // Hapus data inventaris
-        $data->delete();
-
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus');
     }
 
     public function downloadPDF()

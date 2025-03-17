@@ -78,8 +78,21 @@
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @elseif (session('error'))
-                            @foreach (session('error') as $error)
-                                <div class="alert alert-danger">{{ $error }}</div>
+                            @php
+                                $errors = session('error');
+                                if (!is_array($errors)) {
+                                    $errors = [$errors];
+                                }
+                            @endphp
+                            
+                            @foreach ($errors as $error)
+                                <div class="alert alert-danger">
+                                    @if(is_object($error))
+                                        {{ json_encode($error) }}
+                                    @else
+                                        {{ $error }}
+                                    @endif
+                                </div>
                             @endforeach
                         @endif
                     </div>

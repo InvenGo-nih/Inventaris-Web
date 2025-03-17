@@ -15,8 +15,10 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
             <!-- Tombol Create Inventaris -->
             <div class="d-flex mb-2 mb-md-0 ">
+                @hasPermission('CREATE_INVENTARIS')
                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah
                     Inventaris</a>
+                @endhasPermission
                 @hasPermission('PDF_INVENTARIS')
                     <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
                 @endhasPermission

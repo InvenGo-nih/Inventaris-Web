@@ -30,24 +30,25 @@
             <div class="col-md-6">
 
                 <div class="mb-3">
-                    <label for="user_id" class="form-label">Nama Peminjam</label>
-                    <select name="user_id" id="user_id" class="form-control" required>
+                    <label for="borrow_by" class="form-label">Nama Peminjam</label>
+                    <input type="text" name="borrow_by" class="form-control" value="{{ $data->borrow_by ?? '' }}" placeholder="Masukkan Nama Peminjam">
+                    {{-- <select name="user_id" id="user_id" class="form-control">
                         <option value="">Pilih Peminjam</option>
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}" {{ $data->user_id == $user->id ? 'selected' : '' }}>
                                 {{ $user->name }}
                             </option>
                         @endforeach
-                    </select>
+                    </select> --}}
                 </div>
 
                 <div class="mb-3">
                     <label for="inventaris_id" class="form-label">Barang</label>
-                    <select name="inventaris_id" id="inventaris_id" class="form-control" required>
+                    <select name="inventaris_id" id="inventaris_id" class="form-control">
                         <option value="">Pilih Barang</option>
                         @foreach ($inventaris as $item)
                             <option value="{{ $item->id }}" {{ $data->inventaris_id == $item->id ? 'selected' : '' }}>
-                                {{ $item->name }}
+                                {{ $item->name }} - {{ $item->specification }} - {{ $item->location }}
                             </option>
                         @endforeach
                     </select>
@@ -56,7 +57,7 @@
                 <div class="mb-3">
                     <label for="date_borrow" class="form-label">Tanggal Pinjam</label>
                     <input type="date" name="date_borrow" id="date_borrow" class="form-control" 
-                        value="{{ old('date_borrow', $data->date_borrow) }}" required>
+                        value="{{ old('date_borrow', $data->date_borrow) }}">
                 </div>
             </div>
 
@@ -79,7 +80,7 @@
 
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
-                    <input type="file" name="img_borrow" class="form-control"> {{-- Hapus required agar tidak wajib saat edit --}}
+                    <input type="file" name="img_borrow" class="form-control"> {{-- Hapus agar tidak wajib saat edit --}}
                     
                    
                 </div>
