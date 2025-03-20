@@ -44,9 +44,12 @@
             </div>
         </div>
     </div>
-</div>
-<hr>
-    <div id="chart"></div>
+</div><br>
+    <div class="card">
+        <div class="card-body">
+            <div id="chart"></div>
+        </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
