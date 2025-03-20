@@ -60,6 +60,18 @@
         }
     </style>
     @laravelPWA
+    
+    <!-- Nonaktifkan PWA untuk sementara -->
+    <script>
+        // Unregister service worker untuk menghindari duplikasi
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
 </head>
 
 <body id="page-top">
@@ -125,12 +137,14 @@
 </div>
 
     @include('components.logout-modal')
-    {{-- aos scrol animate --}}
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-  AOS.init();
-</script>
-    <!-- Bootstrap core JavaScript-->
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+    <!-- Bootstrap 4 Bundle (untuk SB Admin 2) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    
+    <!-- Bootstrap 5 Bundle (untuk komponen lain) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
@@ -157,6 +171,12 @@
 
     {{-- font awesome --}}
     <script src="https://kit.fontawesome.com/87dd173a0d.js" crossorigin="anonymous"></script>
+    
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
 </body>
 
 </html>

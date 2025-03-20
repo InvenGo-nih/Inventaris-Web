@@ -6,15 +6,19 @@
 
 @section('content')
     <div class="container">
+        @hasPermission('CREATE_LOCATION_INVENTARIS')
         <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Tambah
             Lokasi</button>
+        @endhasPermission
         <div class="table-responsive">
             <table class="table table-bordered text-center">
                 <thead class="table-primary">
                     <tr>
                         <th>No</th>
                         <th>Lokasi</th>
+                        @hasPermission(['EDIT_LOCATION_INVENTARIS', 'DELETE_LOCATION_INVENTARIS'])
                         <th>Aksi</th>
+                        @endhasPermission
                     </tr>
                 </thead>
                 <tbody>
@@ -23,12 +27,16 @@
                         <tr>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ ucfirst($item->location) }}</td>
+                            @hasPermission(['EDIT_LOCATION_INVENTARIS', 'DELETE_LOCATION_INVENTARIS'])
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    @hasPermission('EDIT_LOCATION_INVENTARIS')
                                     <button type="button" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal{{ $item->id }}" class="btn btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endhasPermission
+                                    @hasPermission('DELETE_LOCATION_INVENTARIS')
                                     <form action="{{ route('inventaris.location.delete', $item->id) }}" method="post"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus jabatan ini?');">
                                         @csrf
@@ -37,9 +45,12 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    @endhasPermission
                                 </div>
                             </td>
+                            @endhasPermission
                         </tr>
+                        @hasPermission('EDIT_LOCATION_INVENTARIS')
                         <div class="modal fade" id="exampleModal{{ $item->id }}" tabindex="-1"
                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -65,6 +76,7 @@
                             </form>
                             </div>
                         </div>
+                        @endhasPermission
                     @empty
                         <tr>
                             <td colspan="3" class="text-center">Tidak ada data</td>
@@ -75,6 +87,7 @@
         </div>
 
         <!-- Pindahkan modal di sini agar tidak terulang untuk setiap item -->
+        @hasPermission('CREATE_LOCATION_INVENTARIS')
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <form action="{{ route('inventaris.location.store') }}" method="post">
@@ -97,6 +110,7 @@
                 </form>
             </div>
         </div>
+        @endhasPermission
 
     </div>
 @endsection

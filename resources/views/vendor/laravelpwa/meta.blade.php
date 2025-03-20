@@ -30,7 +30,8 @@
 <meta name="msapplication-TileColor" content="{{ $config['background_color'] }}">
 <meta name="msapplication-TileImage" content="{{ data_get(end($config['icons']), 'src') }}">
 
-<script type="text/javascript">
+<!-- Service Worker dinonaktifkan untuk menghindari duplikasi permintaan -->
+{{-- <script type="text/javascript">
     // Initialize the service worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/serviceworker.js', {
@@ -43,4 +44,4 @@
             console.log('Laravel PWA: ServiceWorker registration failed: ', err);
         });
     }
-</script>
+</script> --}}

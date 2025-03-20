@@ -68,7 +68,7 @@
                                         <div class="d-grid my-3">
                                             {{-- <button class="btn btn-primary btn-lg" type="submit">Log in</button> --}}
                                             <x-primary-button >
-                                                {{ __('Log in') }}
+                                                {{ __('Masuk') }}
                                             </x-primary-button>
                                         </div>
                                     </div>

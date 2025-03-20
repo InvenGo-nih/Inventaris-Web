@@ -31,7 +31,7 @@
                 @forelse ($data as $borrow)
                 <tr>
                     <td class="text-nowrap">{{ $borrow->inventaris->name }}</td>
-                    <td class="text-nowrap">{{ $borrow->user->name }}</td>
+                    <td class="text-nowrap">{{ $borrow->borrow_by }}</td>
                     <td>{{ $borrow->date_borrow }}</td>
                     <td>{{ $borrow->date_back ? $borrow->date_back : '-' }}</td>
                     <td>
@@ -62,6 +62,10 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        {{ $data->links('pagination::bootstrap-5') }}
     </div>
 </div>
 @endsection

@@ -20,7 +20,7 @@ class BorrowController extends Controller
 
     public function index()
     {
-        $data = Borrow::with(['user', 'inventaris'])->get();
+        $data = Borrow::with('inventaris')->latest()->paginate(10);
         return view('borrow.index', compact('data'));
     }
 
@@ -35,12 +35,12 @@ class BorrowController extends Controller
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'user_id'       => 'required|exists:users,id',
+            'borrow_by'     => 'required',
             'inventaris_id' => 'required|exists:inventaris,id',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'status'        => 'required',
-            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'img_borrow'    => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($validate->fails()) {
@@ -48,19 +48,19 @@ class BorrowController extends Controller
         }
 
         $data = new Borrow();
-        $data->user_id = $request->user_id;
+        $data->borrow_by = $request->borrow_by;
         $data->inventaris_id = $request->inventaris_id;
         $data->date_borrow = $request->date_borrow;
         $data->date_back = $request->date_back;
         $data->status = $request->status;
 
-        // Upload gambar jika ada
-        if ($request->hasFile('img_borrow')) {
-            $file = $request->file('img_borrow');
-            $filePath = 'borrow_images/' . time() . '_' . $file->getClientOriginalName();
-            $this->supabase->uploadFile($file, $filePath);
-            $data->img_borrow = $filePath;
-        }
+        // Upload gambar dengan nama yang di-hash
+        $file = $request->file('img_borrow');
+        $extension = $file->getClientOriginalExtension();
+        $hashedName = md5($file->getClientOriginalName() . time()) . '.' . $extension;
+        $filePath = 'borrow_images/' . $hashedName;
+        $this->supabase->uploadFile($file, $filePath);
+        $data->img_borrow = $filePath;
 
         $data->save();
 
@@ -77,7 +77,7 @@ class BorrowController extends Controller
         $data = Borrow::findOrFail($id);
 
         $validate = Validator::make($request->all(), [
-            'user_id'       => 'required|exists:users,id',
+            'borrow_by'     => 'required',
             'inventaris_id' => 'required|exists:inventaris,id',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
@@ -95,8 +95,11 @@ class BorrowController extends Controller
                 $this->supabase->deleteFile($data->img_borrow);
             }
 
+            // Upload gambar baru dengan nama yang di-hash
             $file = $request->file('img_borrow');
-            $filePath = 'borrow_images/' . time() . '_' . $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $hashedName = md5($file->getClientOriginalName() . time()) . '.' . $extension;
+            $filePath = 'borrow_images/' . $hashedName;
             $this->supabase->uploadFile($file, $filePath);
             $data->img_borrow = $filePath;
         }
@@ -109,7 +112,7 @@ class BorrowController extends Controller
         }
 
         $data->update([
-            'user_id'       => $request->user_id,
+            'borrow_by'     => $request->borrow_by,
             'inventaris_id' => $request->inventaris_id,
             'date_borrow'   => $request->date_borrow,
             'date_back'     => $request->date_back,
