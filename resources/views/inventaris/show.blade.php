@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="container text-center">
+    <div class="text-center">
         
 
         <div class="d-flex justify-content-center">

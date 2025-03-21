@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-<div class="container">
 
     <!-- Flash Message -->
     @if ($errors->any())
@@ -18,9 +17,9 @@
         </div>
     @endif
 
-    <form action="{{ $data->id ? route('borrow.update', $data->id) : route('borrow.store') }}" 
-        method="POST" enctype="multipart/form-data"> {{-- Tambahkan enctype agar bisa upload gambar --}}
-        
+    <form action="{{ $data->id ? route('borrow.update', $data->id) : route('borrow.store') }}" method="POST"
+        enctype="multipart/form-data"> {{-- Tambahkan enctype agar bisa upload gambar --}}
+
         @csrf
         @if ($data->id)
             @method('PUT')
@@ -31,7 +30,8 @@
 
                 <div class="mb-3">
                     <label for="borrow_by" class="form-label">Nama Peminjam</label>
-                    <input type="text" name="borrow_by" class="form-control" value="{{ $data->borrow_by ?? '' }}" placeholder="Masukkan Nama Peminjam">
+                    <input type="text" name="borrow_by" class="form-control" value="{{ $data->borrow_by ?? '' }}"
+                        placeholder="Masukkan Nama Peminjam">
                     {{-- <select name="user_id" id="user_id" class="form-control">
                         <option value="">Pilih Peminjam</option>
                         @foreach ($users as $user)
@@ -56,7 +56,7 @@
 
                 <div class="mb-3">
                     <label for="date_borrow" class="form-label">Tanggal Pinjam</label>
-                    <input type="date" name="date_borrow" id="date_borrow" class="form-control" 
+                    <input type="date" name="date_borrow" id="date_borrow" class="form-control"
                         value="{{ old('date_borrow', $data->date_borrow) }}">
                 </div>
             </div>
@@ -67,22 +67,25 @@
                     <label for="status" class="form-label">Status</label>
                     <select name="status" id="status" class="form-control" onchange="toggleDateBack()">
                         <option value="" selected>Pilih Status</option>
-                        <option value="Dikembalikan" {{ $data->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                        <option value="Dikembalikan" {{ $data->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan
+                        </option>
                         <option value="Dipinjam" {{ $data->status == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
                     </select>
                 </div>
 
-                <div class="mb-3" id="dateBackContainer" style="{{ $data->status == 'Dipinjam' || $data->status == '' ? 'display:none;' : '' }}">
+                <div class="mb-3" id="dateBackContainer"
+                    style="{{ $data->status == 'Dipinjam' || $data->status == '' ? 'display:none;' : '' }}">
                     <label for="date_back" class="form-label">Tanggal Kembali</label>
-                    <input type="date" name="date_back" id="date_back" class="form-control" 
-                        value="{{ old('date_back', $data->date_back) }}" {{ $data->status == 'Dipinjam' ? 'value=null' : '' }}>
+                    <input type="date" name="date_back" id="date_back" class="form-control"
+                        value="{{ old('date_back', $data->date_back) }}"
+                        {{ $data->status == 'Dipinjam' ? 'value=null' : '' }}>
                 </div>
 
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
                     <input type="file" name="img_borrow" class="form-control"> {{-- Hapus agar tidak wajib saat edit --}}
-                    
-                   
+
+
                 </div>
             </div>
         </div>
@@ -92,18 +95,17 @@
             <button type="submit" class="btn btn-primary px-4">{{ $data->id ? 'Perbarui' : 'Simpan' }}</button>
         </div>
     </form>
-</div>
 
-<script>
-    function toggleDateBack() {
-        const statusSelect = document.getElementById('status');
-        const dateBackContainer = document.getElementById('dateBackContainer');
-        if (statusSelect.value === 'Dipinjam' || statusSelect.value === '') {
-            dateBackContainer.style.display = 'none';
-            document.getElementById('date_back').value = null; // Set value to null
-        } else {
-            dateBackContainer.style.display = 'block';
+    <script>
+        function toggleDateBack() {
+            const statusSelect = document.getElementById('status');
+            const dateBackContainer = document.getElementById('dateBackContainer');
+            if (statusSelect.value === 'Dipinjam' || statusSelect.value === '') {
+                dateBackContainer.style.display = 'none';
+                document.getElementById('date_back').value = null; // Set value to null
+            } else {
+                dateBackContainer.style.display = 'block';
+            }
         }
-    }
-</script>
+    </script>
 @endsection
