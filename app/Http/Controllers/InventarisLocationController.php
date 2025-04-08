@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\InventarisLocationDataTable;
 use App\Models\InventarisLocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class InventarisLocationController extends Controller
 {
-    public function index(Request $request, $id = null)
+    public function index(InventarisLocationDataTable $dataTable, Request $request, $id = null)
     {
         $data = InventarisLocation::paginate(10);
         $form = $id ? InventarisLocation::findorFail($request->id) : new InventarisLocation();
-        return view('inventaris_location.index', compact(['data', 'form']));
+        // return view('inventaris_location.index', compact(['data', 'form']));
+        return $dataTable->render('inventaris_location.index', compact(['data', 'form']));
     }
 
     public function store(Request $request)

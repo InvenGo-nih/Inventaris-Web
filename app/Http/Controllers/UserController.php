@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\UsersDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -10,10 +11,12 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(UsersDataTable $dataTable)
     {
         $users = User::with('role')->get();
-        return view('permission.users', compact('users'));
+
+        return $dataTable->render('permission.users', compact('users'));
+        // return view('permission.users', compact('users'));
     }
 
     public function form(Request $request, $id = null)

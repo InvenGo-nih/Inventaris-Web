@@ -23,7 +23,7 @@
     <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
       <a href="{{ route('dashboard') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-home-smile"></i>
-        <div class="text-truncate" data-i18n="Basic">Dashboard</div>
+        <div class="text-truncate">Beranda</div>
       </a>
     </li>
     @endhasPermission
@@ -32,7 +32,7 @@
     <li class="menu-item {{ request()->routeIs('inventaris.index') ? 'active' : '' }}">
       <a href="{{ route('inventaris.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-package"></i>
-        <div class="text-truncate" data-i18n="Basic">Inventaris</div>
+        <div class="text-truncate">Daftar Barang</div>
       </a>
     </li>
     @endhasPermission
@@ -41,7 +41,7 @@
     <li class="menu-item {{ request()->routeIs('inventaris.location.index') ? 'active' : '' }}">
       <a href="{{ route('inventaris.location.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-current-location"></i>
-        <div class="text-truncate" data-i18n="Basic">Lokasi Inventaris</div>
+        <div class="text-truncate">Lokasi Barang</div>
       </a>
     </li>
     @endhasPermission
@@ -50,7 +50,7 @@
     <li class="menu-item {{ request()->routeIs('borrow.index') ? 'active' : '' }}">
       <a href="{{ route('borrow.index') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-bookmarks"></i>
-        <div class="text-truncate" data-i18n="Basic">Peminjaman</div>
+        <div class="text-truncate">Peminjaman</div>
       </a>
     </li>
     @endhasPermission
@@ -59,7 +59,7 @@
     <li class="menu-item {{ request()->routeIs('qr.scan') ? 'active' : '' }}">
       <a href="{{ route('qr.scan') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-qr-scan"></i>
-        <div class="text-truncate" data-i18n="Basic">Scan</div>
+        <div class="text-truncate">Scan</div>
       </a>
     </li>
     @endhasPermission
@@ -68,7 +68,7 @@
     <li class="menu-item {{ request()->routeIs('users.index') || request()->routeIs('roles.index') ? 'active' : '' }}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-cog"></i>
-        <div class="text-truncate" data-i18n="Pengaturan">Pengaturan</div>
+        <div class="text-truncate">Pengaturan</div>
       </a>
 
       <ul class="menu-sub">
@@ -76,7 +76,7 @@
         <li class="menu-item {{ request()->routeIs('users.index') ? 'active' : '' }}">
           <a href="{{ route('users.index') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-user"></i>
-            <div class="text-truncate" data-i18n="Pengguna">Pengguna</div>
+            <div class="text-truncate">Pengguna</div>
           </a>
         </li>
         @endhasPermission
@@ -84,7 +84,7 @@
         <li class="menu-item {{ request()->routeIs('roles.index') ? 'active' : '' }}">
           <a href="{{ route('roles.index') }}" class="menu-link">
             <i class="menu-icon tf-icons bx bx-user-plus"></i>
-            <div class="text-truncate" data-i18n="Jabatan">Jabatan</div>
+            <div class="text-truncate">Jabatan</div>
           </a>
         </li>
         @endhasPermission

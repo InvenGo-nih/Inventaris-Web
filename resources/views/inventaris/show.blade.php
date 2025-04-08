@@ -30,7 +30,7 @@
             <a href="{{ route('inventaris.form', ['id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
             @endhasPermission
             @hasPermission('DELETE_INVENTARIS')
-            <form action="{{ route('inventaris.delete', $data->id) }}" method="post">
+            <form action="{{ route('inventaris.delete', $data->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger white-space text-nowrap"><i class="fa-solid fa-trash"></i> Hapus</button>

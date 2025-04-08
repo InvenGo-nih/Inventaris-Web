@@ -4,7 +4,7 @@
             <!-- Informasi jumlah data -->
             <p class="small text-muted mb-2 mb-sm-0">
                 Menampilkan <span class="fw-semibold">{{ $paginator->firstItem() }}</span>
-                hingga <span class="fw-semibold">{{ $paginator->lastItem() }}</span>
+                sampai <span class="fw-semibold">{{ $paginator->lastItem() }}</span>
                 dari <span class="fw-semibold">{{ $paginator->total() }}</span> entri
             </p>
 

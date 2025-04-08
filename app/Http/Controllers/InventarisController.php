@@ -27,7 +27,7 @@ class InventarisController extends Controller
             $search = $request->input('search');
 
             $data = Inventaris::where('name', 'like', "%$search%")
-                ->orWhere('specification', 'like', "%$search%")
+                ->orWhere('type', 'like', "%$search%")
                 ->orWhere('condition', 'like', "%$search%")
                 ->orWhere('status', 'like', "%$search%")
                 ->latest()->paginate(10);
@@ -85,6 +85,7 @@ class InventarisController extends Controller
         $data->location = $request->location ?? 'Tidak Diketahui';
         $data->serial_number = $serialNumber;
         $data->broken_description = $request->broken_description;
+        $data->type = $request->type;
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan
@@ -144,6 +145,7 @@ class InventarisController extends Controller
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
         $data->serial_number = $serialNumber ;
         $data->broken_description = $request->broken_description;
+        $data->type = $request->type;
         $data->save();
 
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui');

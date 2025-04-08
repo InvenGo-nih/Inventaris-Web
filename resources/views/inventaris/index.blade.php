@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Inventaris
+    Daftar Barang
 @endsection
 
 @section('content')
@@ -41,8 +41,8 @@
                         <!-- Detail Laptop -->
                         <div>
                             <h6 class="mb-0 fw-bold">{{ $item->name }}</h6>
-                            <p class="mb-1 text-muted small">{{ $item->specification }}</p>
-                            <span class="badge rounded-pill {{ $item->condition == 'Normal' ? 'bg-success' : 'bg-danger' }}">
+                            <p class="mb-1 text-muted small">{{ $item->type }}</p>
+                            <span class="badge rounded-pill {{ $item->condition == 'Normal' ? 'bg-label-success' : 'bg-label-danger' }}">
                                 {{ $item->condition }}
                             </span>
                         </div>
@@ -60,5 +60,4 @@
     <div class="d-flex justify-content-center">
         {{ $data->links('pagination::bootstrap-5') }}
     </div>
-
 @endsection

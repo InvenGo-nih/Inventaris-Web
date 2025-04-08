@@ -62,6 +62,24 @@
 
             <div class="col-md-6">
                 <div class="mb-3">
+                    @php
+                        $type = [
+                            'Teknologi',
+                            'Otomotif',
+                            'Bahan',
+                        ]    
+                    @endphp
+                    <label for="specification" class="form-label">Type</label>
+                    <select name="type" class="form-control" id="type">
+                        <option value="" selected disabled>Pilih Type</option>
+                        @foreach ($type as $item)
+                            <option value="{{ $item }}" {{ isset($data) && $data->type == $item ? 'selected' : '' }}>
+                                {{ $item }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="specification" class="form-label">Spesifikasi</label>
                     <textarea name="specification" class="form-control" style="height: 7.8em;" placeholder="Masukkan Spesifikasi">{{ $data->specification ?? '' }}</textarea>
                 </div>

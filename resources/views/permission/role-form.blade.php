@@ -10,6 +10,7 @@
         @method('PUT')
         <input type="text" name="name" value="{{ $role->name }}" class="form-control mb-3">
         <button type="button" class="btn btn-secondary mb-3" id="checkAll">Pilih Semua</button>
+        <button type="button" class="btn btn-secondary mb-3" id="closeAll">Hapus Semua</button>
         @foreach ($permissions as $group => $groupPermissions)
             <h3>Grup {{ ucfirst($group) }}</h3>
             <div class="d-flex flex-wrap gap-4">
@@ -34,6 +35,12 @@
             const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
+            });
+        });
+        document.getElementById('closeAll').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
             });
         });
     </script>

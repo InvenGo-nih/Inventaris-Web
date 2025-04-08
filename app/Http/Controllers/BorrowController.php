@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\BorrowDataTable;
 use App\Models\Borrow;
 use App\Models\Inventaris;
 use App\Models\User;
@@ -18,10 +19,11 @@ class BorrowController extends Controller
         $this->supabase = $supabase;
     }
 
-    public function index()
+    public function index(BorrowDataTable $dataTable)
     {
         $data = Borrow::with('inventaris')->latest()->paginate(10);
-        return view('borrow.index', compact('data'));
+        // return view('borrow.index', compact('data'));
+        return $dataTable->render('borrow.index', compact('data'));
     }
 
     public function form($id = null)
