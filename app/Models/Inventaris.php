@@ -18,6 +18,7 @@ class Inventaris extends Model
         'status',
         'qr_link',
         'location',
+        'quantity'
     ];
 
     public function borrow(){

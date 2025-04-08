@@ -13,6 +13,7 @@ class Borrow extends Model
     protected $fillable = [
         'inventaris_id',
         'borrow_by',
+        'quantity',
         'date_borrow',
         'status',
         'date_back'

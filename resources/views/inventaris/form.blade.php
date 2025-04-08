@@ -55,6 +55,11 @@
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="quantity" class="form-label">Jumlah Barang</label>
+                    <input type="number" name="quantity" class="form-control" value="{{ $data->quantity ?? 1 }}"
+                        min="1" placeholder="Masukkan Jumlah Barang">
+                </div>
+                <div class="mb-3">
                     <label for="image" class="form-label">Gambar</label>
                     <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}">
                 </div>

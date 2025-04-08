@@ -18,6 +18,7 @@
                 <p class="mb-2 border-bottom"><strong>Lokasi:</strong> <span class="float-end">{{ $data->location }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Spesifikasi:</strong> <span class="float-end">{{ $data->specification }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Kondisi:</strong> <span class="float-end">{{ $data->condition }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Jumlah:</strong> <span class="float-end">{{ $data->quantity }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Deskripsi Rusak:</strong> <span class="float-end">{{ $data->broken_description ? $data->broken_description : '-' }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Status:</strong> <span class="float-end">{{ $data->status }}</span></p>
                 <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p>
