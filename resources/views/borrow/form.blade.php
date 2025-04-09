@@ -45,7 +45,7 @@
                             <option value="{{ $item->id }}" 
                                 data-quantity="{{ $item->quantity }}"
                                 {{ isset($data) && $data->inventaris_id == $item->id ? 'selected' : '' }}>
-                                {{ $item->name }}
+                                {{ $item->name }} | {{ $item->type }} | {{ $item->location }}
                             </option>
                         @endforeach
                     </select>

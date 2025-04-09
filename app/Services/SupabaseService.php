@@ -33,10 +33,9 @@ class SupabaseService
         try {
             $filePath = trim($path, '/'); // Hapus slash di awal dan akhir
             
-            $response = $this->client->request('POST', "{$this->url}/storage/v1/object/upload/{$this->bucket}/{$filePath}", [
+            $response = $this->client->request('POST', "{$this->url}/storage/v1/object/{$this->bucket}/upload/{$filePath}", [
                 'headers' => [
                     'Authorization' => "Bearer {$this->key}",
-                    'apiKey' => $this->key,
                 ],
                 'multipart' => [
                     [

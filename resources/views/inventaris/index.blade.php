@@ -16,7 +16,7 @@
         <div class="d-flex mb-2 mb-md-0 ">
             @hasPermission('CREATE_INVENTARIS')
                 <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah
-                    Inventaris</a>
+                    Barang</a>
             @endhasPermission
             @hasPermission('PDF_INVENTARIS')
                 <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
@@ -41,7 +41,7 @@
                         <!-- Detail Laptop -->
                         <div>
                             <h6 class="mb-0 fw-bold">{{ $item->name }}</h6>
-                            <p class="mb-1 text-muted small">{{ $item->type }}</p>
+                            <p class="mb-1 text-muted small">{{ $item->type }} | {{ $item->quantity }}</p>
                             <span class="badge rounded-pill {{ $item->condition == 'Normal' ? 'bg-label-success' : 'bg-label-danger' }}">
                                 {{ $item->condition }}
                             </span>

@@ -52,7 +52,6 @@ class InventarisController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             // 'specification' => 'required',
             'condition' => 'required',
-            'status' => 'required',
             'location' => 'required'
         ], [
             'name.required' => 'Nama barang harus diisi.',
@@ -62,7 +61,6 @@ class InventarisController extends Controller
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
             // 'specification.required' => 'Spesifikasi harus diisi.',
             'condition.required' => 'Kondisi harus diisi.',
-            'status.required' => 'Status harus diisi.',
             'location.required' => 'Lokasi harus diisi.'
         ]);
 
@@ -81,11 +79,12 @@ class InventarisController extends Controller
         $data->image = $filePath; // Hanya menyimpan nama file
         $data->specification = $request->specification;
         $data->condition = $request->condition;
-        $data->status = $request->status;
+        // $data->status = $request->status;
         $data->location = $request->location ?? 'Tidak Diketahui';
         $data->serial_number = $serialNumber;
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
+        $data->quantity = $request->quantity;
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan
@@ -104,7 +103,6 @@ class InventarisController extends Controller
             'image' => 'image|mimes:jpeg,png,jpg|max:2048', // Gambar tidak wajib saat update
             // 'specification' => 'required',
             'condition' => 'required',
-            'status' => 'required',
             'location' => 'required'
         ], [
             'name.required' => 'Nama barang harus diisi.',
@@ -113,7 +111,6 @@ class InventarisController extends Controller
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
             // 'specification.required' => 'Spesifikasi harus diisi.',
             'condition.required' => 'Kondisi harus diisi.',
-            'status.required' => 'Status harus diisi.',
             'location.required' => 'Lokasi harus diisi.'
         ]);
 
@@ -140,12 +137,13 @@ class InventarisController extends Controller
 
         $data->specification = $request->specification;
         $data->condition = $request->condition;
-        $data->status = $request->status;
+        // $data->status = $request->status;
         $data->location = $request->location;
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
         $data->serial_number = $serialNumber ;
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
+        $data->quantity = $request->quantity;
         $data->save();
 
         return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui');
