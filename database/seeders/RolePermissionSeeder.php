@@ -79,6 +79,8 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'CREATE_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Buat Lokasi Inventaris'],
             ['name' => 'EDIT_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Edit Lokasi Inventaris'],
             ['name' => 'DELETE_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Hapus Lokasi Inventaris'],
+            ['name' => 'VIEW_CEK', 'permission_group' => 'cek', 'alias' => 'Lihat Pengecekan'],
+            ['name' => 'PROCESS_CEK', 'permission_group' => 'cek', 'alias' => 'Proses Pengecekan'],
         ];
     
             foreach ($permissions as $perm) {

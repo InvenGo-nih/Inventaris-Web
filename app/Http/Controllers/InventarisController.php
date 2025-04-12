@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupInventaris;
 use App\Models\Inventaris;
 use App\Models\InventarisLocation;
 use App\Services\SupabaseService;
@@ -20,29 +21,30 @@ class InventarisController extends Controller
     {
         $this->supabase = $supabase;
     }
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
-        $jumlah = Inventaris::count();
+        $title = GroupInventaris::findorFail($id)->name;
+        $jumlah = Inventaris::where('group_inventaris_id', $id)->count();
+        $query = Inventaris::where('group_inventaris_id', $id);
+        
         if (request()->has('search')) {
             $search = $request->input('search');
-
-            $data = Inventaris::where('name', 'like', "%$search%")
-                ->orWhere('type', 'like', "%$search%")
-                ->orWhere('condition', 'like', "%$search%")
-                ->orWhere('status', 'like', "%$search%")
-                ->latest()->paginate(10);
-
-            return view('inventaris.index', compact('data', 'jumlah'));
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhere('condition', 'like', "%$search%")
+                  ->orWhere('location', 'like', "%$search%");
+            });
         }
-        $data = Inventaris::latest()->paginate(5);
-        return view('inventaris.index', compact('data', 'jumlah'));
+
+        $data = $query->latest()->paginate(10);
+        return view('inventaris.index', compact('data', 'jumlah', 'title'));
     }
 
-    public function form(Request $request, $id = null)
+    public function form(Request $request, $group_inventaris_id ,$id = null)
     {
         $data = $id ? Inventaris::findorFail($request->id) : new Inventaris();
         $location = InventarisLocation::all();
-        return view('inventaris.form', compact(['data','location']));
+        return view('inventaris.form', compact(['data','location', 'group_inventaris_id']));
     }
 
     public function store(Request $request)
@@ -85,13 +87,14 @@ class InventarisController extends Controller
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
         $data->quantity = $request->quantity;
+        $data->group_inventaris_id = $request->group_inventaris_id;
         $data->save();
         
         // Perbarui qr_link dengan ID yang baru saja disimpan
         $data->qr_link = route('test_qr', ['id' => $data->id]);
         $data->save(); // Simpan kembali dengan qr_link
 
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil disimpan');
+        return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('success', 'Inventaris berhasil disimpan');
     }
 
 
@@ -144,9 +147,10 @@ class InventarisController extends Controller
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
         $data->quantity = $request->quantity;
+        $data->group_inventaris_id = $request->group_inventaris_id;
         $data->save();
 
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui');
+        return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('success', 'Inventaris berhasil diperbarui');
     }
 
     public function show($id)
@@ -173,19 +177,20 @@ class InventarisController extends Controller
             // Hapus data inventaris
             $data->delete();
 
-            return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus');
+            return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('success', 'Inventaris berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
+            $data = Inventaris::findOrFail($id);
             if ($e->getCode() === '23000') {
-                return redirect()->route('inventaris.index')->with('error', 'Inventaris tidak dapat dihapus karena masih dalam peminjaman');
+                return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('error', 'Inventaris tidak dapat dihapus karena masih dalam peminjaman');
             }
-            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus inventaris');
+            return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('error', 'Terjadi kesalahan saat menghapus inventaris');
         }
     }
 
-    public function downloadPDF()
+    public function downloadPDF($group_inventaris_id)
     {
         // Ambil semua data dari database
-        $inventaris = Inventaris::all();
+        $inventaris = Inventaris::where('group_inventaris_id', $group_inventaris_id)->get();
 
         // Buat instance TCPDF
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);

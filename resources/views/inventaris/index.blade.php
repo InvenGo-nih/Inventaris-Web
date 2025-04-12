@@ -1,25 +1,28 @@
 @extends('layouts.app')
 
 @section('title')
-    Daftar Barang
+    Barang {{ $title }}
 @endsection
 
 @section('content')
+    <a href="{{ route('inventaris.index') }}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
     <div class="container p-5 mt-3 mb-5 border text-center shadow bg-white" data-aos="zoom-in">
         <div>
-            <p>Jumlah Inventaris :</p>
-            <p>{{ $jumlah }}</p>
+            <p>Jumlah : {{ $jumlah }}</p>
         </div>
     </div>
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3">
         <!-- Tombol Create Inventaris -->
         <div class="d-flex mb-2 mb-md-0 ">
+            @php
+                $id = request()->route('id');
+            @endphp
             @hasPermission('CREATE_INVENTARIS')
-                <a href="{{ route('inventaris.form') }}" class="btn btn-primary" style="margin-right: 10px">Tambah
+                <a href="{{ route('inventaris.form', ['group_inventaris_id' => $id]) }}" class="btn btn-primary" style="margin-right: 10px"><i class="fa-solid fa-plus"></i> Tambah
                     Barang</a>
             @endhasPermission
             @hasPermission('PDF_INVENTARIS')
-                <a href="{{ route('inventaris.pdf') }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
+                <a href="{{ route('inventaris.pdf', ['group_inventaris_id' => $id]) }}" class="btn btn-danger"><i class="fa-solid fa-download"></i></a>
             @endhasPermission
         </div>
         <!-- Form Search -->
@@ -40,8 +43,8 @@
                         </div>
                         <!-- Detail Laptop -->
                         <div>
-                            <h6 class="mb-0 fw-bold">{{ $item->name }}</h6>
-                            <p class="mb-1 text-muted small">{{ $item->type }} | {{ $item->quantity }}</p>
+                            <h6 class="mb-1 fw-bold">{{ $item->name }}</h6>
+                            <p class="mb-1 text-muted small">{{ $item->location }}</p>
                             <span class="badge rounded-pill {{ $item->condition == 'Normal' ? 'bg-label-success' : 'bg-label-danger' }}">
                                 {{ $item->condition }}
                             </span>

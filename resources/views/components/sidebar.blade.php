@@ -37,6 +37,15 @@
     </li>
     @endhasPermission
 
+    @hasPermission('VIEW_CEK')
+    <li class="menu-item {{ request()->routeIs('cek.index') ? 'active' : '' }}">
+      <a href="{{ route('cek.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-clipboard"></i>
+        <div class="text-truncate">Pengecekan Barang</div>
+      </a>
+    </li>
+    @endhasPermission
+
     @hasPermission('VIEW_LOCATION_INVENTARIS')
     <li class="menu-item {{ request()->routeIs('inventaris.location.index') ? 'active' : '' }}">
       <a href="{{ route('inventaris.location.index') }}" class="menu-link">

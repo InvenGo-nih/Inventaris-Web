@@ -15,12 +15,14 @@
         <div class="card mx-auto" style="max-width: 90%;">
             <div class="card-body text-start">
                 <p class="mb-2 border-bottom"><strong>Nama:</strong> <span class="float-end">{{ $data->name }}</span></p>
-                <p class="mb-2 border-bottom"><strong>Tipe:</strong> <span class="float-end">{{ $data->type }}</span></p>
+                {{-- <p class="mb-2 border-bottom"><strong>Tipe:</strong> <span class="float-end">{{ $data->type }}</span></p> --}}
                 <p class="mb-2 border-bottom"><strong>Lokasi:</strong> <span class="float-end">{{ $data->location }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Spesifikasi:</strong> <span class="float-end">{{ $data->specification }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Kondisi:</strong> <span class="float-end">{{ $data->condition }}</span></p>
-                <p class="mb-2 border-bottom"><strong>Jumlah:</strong> <span class="float-end">{{ $data->quantity }}</span></p>
+                {{-- <p class="mb-2 border-bottom"><strong>Jumlah:</strong> <span class="float-end">{{ $data->quantity }}</span></p> --}}
                 <p class="mb-2 border-bottom"><strong>Deskripsi Rusak:</strong> <span class="float-end">{{ $data->broken_description ? $data->broken_description : '-' }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Tanggal Masuk:</strong> <span class="float-end">{{ $data->created_at->format('d/m/Y') }}</span></p>
+                <p class="mb-2 border-bottom"><strong>Tanggal Perbaikan:</strong> <span class="float-end">{{ $data->updated_at->format('d/m/Y') }}</span></p>
                 {{-- <p class="mb-2 border-bottom"><strong>Status:</strong> <span class="float-end">{{ $data->status }}</span></p> --}}
                 {{-- <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p> --}}
             </div>
@@ -28,8 +30,11 @@
 
         <div class="d-flex justify-content-center gap-2 my-3">
             <button onclick="window.history.back()" class="btn btn-secondary white-space text-nowrap"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+            @hasPermission('VIEW_CEK')
+            <a href="{{ route('cek.index') }}" class="btn btn-info white-space text-nowrap"><i class="fa-solid fa-clipboard-list"></i> Cek</a>
+            @endhasPermission
             @hasPermission('EDIT_INVENTARIS')
-            <a href="{{ route('inventaris.form', ['id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+            <a href="{{ route('inventaris.form', ['group_inventaris_id' => $data->group_inventaris_id,'id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
             @endhasPermission
             @hasPermission('DELETE_INVENTARIS')
             <form action="{{ route('inventaris.delete', $data->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">

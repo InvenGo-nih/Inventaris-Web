@@ -24,4 +24,9 @@ class Inventaris extends Model
     public function borrow(){
         return $this->hasMany(Borrow::class);
     }
+
+    public function groupInventaris()
+    {
+        return $this->hasMany(GroupInventaris::class);
+    }
 }

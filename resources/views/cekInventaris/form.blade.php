@@ -1,32 +1,22 @@
 @extends('layouts.app')
 
 @section('title')
-    {{ request()->route('id') ? 'Edit' : 'Tambah' }} Inventaris
+    Periksa Inventaris
 @endsection
 
 @section('content')
-    @php
-        $url = '';
-        if (request()->route('id')) {
-            $url = route('inventaris.update', ['id' => $data->id]);
-        } else {
-            $url = route('inventaris.store');
-        }
-    @endphp
 
-    <form method="POST" action="{{ $url }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('cek.update', ['id' => $data->id]) }}" enctype="multipart/form-data">
         @csrf
-        @if (request()->route('id'))
-            @method('PUT')
-        @endif
+        @method('PUT')
 
         <div class="row">
             <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nama</label>
+                {{-- <div class="mb-3"> --}}
+                    {{-- <label for="name" class="form-label">Nama</label> --}}
                     <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}"
-                        placeholder="Masukkan Nama Inventaris">
-                </div>
+                        placeholder="Masukkan Nama Inventaris" hidden>
+                {{-- </div> --}}
                 <div class="mb-3">
                     <label for="condition" class="form-label">Kondisi Inventaris</label>
                     <select name="condition" class="form-control" id="condition" onchange="toggleBrokenDescription()">
@@ -50,9 +40,8 @@
                     </select>
                 </div> --}}
                 <div class="mb-3">
-                    <label for="location" class="form-label">Lokasi</label>
-                    {{-- <input type="text" name="location" class="form-control" value="{{ $data->location ?? '' }}"> --}}
-                    <select name="location" id="location" class="form-control">
+                    {{-- <label for="location" class="form-label">Lokasi</label> --}}
+                    <select name="location" id="location" class="form-control" hidden>
                         <option value="" selected disabled>Pilih Lokasi</option>
                         @foreach ($location as $item)
                             <option value="{{ $item->location }}"
@@ -67,8 +56,8 @@
                         min="1" placeholder="Masukkan Jumlah Barang">
                 </div> --}}
                 <div class="mb-3">
-                    <label for="image" class="form-label">Gambar</label>
-                    <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}">
+                    {{-- <label for="image" class="form-label">Gambar</label> --}}
+                    <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}" hidden>
                 </div>
             </div>
 

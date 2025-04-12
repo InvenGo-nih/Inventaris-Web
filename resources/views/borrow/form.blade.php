@@ -60,13 +60,11 @@
                 </div>
                 <div class="mb-3">
                     <label for="date_borrow" class="form-label">TANGGAL PINJAM</label>
-                    <input type="date" class="form-control" id="date_borrow" name="date_borrow" value="{{ old('date_borrow', $data->date_borrow) }}" required>
+                    <input type="date" class="form-control" id="date_borrow" name="date_borrow" value="{{ old('date_borrow', isset($data) ? \Carbon\Carbon::parse($data->date_borrow)->format('Y-m-d') : '') }}"
+                    required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="max_return_date" class="form-label">BATAS WAKTU PENGEMBALIAN</label>
-                    <input type="date" class="form-control" id="max_return_date" name="max_return_date" value="{{ old('max_return_date', $data->max_return_date) }}" required>
-                </div>
+
             </div>
 
             <div class="col-md-6">
@@ -85,6 +83,11 @@
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
                     <input type="file" name="img_borrow" class="form-control" {{ request()->route('id') ? '' : 'required' }}>
+                </div>
+                <div class="mb-3">
+                    <label for="max_return_date" class="form-label">BATAS WAKTU PENGEMBALIAN</label>
+                    <input type="date" class="form-control" id="max_return_date" name="max_return_date" value="{{ old('max_return_date', isset($data) ? \Carbon\Carbon::parse($data->max_return_date)->format('Y-m-d') : '') }}"
+                    required>
                 </div>
             </div>
         </div>
