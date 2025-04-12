@@ -23,9 +23,12 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Nama</label>
-                    <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}"
-                        placeholder="Masukkan Nama Inventaris">
+                    <label for="name" class="form-label">NAMA BARANG</label>
+                    <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}" required placeholder="Masukkan nama barang" >
+                </div>
+                <div class="mb-3">
+                    <label for="serial_number" class="form-label">SERIAL NUMBER</label>
+                    <input type="text" name="serial_number" class="form-control" value="{{ $data->serial_number ?? '' }}" placeholder="Masukkan nomor seri barang">
                 </div>
                 <div class="mb-3">
                     <label for="condition" class="form-label">Kondisi Inventaris</label>

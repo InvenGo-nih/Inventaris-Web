@@ -51,19 +51,24 @@ class InventarisController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            // 'specification' => 'required',
+            'serial_number' => 'nullable|unique:inventaris,serial_number',
+            'type' => 'required',
+            'quantity' => 'required|integer|min:1',
             'condition' => 'required',
-            'location' => 'required'
+            'location' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
-            'name.required' => 'Nama barang harus diisi.',
-            'image.required' => 'Gambar harus diunggah.',
-            'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            // 'specification.required' => 'Spesifikasi harus diisi.',
-            'condition.required' => 'Kondisi harus diisi.',
-            'location.required' => 'Lokasi harus diisi.'
+            'name.required' => 'Nama barang harus diisi',
+            'serial_number.unique' => 'Serial number sudah digunakan',
+            'type.required' => 'Tipe barang harus diisi',
+            'quantity.required' => 'Jumlah barang harus diisi',
+            'quantity.integer' => 'Jumlah barang harus berupa angka',
+            'quantity.min' => 'Jumlah barang minimal 1',
+            'condition.required' => 'Kondisi barang harus diisi',
+            'location.required' => 'Lokasi barang harus diisi',
+            'image.image' => 'File harus berupa gambar',
+            'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+            'image.max' => 'Ukuran gambar maksimal 2MB',
         ]);
 
         if ($validate->fails()) {
@@ -100,21 +105,26 @@ class InventarisController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validasi data yang diterima
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048', // Gambar tidak wajib saat update
-            // 'specification' => 'required',
+            'serial_number' => 'nullable|unique:inventaris,serial_number,'.$id,
+            'type' => 'required',
+            'quantity' => 'required|integer|min:1',
             'condition' => 'required',
-            'location' => 'required'
+            'location' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
-            'name.required' => 'Nama barang harus diisi.',
-            'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            // 'specification.required' => 'Spesifikasi harus diisi.',
-            'condition.required' => 'Kondisi harus diisi.',
-            'location.required' => 'Lokasi harus diisi.'
+            'name.required' => 'Nama barang harus diisi',
+            'serial_number.unique' => 'Serial number sudah digunakan',
+            'type.required' => 'Tipe barang harus diisi',
+            'quantity.required' => 'Jumlah barang harus diisi',
+            'quantity.integer' => 'Jumlah barang harus berupa angka',
+            'quantity.min' => 'Jumlah barang minimal 1',
+            'condition.required' => 'Kondisi barang harus diisi',
+            'location.required' => 'Lokasi barang harus diisi',
+            'image.image' => 'File harus berupa gambar',
+            'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+            'image.max' => 'Ukuran gambar maksimal 2MB',
         ]);
 
         if ($validate->fails()) {
