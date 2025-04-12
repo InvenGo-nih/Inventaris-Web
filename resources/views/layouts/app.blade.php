@@ -102,6 +102,7 @@
                                 @foreach (session('error') as $error)
                                     <div class="alert alert-danger">{{ $error }}</div>
                                 @endforeach
+                                {{-- <div class="alert alert-danger">{{ session('error') }}</div> --}}
                             @endif
                             @yield('content')
                         </div>

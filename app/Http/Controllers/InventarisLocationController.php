@@ -11,10 +11,10 @@ class InventarisLocationController extends Controller
 {
     public function index(InventarisLocationDataTable $dataTable, Request $request, $id = null)
     {
-        $data = InventarisLocation::paginate(10);
-        $form = $id ? InventarisLocation::findorFail($request->id) : new InventarisLocation();
+        // $data = InventarisLocation::paginate(10);
+        // $form = $id ? InventarisLocation::findorFail($request->id) : new InventarisLocation();
         // return view('inventaris_location.index', compact(['data', 'form']));
-        return $dataTable->render('inventaris_location.index', compact(['data', 'form']));
+        return $dataTable->render('inventaris_location.index');
     }
 
     public function store(Request $request)

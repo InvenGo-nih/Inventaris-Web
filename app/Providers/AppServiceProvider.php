@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
             $roleId = DB::table('users')->where('id', $user->id)->value('role_id');
 
             if (!$roleId) {
-                return redirect()->back()->with('error', 'You do not have permission to access this page.');
+                return redirect()->back()->with('error', ['Anda tidak memiliki hak akses untuk halaman ini']);
             }
 
             // Cek apakah role memiliki salah satu dari permission yang dibutuhkan
