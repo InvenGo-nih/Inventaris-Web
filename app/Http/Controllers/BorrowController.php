@@ -43,6 +43,7 @@ class BorrowController extends Controller
             'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -69,6 +70,7 @@ class BorrowController extends Controller
             $data->quantity = $requestedQuantity;
             $data->date_borrow = $request->date_borrow;
             $data->date_back = $request->date_back;
+            $data->max_return_date = $request->max_return_date;
             $data->status = $request->status;
 
             // Upload gambar dengan nama yang di-hash
@@ -104,6 +106,7 @@ class BorrowController extends Controller
             'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -167,6 +170,7 @@ class BorrowController extends Controller
                 'quantity'      => $requestedQuantity,
                 'date_borrow'   => $request->date_borrow,
                 'date_back'     => $request->date_back,
+                'max_return_date' => $request->max_return_date,
                 'status'        => $request->status,
                 'img_borrow'    => $data->img_borrow
             ]);

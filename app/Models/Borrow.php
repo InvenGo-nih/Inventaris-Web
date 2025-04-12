@@ -11,12 +11,20 @@ class Borrow extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'inventaris_id',
         'borrow_by',
+        'inventaris_id',
         'quantity',
         'date_borrow',
+        'date_back',
+        'max_return_date',
         'status',
-        'date_back'
+        'img_borrow'
+    ];
+
+    protected $casts = [
+        'date_borrow' => 'date',
+        'date_back' => 'date',
+        'max_return_date' => 'date',
     ];
 
     public function user()

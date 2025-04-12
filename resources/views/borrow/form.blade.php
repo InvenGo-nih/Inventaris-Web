@@ -59,8 +59,13 @@
                     <small class="text-muted">Stok tersedia: <span id="available_quantity">0</span></small>
                 </div>
                 <div class="mb-3">
-                    <label for="date_borrow" class="form-label">Tanggal Pinjam</label>
-                    <input type="date" name="date_borrow" class="form-control" value="{{ $data->date_borrow ?? '' }}">
+                    <label for="date_borrow" class="form-label">TANGGAL PINJAM</label>
+                    <input type="date" class="form-control" id="date_borrow" name="date_borrow" value="{{ old('date_borrow', $data->date_borrow) }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="max_return_date" class="form-label">BATAS WAKTU PENGEMBALIAN</label>
+                    <input type="date" class="form-control" id="max_return_date" name="max_return_date" value="{{ old('max_return_date', $data->max_return_date) }}" required>
                 </div>
             </div>
 
@@ -74,8 +79,8 @@
                     </select>
                 </div>
                 <div class="mb-3" id="dateBackContainer" style="display: {{ isset($data) && $data->status == 'Dikembalikan' ? 'block' : 'none' }};">
-                    <label for="date_back" class="form-label">Tanggal Kembali</label>
-                    <input type="date" name="date_back" class="form-control" value="{{ $data->date_back ?? '' }}">
+                    <label for="date_back" class="form-label">TANGGAL KEMBALI</label>
+                    <input type="date" class="form-control" id="date_back" name="date_back" value="{{ old('date_back', $data->date_back) }}">
                 </div>
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
