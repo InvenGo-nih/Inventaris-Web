@@ -26,6 +26,22 @@
           <a class="github-button" href="https://github.com/themeselection/sneat-bootstrap-html-admin-template-free" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
         </li> --}}
 
+            <!-- Notification -->
+            <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+                <a class="nav-link dropdown-toggle hide-arrow" href="{{ route('notifications.overdue') }}">
+                    <i class="bx bx-bell bx-sm"></i>
+                    @php
+                        $overdueCount = \App\Models\Borrow::where('status', 'Dipinjam')
+                            ->where('max_return_date', '<', now()->format('Y-m-d'))
+                            ->count();
+                    @endphp
+                    @if($overdueCount > 0)
+                        <span class="badge bg-danger rounded-pill badge-notifications">{{ $overdueCount }}</span>
+                    @endif
+                </a>
+            </li>
+            <!--/ Notification -->
+
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">

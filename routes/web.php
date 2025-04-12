@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -71,6 +72,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [RolePermissionController::class, 'store'])->name('store')->middleware('permission:CREATE_ROLES');
         Route::delete('/delete/{role}', [RolePermissionController::class, 'destroy'])->name('destroy')->middleware('permission:DELETE_ROLES');
     });
+
+    Route::get('/notifications/overdue', [NotificationController::class, 'overdueNotifications'])->name('notifications.overdue');
 });
 
 require __DIR__.'/auth.php';
