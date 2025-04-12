@@ -24,7 +24,7 @@
                 <p class="mb-2 border-bottom"><strong>Tanggal Masuk:</strong> <span class="float-end">{{ $data->created_at->format('d/m/Y') }}</span></p>
                 <p class="mb-2 border-bottom"><strong>Tanggal Perbaikan:</strong> <span class="float-end">{{ $data->updated_at->format('d/m/Y') }}</span></p>
                 {{-- <p class="mb-2 border-bottom"><strong>Status:</strong> <span class="float-end">{{ $data->status }}</span></p> --}}
-                {{-- <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p> --}}
+                <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p>
             </div>
         </div>
 

@@ -79,8 +79,6 @@ class InventarisController extends Controller
         $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
         $this->supabase->uploadFile($file, $filePath);
 
-        $serialNumber = 'SN-' . str::upper(Str::random(10));
-
         $data = new Inventaris();
         $data->name = $request->name;
         $data->image = $filePath; // Hanya menyimpan nama file
@@ -88,7 +86,7 @@ class InventarisController extends Controller
         $data->condition = $request->condition;
         // $data->status = $request->status;
         $data->location = $request->location ?? 'Tidak Diketahui';
-        $data->serial_number = $serialNumber;
+        $data->serial_number = $request->serial_number;
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
         $data->quantity = $request->quantity;
@@ -108,16 +106,12 @@ class InventarisController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'required',
             'serial_number' => 'nullable|unique:inventaris,serial_number,'.$id,
-            'type' => 'required',
-            'quantity' => 'required|integer|min:1',
             'condition' => 'required',
             'location' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'name.required' => 'Nama barang harus diisi',
             'serial_number.unique' => 'Serial number sudah digunakan',
-            'type.required' => 'Tipe barang harus diisi',
-            'quantity.required' => 'Jumlah barang harus diisi',
             'quantity.integer' => 'Jumlah barang harus berupa angka',
             'quantity.min' => 'Jumlah barang minimal 1',
             'condition.required' => 'Kondisi barang harus diisi',
@@ -145,15 +139,13 @@ class InventarisController extends Controller
             $this->supabase->uploadFile($file, $filePath);
             $data->image = $filePath;
         }            
-        
-        $serialNumber = 'SN-' . str::upper(Str::random(10));
 
         $data->specification = $request->specification;
         $data->condition = $request->condition;
         // $data->status = $request->status;
         $data->location = $request->location;
         $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
-        $data->serial_number = $serialNumber ;
+        $data->serial_number = $request->serial_number;
         $data->broken_description = $request->broken_description;
         $data->type = $request->type;
         $data->quantity = $request->quantity;
