@@ -11,14 +11,13 @@ class Inventaris extends Model
     
     protected $fillable = [
         'name',
-        'image',
-        'specification',
+        'serial_number',
+        'type',
+        'quantity',
         'condition',
-        'broken_description',
-        'status',
-        'qr_link',
         'location',
-        'quantity'
+        'image',
+        'qr_link'
     ];
 
     public function borrow(){

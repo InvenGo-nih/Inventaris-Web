@@ -41,7 +41,10 @@
                         <!-- Detail Laptop -->
                         <div>
                             <h6 class="mb-0 fw-bold">{{ $item->name }}</h6>
-                            <p class="mb-1 text-muted small">{{ $item->type }} | {{ $item->quantity }}</p>
+                           
+                            <p class="mb-1 text-muted small">
+                                   {{ $item->type }} | {{ $item->quantity }} unit |  {{ $item->serial_number ?? 'Belum ada' }}
+                               </p>
                             <span class="badge rounded-pill {{ $item->condition == 'Normal' ? 'bg-label-success' : 'bg-label-danger' }}">
                                 {{ $item->condition }}
                             </span>
