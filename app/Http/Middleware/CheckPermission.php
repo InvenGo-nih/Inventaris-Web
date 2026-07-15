@@ -23,7 +23,7 @@ class CheckPermission
         $roleId = DB::table('users')->where('id', $user->id)->value('role_id');
 
         if (!$roleId) {
-            return redirect()->back()->with('error', ['Anda tidak memiliki hak akses untuk halaman ini BAKAR']);
+            return redirect()->back()->with('error', ['Anda tidak memiliki hak akses untuk halaman tersebut']);
         }
         // Cek apakah role memiliki permission yang dibutuhkan
         $hasPermission = DB::table('role_has_permissions')
@@ -33,7 +33,7 @@ class CheckPermission
             ->exists();
 
         if (!$hasPermission) {
-            return redirect()->back()->with('error', ['Anda tidak memiliki hak akses untuk halaman ini KONTOL']);
+            return redirect()->back()->with('error', ['Anda tidak memiliki hak akses untuk halaman tersebut']);
         }
 
         return $next($request);

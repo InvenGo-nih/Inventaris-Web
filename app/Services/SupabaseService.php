@@ -32,7 +32,7 @@ class SupabaseService
     {
         try {
             $filePath = trim($path, '/'); // Hapus slash di awal dan akhir
-            
+
             $response = $this->client->request('POST', "{$this->url}/storage/v1/object/{$this->bucket}/upload/{$filePath}", [
                 'headers' => [
                     'Authorization' => "Bearer {$this->key}",
@@ -69,8 +69,8 @@ class SupabaseService
     {
         try {
             $filePath = trim($filePath, '/');
-            
-            $response = $this->client->request('DELETE', "{$this->url}/storage/v1/object/{$this->bucket}/{$filePath}", [
+
+            $response = $this->client->request('DELETE', "{$this->url}/storage/v1/object/{$this->bucket}/upload/{$filePath}", [
                 'headers' => [
                     'Authorization' => "Bearer {$this->key}",
                     'apiKey' => $this->key,

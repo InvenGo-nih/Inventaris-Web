@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Daftar Barang
+    Grup Barang
 @endsection
 
 @section('content')
@@ -15,7 +15,7 @@
         <!-- Tombol Create Inventaris -->
         <div class="d-flex mb-2 mb-md-0 ">
             @hasPermission('CREATE_INVENTARIS')
-                <a href="{{ route('inventaris.formGroup') }}" class="btn btn-primary" style="margin-right: 10px"><i class="fa-solid fa-plus"></i> Tambah
+                <a href="{{ route('inventaris.formGroup') }}" class="btn btn-primary" style="margin-right: 10px"><i class="fa-solid fa-plus"></i> Tambah Grup
                     Barang</a>
             @endhasPermission
         </div>
@@ -50,7 +50,7 @@
                     <!-- Gambar dan Detail -->
                     <a href="{{ route('inventaris.inventaris', $item->id) }}" class="text-decoration-none">
                         <div class="text-center mt-3 mb-3">
-                            <img src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $item->image }}"
+                            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
                                 alt="{{ $item->name }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
                         </div>
                         @php

@@ -33,7 +33,7 @@ class BorrowDataTable extends DataTable
                 return \Carbon\Carbon::parse($item->date_borrow)->format('d/m/Y');
             })
             ->addColumn('date_back', function ($item) {
-                return \Carbon\Carbon::parse($item->date_back)->format('d/m/Y');
+                return $item->date_back ? \Carbon\Carbon::parse($item->date_back)->format('d/m/Y') : '-';
             })
             ->filterColumn('date_borrow', function ($query, $keyword) {
                 try {
@@ -44,6 +44,10 @@ class BorrowDataTable extends DataTable
                 }
             })
             ->filterColumn('date_back', function ($query, $keyword) {
+                if ($keyword === '-') {
+                    $query->whereNull('borrows.date_back');
+                    return;
+                }
                 try {
                     $date = \Carbon\Carbon::createFromFormat('d/m/Y', $keyword)->format('Y-m-d');
                     $query->whereDate('borrows.date_back', $date);
@@ -56,7 +60,7 @@ class BorrowDataTable extends DataTable
             })
             ->addColumn('img_borrow', function ($item) {
                 if ($item->img_borrow) {
-                    $url = "https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{$item->img_borrow}";
+                    $url = "https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{$item->img_borrow}";
                     return '<img src="' . $url . '" alt="img_borrow" height="100">';
                 }
                 return '-';
@@ -87,7 +91,7 @@ class BorrowDataTable extends DataTable
                             <i class="fas fa-edit"></i>
                         </a>';
                 }
-            
+
                 if (hasPermission('DELETE_BORROW')) {
                     $buttons .= '
                         <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus pengguna ini?\');">
@@ -98,11 +102,11 @@ class BorrowDataTable extends DataTable
                             </button>
                         </form>';
                 }
-            
+
                 if ($buttons == '') {
                     return null; // tidak menampilkan kolom action
                 }
-            
+
                 return '<div class="d-flex justify-content-center gap-2">' . $buttons . '</div>';
             })
             ->rawColumns(['img_borrow', 'status', 'action']) // 👈 penting: agar <img>, status dan <form> tidak di-escape
@@ -162,7 +166,7 @@ class BorrowDataTable extends DataTable
                 ->title('Nama Barang') // opsional: ubah header jadi 'Role'
                 ->searchable(true)   // 👈 WAJIB untuk bisa disearch
                 ->orderable(true)   // 👈 WAJIB untuk bisa diurutkan
-                ->addClass('white-space text-nowrap'),   
+                ->addClass('white-space text-nowrap'),
                 Column::make('borrow_by')->title('Peminjam')->addClass('white-space text-nowrap'),
                 Column::make('date_borrow')->title('Tanggal Pinjam')->addClass('white-space text-nowrap text-end'),
                 Column::make('date_back')->title('Tanggal Pengembalian')->addClass('white-space text-nowrap text-end'),
@@ -175,7 +179,7 @@ class BorrowDataTable extends DataTable
             ->title('Nama Barang') // opsional: ubah header jadi 'Role'
             ->searchable(true)   // 👈 WAJIB untuk bisa disearch
             ->orderable(true)   // 👈 WAJIB untuk bisa diurutkan
-            ->addClass('white-space text-nowrap'),   
+            ->addClass('white-space text-nowrap'),
             Column::make('borrow_by')->title('Peminjam')->addClass('white-space text-nowrap'),
             Column::make('date_borrow')->title('Tanggal Pinjam')->addClass('white-space text-nowrap text-end'),
             Column::make('date_back')->title('Tanggal Pengembalian')->addClass('white-space text-nowrap text-end'),

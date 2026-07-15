@@ -10,7 +10,7 @@
 <body>
     <div class="container my-5">
         <div class="card">
-            <img src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $data->image }}" class="mx-auto" width="400" alt="{{ $data->name }}">
+            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $data->image }}" class="mx-auto" width="400" alt="{{ $data->name }}">
             <div class="card-body">
                 <p class="mb-2 border-bottom"><strong>Nama:</strong> <span class="float-end">{{ $data->name }}</span></p>
                 {{-- <p class="mb-2 border-bottom"><strong>Tipe:</strong> <span class="float-end">{{ $data->type }}</span></p> --}}
@@ -21,8 +21,13 @@
                 {{-- <p class="mb-2 border-bottom"><strong>Status:</strong> <span class="float-end">{{ $data->status }}</span></p> --}}
                 {{-- <p class="mb-2 border-bottom"><strong>No.Serial:</strong> <span class="float-end">{{ $data->serial_number }}</span></p> --}}
             </div>
+
+        </div>
+        <div class="d-flex justify-content-center">
+            <button onclick="window.history.back()" class="btn btn-secondary white-space text-nowrap mt-1"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

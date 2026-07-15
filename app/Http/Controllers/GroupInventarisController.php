@@ -73,7 +73,7 @@ class GroupInventarisController extends Controller
         // Validasi data yang diterima
         $validate = Validator::make($request->all(), [
             'name' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'type' => 'required'
         ], [
             'name.required' => 'Nama barang harus diisi.',
@@ -106,7 +106,7 @@ class GroupInventarisController extends Controller
         $data->type = $request->type;
         $data->save();
 
-        return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil diperbarui');
+        return redirect()->route('inventaris.index')->with('success', 'Barang berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -122,10 +122,10 @@ class GroupInventarisController extends Controller
             // Hapus data inventaris
             $data->delete();
 
-            return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil dihapus');
+            return redirect()->route('inventaris.index')->with('success', 'Barang berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() === '23000') {
-                return redirect()->route('inventaris.index')->with('error', value: 'Barang masih dalam peminjaman');
+                return redirect()->route('inventaris.index')->with('error', 'Grup barang tidak dapat dihapus karena masih dipinjam atau masih memiliki barang. ');
             }
             return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus Barang');
         }

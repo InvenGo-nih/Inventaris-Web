@@ -40,12 +40,29 @@ class BorrowController extends Controller
         $validate = Validator::make($request->all(), [
             'borrow_by'     => 'required',
             'inventaris_id' => 'required|exists:inventaris,id',
-            'quantity'      => 'nullable|integer|min:1',
+            // 'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ] ,[
+            'borrow_by.required' => 'Nama peminjam harus diisi',
+            'inventaris_id.required' => 'Barang harus diisi',
+            'inventaris_id.exists' => 'Barang tersebut tidak ada',
+            'date_borrow.required' => 'Tanggal peminjam harus diisi',
+            'date_borrow.date' => 'Tanggal peminjam harus berupa tanggal',
+            'date_back.required' => 'Tanggal kembali harus diisi',
+            'date_back.date' => 'Tanggal kembali harus berupa tanggal',
+            'date_back.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
+            'max_return_date.required' => 'Tanggal kembali harus diisi',
+            'max_return_date.date' => 'Tanggal kembali harus berupa tanggal',
+            'max_return_date.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
+            'status.required' => 'Status peminjaman harus diisi',
+            'img_borrow.required' => 'Gambar peminjam harus diisi',
+            'img_borrow.image' => 'Gambar peminjam harus berupa gambar',
+            'img_borrow.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+            'img_borrow.max' => 'Ukuran gambar maksimal 2MB',
         ]);
 
         if ($validate->fails()) {
@@ -53,21 +70,21 @@ class BorrowController extends Controller
         }
 
         // Cek ketersediaan jumlah barang
-        $inventaris = Inventaris::findOrFail($request->inventaris_id);
-        $requestedQuantity = $request->quantity ?? 1;
-        
-        if ($requestedQuantity > $inventaris->quantity) {
-            return redirect()->back()
-                ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
-                ->withInput();
-        }
+        // $inventaris = Inventaris::findOrFail($request->inventaris_id);
+        // $requestedQuantity = $request->quantity ?? 1;
+
+        // if ($requestedQuantity > $inventaris->quantity) {
+        //     return redirect()->back()
+        //         ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
+        //         ->withInput();
+        // }
 
         DB::beginTransaction();
         try {
             $data = new Borrow();
             $data->borrow_by = $request->borrow_by;
             $data->inventaris_id = $request->inventaris_id;
-            $data->quantity = $requestedQuantity;
+            // $data->quantity = $requestedQuantity;
             $data->date_borrow = $request->date_borrow;
             $data->date_back = $request->date_back;
             $data->max_return_date = $request->max_return_date;
@@ -84,8 +101,8 @@ class BorrowController extends Controller
             $data->save();
 
             // Update jumlah barang yang tersedia
-            $inventaris->quantity -= $requestedQuantity;
-            $inventaris->save();
+            // $inventaris->quantity -= $requestedQuantity;
+            // $inventaris->save();
 
             DB::commit();
             return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
@@ -103,27 +120,43 @@ class BorrowController extends Controller
         $validate = Validator::make($request->all(), [
             'borrow_by'     => 'required',
             'inventaris_id' => 'required|exists:inventaris,id',
-            'quantity'      => 'nullable|integer|min:1',
+            // 'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
             'date_back'     => 'nullable|date|after_or_equal:date_borrow',
             'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+        ], [
+            'borrow_by.required' => 'Nama peminjam harus diisi',
+            'inventaris_id.required' => 'Barang harus diisi',
+            'inventaris_id.exists' => 'Barang tersebut tidak ada',
+            'date_borrow.required' => 'Tanggal peminjam harus diisi',
+            'date_borrow.date' => 'Tanggal peminjam harus berupa tanggal',
+            'date_back.required' => 'Tanggal kembali harus diisi',
+            'date_back.date' => 'Tanggal kembali harus berupa tanggal',
+            'date_back.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
+            'max_return_date.required' => 'Tanggal kembali harus diisi',
+            'max_return_date.date' => 'Tanggal kembali harus berupa tanggal',
+            'max_return_date.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
+            'status.required' => 'Status peminjaman harus diisi',
+            'img_borrow.image' => 'Gambar peminjam harus berupa gambar',
+            'img_borrow.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+            'img_borrow.max' => 'Ukuran gambar maksimal 2MB',
         ]);
 
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         }
 
-        $requestedQuantity = $request->quantity ?? 1;
-        $quantityDifference = $requestedQuantity - $data->quantity;
+        // $requestedQuantity = $request->quantity ?? 1;
+        // $quantityDifference = $requestedQuantity - $data->quantity;
 
         // Cek ketersediaan jumlah barang jika ada perubahan jumlah
-        if ($quantityDifference > 0 && $quantityDifference > $inventaris->quantity) {
-            return redirect()->back()
-                ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
-                ->withInput();
-        }
+        // if ($quantityDifference > 0 && $quantityDifference > $inventaris->quantity) {
+        //     return redirect()->back()
+        //         ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
+        //         ->withInput();
+        // }
 
         DB::beginTransaction();
         try {
@@ -143,31 +176,31 @@ class BorrowController extends Controller
             }
 
             // Logika untuk mengembalikan stok ketika status diubah menjadi Dikembalikan
-            if ($data->status == 'Dipinjam' && $request->status == 'Dikembalikan') {
-                // Kembalikan stok ke inventaris
-                $inventaris->quantity += $data->quantity;
-                $inventaris->save();
-            } 
-            // Logika untuk mengurangi stok ketika status diubah dari Dikembalikan menjadi Dipinjam
-            else if ($data->status == 'Dikembalikan' && $request->status == 'Dipinjam') {
-                // Kurangi stok dari inventaris
-                if ($inventaris->quantity < $requestedQuantity) {
-                    throw new \Exception('Stok tidak mencukupi untuk dipinjam kembali');
-                }
-                $inventaris->quantity -= $requestedQuantity;
-                $inventaris->save();
-            }
-            // Logika untuk perubahan jumlah pinjaman
-            else if ($request->status == 'Dipinjam') {
-                // Jika status masih Dipinjam, hitung selisih jumlah
-                $inventaris->quantity -= $quantityDifference;
-                $inventaris->save();
-            }
+            // if ($data->status == 'Dipinjam' && $request->status == 'Dikembalikan') {
+            //     // Kembalikan stok ke inventaris
+            //     $inventaris->quantity += $data->quantity;
+            //     $inventaris->save();
+            // }
+            // // Logika untuk mengurangi stok ketika status diubah dari Dikembalikan menjadi Dipinjam
+            // else if ($data->status == 'Dikembalikan' && $request->status == 'Dipinjam') {
+            //     // Kurangi stok dari inventaris
+            //     if ($inventaris->quantity < $requestedQuantity) {
+            //         throw new \Exception('Stok tidak mencukupi untuk dipinjam kembali');
+            //     }
+            //     $inventaris->quantity -= $requestedQuantity;
+            //     $inventaris->save();
+            // }
+            // // Logika untuk perubahan jumlah pinjaman
+            // else if ($request->status == 'Dipinjam') {
+            //     // Jika status masih Dipinjam, hitung selisih jumlah
+            //     $inventaris->quantity -= $quantityDifference;
+            //     $inventaris->save();
+            // }
 
             $data->update([
                 'borrow_by'     => $request->borrow_by,
                 'inventaris_id' => $request->inventaris_id,
-                'quantity'      => $requestedQuantity,
+                // 'quantity'      => $requestedQuantity,
                 'date_borrow'   => $request->date_borrow,
                 'date_back'     => $request->date_back,
                 'max_return_date' => $request->max_return_date,
@@ -200,7 +233,7 @@ class BorrowController extends Controller
             $inventaris->save();
 
             $data->delete();
-            
+
             DB::commit();
             return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dihapus');
         } catch (\Exception $e) {

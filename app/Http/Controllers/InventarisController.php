@@ -89,6 +89,31 @@ class InventarisController extends Controller
         //     return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
         // }
 
+        $validate = Validator::make($request->all(), [
+            'name' => 'required',
+            'serial_number' => 'nullable|unique:inventaris,serial_number',
+            'condition' => 'required',
+            'specification' => 'required',
+            'location' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'name.required' => 'Nama barang harus diisi',
+            'serial_number.unique' => 'Serial number sudah digunakan',
+            'quantity.integer' => 'Jumlah barang harus berupa angka',
+            'quantity.min' => 'Jumlah barang minimal 1',
+            'condition.required' => 'Kondisi barang harus diisi',
+            'specification.required' => 'Spesifikasi barang harus diisi',
+            'location.required' => 'Lokasi barang harus diisi',
+            'image.required' => 'Gambar barang harus diisi',
+            'image.image' => 'File harus berupa gambar',
+            'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+            'image.max' => 'Ukuran gambar maksimal 2MB',
+        ]);
+
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        }
+
         $file = $request->file('image');
         $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
         $this->supabase->uploadFile($file, $filePath);
@@ -121,8 +146,7 @@ class InventarisController extends Controller
             'name' => 'required',
             'serial_number' => 'nullable|unique:inventaris,serial_number,'.$id,
             'condition' => 'required',
-            'location' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'specification' => 'required',
             'location' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
@@ -131,6 +155,7 @@ class InventarisController extends Controller
             'quantity.integer' => 'Jumlah barang harus berupa angka',
             'quantity.min' => 'Jumlah barang minimal 1',
             'condition.required' => 'Kondisi barang harus diisi',
+            'specification.required' => 'Spesifikasi barang harus diisi',
             'location.required' => 'Lokasi barang harus diisi',
             'image.image' => 'File harus berupa gambar',
             'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',

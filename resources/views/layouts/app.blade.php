@@ -99,9 +99,18 @@
                             @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @elseif (session('error'))
-                                @foreach (session('error') as $error)
+                                @if (is_array(session('error')))
+                                    @foreach (session('error') as $error)
+                                        <div class="alert alert-danger">{{ $error }}</div>
+                                    @endforeach
+                                @else
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                {{-- @foreach (session('error') as $error)
                                     <div class="alert alert-danger">{{ $error }}</div>
-                                @endforeach
+                                @endforeach --}}
                                 {{-- <div class="alert alert-danger">{{ session('error') }}</div> --}}
                             @endif
                             @yield('content')

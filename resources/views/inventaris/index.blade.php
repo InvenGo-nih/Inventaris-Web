@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('title')
-    Barang {{ $title }}
+    {{-- Daftar {{ $title }} --}}
+    Daftar Barang
 @endsection
 
 @section('content')
@@ -90,7 +91,7 @@
                     <div class="d-flex align-items-center">
                         <!-- Gambar -->
                         <div class="me-3">
-                            <img src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $item->image }}"
+                            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
                                 alt="{{ $item->name }}" class="rounded" width="60" height="60">
                         </div>
                         <!-- Detail Laptop -->

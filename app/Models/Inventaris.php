@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Inventaris extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'name',
+        'specification',
         'serial_number',
         'type',
         'quantity',

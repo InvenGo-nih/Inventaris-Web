@@ -42,7 +42,7 @@
                     <select name="inventaris_id" class="form-control" id="inventaris_id" onchange="updateAvailableQuantity()">
                         <option value="" selected disabled>Pilih Barang</option>
                         @foreach ($inventaris as $item)
-                            <option value="{{ $item->id }}" 
+                            <option value="{{ $item->id }}"
                                 data-quantity="{{ $item->quantity }}"
                                 {{ isset($data) && $data->inventaris_id == $item->id ? 'selected' : '' }}>
                                 {{ $item->name }} | {{ $item->type }} | {{ $item->location }}
@@ -50,14 +50,14 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="quantity" class="form-label">Jumlah Pinjam</label>
-                    <input type="number" name="quantity" class="form-control" id="quantity" 
-                        value="{{ $data->quantity ?? 1 }}" min="1" 
+                    <input type="number" name="quantity" class="form-control" id="quantity"
+                        value="{{ $data->quantity ?? 1 }}" min="1"
                         placeholder="Masukkan Jumlah Pinjam"
                         {{ isset($data) && $data->status == 'Dikembalikan' ? 'readonly' : '' }}>
                     <small class="text-muted">Stok tersedia: <span id="available_quantity">0</span></small>
-                </div>
+                </div> --}}
                 <div class="mb-3">
                     <label for="date_borrow" class="form-label">TANGGAL PINJAM</label>
                     <input type="date" class="form-control" id="date_borrow" name="date_borrow" value="{{ old('date_borrow', isset($data) ? \Carbon\Carbon::parse($data->date_borrow)->format('Y-m-d') : '') }}"
@@ -82,7 +82,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
-                    <input type="file" name="img_borrow" class="form-control" {{ request()->route('id') ? '' : 'required' }}>
+                    <input type="file" name="img_borrow" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label for="max_return_date" class="form-label">BATAS WAKTU PENGEMBALIAN</label>
@@ -112,7 +112,7 @@
             const status = document.getElementById('status').value;
             const dateBackContainer = document.getElementById('dateBackContainer');
             const quantityInput = document.getElementById('quantity');
-            
+
             if (status === 'Dikembalikan') {
                 dateBackContainer.style.display = 'block';
                 // Jika dalam mode edit, set quantity ke nilai awal
