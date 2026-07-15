@@ -95,7 +95,7 @@
                 <div class="content-wrapper">
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
-                        <div class="container-fluid" data-aos="fade-right">
+                        <div data-aos="fade-right">
                             @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                             @elseif (session('error'))

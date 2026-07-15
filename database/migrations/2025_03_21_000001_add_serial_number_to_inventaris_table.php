@@ -9,14 +9,15 @@ return new class extends Migration
     public function up()
     {
         Schema::table('inventaris', function (Blueprint $table) {
+            $table->dropColumn('serial_number');
             $table->string('serial_number')->nullable()->after('name');
         });
     }
 
     public function down()
     {
-        Schema::table('inventaris', function (Blueprint $table) {
-            $table->dropColumn('serial_number');
-        });
+        // Schema::table('inventaris', function (Blueprint $table) {
+        //     $table->dropColumn('serial_number');
+        // });
     }
-}; 
+};

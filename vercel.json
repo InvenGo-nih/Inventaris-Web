@@ -23,7 +23,7 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "true",
-        "APP_URL": "https://invengo.vercel.app",
+        "APP_URL": "https://siar.vercel.app",
         "APP_KEY": "base64:euGvf7FTZUVjgZeDXxZt2tFTkP7KB54jCDYsVokvC8I=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
@@ -34,7 +34,6 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
-        "DB_CONNECTION": "pgsql",
-        "APP_PRODUCTION":"PRODUCTION"
+        "DB_CONNECTION": "pgsql"
     }
 }

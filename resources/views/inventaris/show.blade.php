@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="text-center">
-        
+
 
         <div class="d-flex justify-content-center">
             <img class="img-fluid mb-3 rounded" src="https://vtgompvryxqxirylucui.supabase.co/storage/v1/object/public/invengo/upload/{{ $data->image }}" alt="{{ $data->name }}" class="rounded mb-3" width="350" height="230">
@@ -31,10 +31,10 @@
         <div class="d-flex justify-content-center gap-2 my-3">
             <button onclick="window.history.back()" class="btn btn-secondary white-space text-nowrap"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
             @hasPermission('VIEW_CEK')
-            <a href="{{ route('cek.index') }}" class="btn btn-info white-space text-nowrap"><i class="fa-solid fa-clipboard-list"></i> Cek</a>
+                <a href="{{ route('cek.cek', $data->id) }}" class="btn btn-info white-space text-nowrap"><i class="fa-solid fa-clipboard-list"></i> Cek</a>
             @endhasPermission
             @hasPermission('EDIT_INVENTARIS')
-            <a href="{{ route('inventaris.form', ['group_inventaris_id' => $data->group_inventaris_id,'id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                <a href="{{ route('inventaris.form', ['group_inventaris_id' => $data->group_inventaris_id,'id' => $data->id]) }}" class="btn btn-warning white-space text-nowrap"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
             @endhasPermission
             @hasPermission('DELETE_INVENTARIS')
             <form action="{{ route('inventaris.delete', $data->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">

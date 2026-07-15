@@ -28,15 +28,17 @@
 
             <!-- Notification -->
             <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1 ">
-                <a class="nav-link dropdown-toggle hide-arrow position-relative" style="width: 30px" href="{{ route('notifications.overdue') }}">
+                <a class="nav-link dropdown-toggle hide-arrow position-relative"
+                    href="{{ route('notifications.overdue') }}">
                     <i class="bx bx-bell bx-sm"></i>
                     @php
                         $overdueCount = \App\Models\Borrow::where('status', 'Dipinjam')
                             ->where('max_return_date', '<', now()->format('Y-m-d'))
                             ->count();
                     @endphp
-                    @if($overdueCount > 0)
-                        <span class="badge bg-danger rounded-pill badge-notifications position-absolute top-0 end-0">{{ $overdueCount }}</span>
+                    @if ($overdueCount > 0)
+                        <span
+                            class="badge bg-danger rounded-pill badge-notifications position-absolute top-0 end-0">{{ $overdueCount }}</span>
                     @endif
                 </a>
             </li>

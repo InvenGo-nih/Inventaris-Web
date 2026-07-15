@@ -1,23 +1,27 @@
 {{-- Sneat --}}
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-  
+
   <div class="app-brand ">
-    <img class="img-fluid app-brand-link" src="{{asset('images/logo-invengo.png')}}" alt="" width="150">
+    <img class="img-fluid app-brand-link" src="{{asset('images/logo-invengo.png')}}" alt="Logo" width="150">
 
     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-      <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
+        <div class="d-flex justify-content-center align-items-center" style="width: 2rem; height: 2rem;">
+            <i class="bx bx-chevron-left d-block d-xl-none align-middle bx-beat" style="wid"></i>
+        </div>
+      {{-- <i class="fa-solid fa-angle-left"></i> --}}
+      {{-- <i class="fa-solid fa-angles-left fa-beat-fade fa-2xl"></i> --}}
     </a>
   </div>
 
-  
+
   <div class="menu-divider mt-0  "></div>
 
   <div class="menu-inner-shadow"></div>
 
-  
+
 
   <ul class="menu-inner py-1">
-    
+
     <!-- Dashboards -->
     @hasPermission('VIEW_DASHBOARD')
     <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">

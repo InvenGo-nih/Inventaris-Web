@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Periksa Inventaris
+    Periksa {{ $data->name }}
 @endsection
 
 @section('content')
@@ -68,7 +68,7 @@
                             'Teknologi',
                             'Otomotif',
                             'Bahan',
-                        ]    
+                        ]
                     @endphp
                     <label for="specification" class="form-label">Type</label>
                     <select name="type" class="form-control" id="type">

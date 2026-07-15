@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    NOTIFIKASI PEMINJAMAN TERLAMBAT
+    NOTIFIKASI
 @endsection
 
 @section('content')
@@ -63,4 +63,4 @@
             @endif
         </div>
     </div>
-@endsection 
+@endsection

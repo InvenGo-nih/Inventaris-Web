@@ -25,8 +25,10 @@ class InventarisController extends Controller
     {
         $title = GroupInventaris::findorFail($id)->name;
         $jumlah = Inventaris::where('group_inventaris_id', $id)->count();
+        $jumlahRusak = Inventaris::where('group_inventaris_id', $id)->where('condition', 'Rusak')->count();
+        $jumlahNormal = Inventaris::where('group_inventaris_id', $id)->where('condition', 'Normal')->count();
         $query = Inventaris::where('group_inventaris_id', $id);
-        
+
         if (request()->has('search')) {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
@@ -37,7 +39,7 @@ class InventarisController extends Controller
         }
 
         $data = $query->latest()->paginate(10);
-        return view('inventaris.index', compact('data', 'jumlah', 'title'));
+        return view('inventaris.index', compact('data', 'jumlah', 'title', 'jumlahRusak', 'jumlahNormal'));
     }
 
     public function form(Request $request, $group_inventaris_id ,$id = null)
@@ -49,43 +51,43 @@ class InventarisController extends Controller
 
     public function store(Request $request)
     {
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'serial_number' => 'nullable|unique:inventaris,serial_number',
-            'serial_number' => 'nullable|unique:inventaris,serial_number',
-            'type' => 'required',
-            'quantity' => 'required|integer|min:1',
-            'condition' => 'required',
-            'location' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'location' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ], [
-            'name.required' => 'Nama barang harus diisi',
-            'serial_number.unique' => 'Serial number sudah digunakan',
-            'quantity.integer' => 'Jumlah barang harus berupa angka',
-            'quantity.min' => 'Jumlah barang minimal 1',
-            'condition.required' => 'Kondisi barang harus diisi',
-            'location.required' => 'Lokasi barang harus diisi',
-            'image.image' => 'File harus berupa gambar',
-            'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
-            'image.max' => 'Ukuran gambar maksimal 2MB',
-            'name.required' => 'Nama barang harus diisi',
-            'serial_number.unique' => 'Serial number sudah digunakan',
-            'type.required' => 'Tipe barang harus diisi',
-            'quantity.required' => 'Jumlah barang harus diisi',
-            'quantity.integer' => 'Jumlah barang harus berupa angka',
-            'quantity.min' => 'Jumlah barang minimal 1',
-            'condition.required' => 'Kondisi barang harus diisi',
-            'location.required' => 'Lokasi barang harus diisi',
-            'image.image' => 'File harus berupa gambar',
-            'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
-            'image.max' => 'Ukuran gambar maksimal 2MB',
-        ]);
+        // $validate = Validator::make($request->all(), [
+        //     'name' => 'required',
+        //     'serial_number' => 'nullable|unique:inventaris,serial_number',
+        //     'serial_number' => 'nullable|unique:inventaris,serial_number',
+        //     'type' => 'required',
+        //     'quantity' => 'required|integer|min:1',
+        //     'condition' => 'required',
+        //     'location' => 'required',
+        //     'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        //     'location' => 'required',
+        //     'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        // ], [
+        //     'name.required' => 'Nama barang harus diisi',
+        //     'serial_number.unique' => 'Serial number sudah digunakan',
+        //     'quantity.integer' => 'Jumlah barang harus berupa angka',
+        //     'quantity.min' => 'Jumlah barang minimal 1',
+        //     'condition.required' => 'Kondisi barang harus diisi',
+        //     'location.required' => 'Lokasi barang harus diisi',
+        //     'image.image' => 'File harus berupa gambar',
+        //     'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+        //     'image.max' => 'Ukuran gambar maksimal 2MB',
+        //     'name.required' => 'Nama barang harus diisi',
+        //     'serial_number.unique' => 'Serial number sudah digunakan',
+        //     'type.required' => 'Tipe barang harus diisi',
+        //     'quantity.required' => 'Jumlah barang harus diisi',
+        //     'quantity.integer' => 'Jumlah barang harus berupa angka',
+        //     'quantity.min' => 'Jumlah barang minimal 1',
+        //     'condition.required' => 'Kondisi barang harus diisi',
+        //     'location.required' => 'Lokasi barang harus diisi',
+        //     'image.image' => 'File harus berupa gambar',
+        //     'image.mimes' => 'Format gambar harus jpeg, png, atau jpg',
+        //     'image.max' => 'Ukuran gambar maksimal 2MB',
+        // ]);
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
+        // if ($validate->fails()) {
+        //     return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        // }
 
         $file = $request->file('image');
         $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
@@ -104,7 +106,7 @@ class InventarisController extends Controller
         $data->quantity = $request->quantity;
         $data->group_inventaris_id = $request->group_inventaris_id;
         $data->save();
-        
+
         // Perbarui qr_link dengan ID yang baru saja disimpan
         $data->qr_link = route('test_qr', ['id' => $data->id]);
         $data->save(); // Simpan kembali dengan qr_link
@@ -152,7 +154,7 @@ class InventarisController extends Controller
             $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
             $this->supabase->uploadFile($file, $filePath);
             $data->image = $filePath;
-        }            
+        }
 
         $data->specification = $request->specification;
         $data->condition = $request->condition;
@@ -238,7 +240,7 @@ class InventarisController extends Controller
             // Jika sudah 7 item di halaman ini, buat halaman baru
             if (($index > 0) && ($index % 7 == 0)) {
                 $pdf->AddPage();
-        
+
                 // Tambahkan ulang header di halaman baru
                 $pdf->SetFillColor(200, 200, 200);
                 $pdf->Cell($columnWidths[0], $lineHeight, 'Nama Barang', 1, 0, 'C', true);
@@ -246,31 +248,31 @@ class InventarisController extends Controller
                 $pdf->Cell($columnWidths[2], $lineHeight, 'Spesifikasi', 1, 0, 'C', true);
                 $pdf->Cell($columnWidths[3], $lineHeight, 'QR Code', 1, 1, 'C', true);
             }
-        
+
             // Isi Data
             $pdf->SetFont('helvetica', '', 10);
             $pdf->Cell($columnWidths[0], $lineHeight, $item->name, 1, 0, 'L');
             $pdf->Cell($columnWidths[1], $lineHeight, $item->condition, 1, 0, 'C');
             $pdf->Cell($columnWidths[2], $lineHeight, $item->specification, 1, 0, 'L');
-        
+
             // Simpan posisi awal untuk QR Code
             $xPos = $pdf->GetX();
             $yPos = $pdf->GetY();
-        
+
             // Cell kosong untuk QR Code agar kotaknya tetap rapi
             $pdf->Cell($columnWidths[3], $lineHeight, '', 1, 1, 'C'); // Cell ini hanya untuk kotak
-        
+
             // Buat QR Code lebih kecil & di tengah cell
             $qrSize = 15; // Ukuran QR Code lebih kecil
             $qrX = $xPos + ($columnWidths[3] - $qrSize) / 2; // Posisi tengah
             $qrY = $yPos + ($lineHeight - $qrSize) / 2; // Posisi tengah
             $pdf->write2DBarcode($item->qr_link ?? 'No QR', 'QRCODE,M', $qrX, $qrY, $qrSize, $qrSize);
         }
-        
+
 
         // Output PDF
         return response($pdf->Output('inventaris.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
-    
+
 }

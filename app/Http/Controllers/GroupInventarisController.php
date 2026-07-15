@@ -65,7 +65,7 @@ class GroupInventarisController extends Controller
         $data->type = $request->type;
         $data->save();
 
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil disimpan');
+        return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil ditambah');
     }
 
     public function update(Request $request, $id)
@@ -101,12 +101,12 @@ class GroupInventarisController extends Controller
             $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
             $this->supabase->uploadFile($file, $filePath);
             $data->image = $filePath;
-        }            
-        
+        }
+
         $data->type = $request->type;
         $data->save();
 
-        return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil diperbarui');
+        return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -122,12 +122,12 @@ class GroupInventarisController extends Controller
             // Hapus data inventaris
             $data->delete();
 
-            return redirect()->route('inventaris.index')->with('success', 'Inventaris berhasil dihapus');
+            return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             if ($e->getCode() === '23000') {
-                return redirect()->route('inventaris.index')->with('error', 'Inventaris tidak dapat dihapus karena masih dalam peminjaman');
+                return redirect()->route('inventaris.index')->with('error', value: 'Barang masih dalam peminjaman');
             }
-            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus inventaris');
+            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus Barang');
         }
     }
 }

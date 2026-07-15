@@ -16,7 +16,7 @@
         <div class="d-flex mb-2 mb-md-0 ">
             @hasPermission('CREATE_INVENTARIS')
                 <a href="{{ route('inventaris.formGroup') }}" class="btn btn-primary" style="margin-right: 10px"><i class="fa-solid fa-plus"></i> Tambah
-                    Barang Baru</a>
+                    Barang</a>
             @endhasPermission
         </div>
         <!-- Form Search -->
@@ -27,11 +27,11 @@
     </div>
     <div class="d-flex justify-content-between flex-wrap gap-3">
         @forelse ($data as $item)
-            <div class="card shadow-sm mb-3" style="width: 200px; height: 300px;">
-                <div class="card-body d-flex flex-column">
+            <div class="card shadow-sm mb-3" >
+                <div class="card-body d-flex flex-column" style="padding: 1.5rem 2.5rem; !important">
                     <!-- Dropdown Menu -->
                     <div class="dropdown position-absolute top-0 end-0 m-2">
-                        <button class="btn btn-link text-dark p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 40px; height: 40px;">
+                        <button class="text-dark bg-transparent border-0 mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 25px; height: 25px;">
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <ul class="dropdown-menu">
@@ -61,8 +61,8 @@
                         <!-- Detail Laptop -->
                         <div class="mt-3">
                             <h6 class="mb-2 fw-bold text-center text-dark">{{ $item->name }}</h6>
-                            <p class="mb-1 text-muted small">{{ $item->type }}</p>
-                            <p class="mb-1 text-muted small"><span class="badge bg-label-success">{{ $normal }} Normal</span> <span class="badge bg-label-danger">{{ $broken }} Rusak</span></p>
+                            <p class="mb-2 text-muted small">Tipe : {{ $item->type }}</p>
+                            <div class="mb-2 text-muted small d-flex justify-content-between"><span class="badge bg-label-success">{{ $normal }} Normal</span> | <span class="badge bg-label-danger">{{ $broken }} Rusak</span></div>
                         </div>
                     </a>
                 </div>

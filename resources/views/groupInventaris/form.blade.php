@@ -40,7 +40,9 @@
                             'Teknologi',
                             'Otomotif',
                             'Bahan',
-                        ]    
+                            'Furnitur',
+                            'Alat Tulis',
+                        ]
                     @endphp
                     <label for="specification" class="form-label">Type</label>
                     <select name="type" class="form-control" id="type">
