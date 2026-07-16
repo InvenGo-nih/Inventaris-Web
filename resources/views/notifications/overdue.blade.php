@@ -7,14 +7,14 @@
 @section('content')
     <div class="card">
         <div class="card-header bg-danger text-white">
-            <h5 class="mb-0">
+            <h5 class="mb-0 text-white">
                 <i class="bx bx-error-circle me-2"></i>
                 Daftar Peminjaman Terlambat
             </h5>
         </div>
         <div class="card-body">
             @if($overdueBorrows->isEmpty())
-                <div class="alert alert-success">
+                <div class="alert alert-success mt-2">
                     <i class="bx bx-check-circle me-2"></i>
                     Tidak ada peminjaman yang terlambat saat ini.
                 </div>

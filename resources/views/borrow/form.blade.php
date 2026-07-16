@@ -49,8 +49,9 @@
                             </option>
                         @endforeach
                     </select>
-
-                    <input type="hidden" name="inventaris_id" value="{{ old('inventaris_id', $data->inventaris_id) }}">
+                    @if(request()->route('id'))
+                        <input type="hidden" name="inventaris_id" value="{{ old('inventaris_id', $data->inventaris_id) }}">
+                    @endif
                 </div>
                 {{-- <div class="mb-3">
                     <label for="quantity" class="form-label">Jumlah Pinjam</label>

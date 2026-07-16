@@ -45,6 +45,7 @@ class BorrowController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validate = Validator::make($request->all(), [
             'borrow_by'     => 'required',
             'inventaris_id' => 'required|exists:inventaris,id',

@@ -25,54 +25,55 @@
             <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
     </div>
-    <div class="d-flex justify-content-between flex-wrap gap-3">
+    <div class="row g-3">
         @forelse ($data as $item)
-            <div class="card shadow-sm mb-3" >
-                <div class="card-body d-flex flex-column" style="padding: 1.5rem 2.5rem; !important">
-                    <!-- Dropdown Menu -->
-                    <div class="dropdown position-absolute top-0 end-0 m-2">
-                        <button class="text-dark bg-transparent border-0 mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 25px; height: 25px;">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                            @hasPermission('EDIT_INVENTARIS')
-                            <li><a class="dropdown-item" href="{{ route('inventaris.formGroup', $item->id) }}"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                            @endhasPermission
-                            @hasPermission('DELETE_INVENTARIS')
-                            <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $item->id }}').submit();"><i class="fas fa-trash me-2"></i>Hapus</a></li>
-                            <form id="delete-form-{{ $item->id }}" action="{{ route('inventaris.deleteGroup', $item->id) }}" method="POST" class="d-none">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-                            @endhasPermission
-                        </ul>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+                <div class="card shadow-sm mb-3 h-100" >
+                    <div class="card-body d-flex flex-column position-relative p-4">
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown position-absolute top-0 end-0 m-2">
+                            <button class="text-dark bg-transparent border-0 mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 25px; height: 25px;">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @hasPermission('EDIT_INVENTARIS')
+                                <li><a class="dropdown-item" href="{{ route('inventaris.formGroup', $item->id) }}"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                @endhasPermission
+                                @hasPermission('DELETE_INVENTARIS')
+                                <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $item->id }}').submit();"><i class="fas fa-trash me-2"></i>Hapus</a></li>
+                                <form id="delete-form-{{ $item->id }}" action="{{ route('inventaris.deleteGroup', $item->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                @endhasPermission
+                            </ul>
+                        </div>
+                        <!-- Gambar dan Detail -->
+                        <a href="{{ route('inventaris.inventaris', $item->id) }}" class="text-decoration-none">
+                            <div class="text-center mt-3 mb-3">
+                                <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
+                                    alt="{{ $item->name }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
+                            </div>
+                            @php
+                                $jumlah = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->count();
+                                $broken = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Rusak')->count();
+                                $normal = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Normal')->count();
+                            @endphp
+                            <!-- Detail Laptop -->
+                            <div class="mt-3">
+                                <h6 class="mb-2 fw-bold text-center text-dark">{{ $item->name }}</h6>
+                                <p class="mb-2 text-muted small">Tipe : {{ $item->type }}</p>
+                                <div class="mb-2 text-muted small d-flex justify-content-between"><span class="badge bg-label-success">{{ $normal }} Normal</span> | <span class="badge bg-label-danger">{{ $broken }} Rusak</span></div>
+                            </div>
+                        </a>
                     </div>
-                    <!-- Gambar dan Detail -->
-                    <a href="{{ route('inventaris.inventaris', $item->id) }}" class="text-decoration-none">
-                        <div class="text-center mt-3 mb-3">
-                            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
-                                alt="{{ $item->name }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
-                        </div>
-                        @php
-                            $jumlah = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->count();
-                            $broken = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Rusak')->count();
-                            $normal = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Normal')->count();
-                        @endphp
-                        <!-- Detail Laptop -->
-                        <div class="mt-3">
-                            <h6 class="mb-2 fw-bold text-center text-dark">{{ $item->name }}</h6>
-                            <p class="mb-2 text-muted small">Tipe : {{ $item->type }}</p>
-                            <div class="mb-2 text-muted small d-flex justify-content-between"><span class="badge bg-label-success">{{ $normal }} Normal</span> | <span class="badge bg-label-danger">{{ $broken }} Rusak</span></div>
-                        </div>
-                    </a>
                 </div>
             </div>
         @empty
-            <p class="text-center">Tidak ada data</p>
+            <div class="col-12">
+                <p class="text-center">Tidak ada data</p>
+            </div>
         @endforelse
-    @for ($i = 0; $i < 10; $i++)
-        <div class="card invisible" style="width: 200px; height: 0;"></div>
-    @endfor
     </div>
     <div class="d-flex justify-content-center">
         {{ $data->links('pagination::bootstrap-5') }}
