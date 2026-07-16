@@ -31,7 +31,15 @@ class BorrowController extends Controller
     {
         $data = $id ? Borrow::findOrFail($id) : new Borrow();
         $users = User::all();
-        $inventaris = Inventaris::all(); // Ubah untuk menampilkan semua inventaris
+
+        if ($id) {
+            $inventaris = Inventaris::where('is_borrow', 0)
+                ->orWhere('id', $data->inventaris_id)
+                ->get();
+        } else {
+            $inventaris = Inventaris::where('is_borrow', 0)->get();
+        }
+
         return view('borrow.form', compact('data', 'inventaris', 'users'));
     }
 
@@ -42,8 +50,10 @@ class BorrowController extends Controller
             'inventaris_id' => 'required|exists:inventaris,id',
             // 'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
-            'date_back'     => 'nullable|date|after_or_equal:date_borrow',
-            'max_return_date' => 'required|date|after_or_equal:date_borrow',
+            'date_back'     => 'nullable|date',
+            'max_return_date' => 'required|date',
+            // 'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            // 'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ] ,[
@@ -98,11 +108,18 @@ class BorrowController extends Controller
             $this->supabase->uploadFile($file, $filePath);
             $data->img_borrow = $filePath;
 
+
             $data->save();
 
             // Update jumlah barang yang tersedia
             // $inventaris->quantity -= $requestedQuantity;
             // $inventaris->save();
+
+            //update is_borrow jadi 1 (udh kepinjam)
+            $inventaris = Inventaris::find($request->inventaris_id);
+            $inventaris->is_borrow = 1;
+            $inventaris->save();
+
 
             DB::commit();
             return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
@@ -122,8 +139,10 @@ class BorrowController extends Controller
             'inventaris_id' => 'required|exists:inventaris,id',
             // 'quantity'      => 'nullable|integer|min:1',
             'date_borrow'   => 'required|date',
-            'date_back'     => 'nullable|date|after_or_equal:date_borrow',
-            'max_return_date' => 'required|date|after_or_equal:date_borrow',
+            'date_back'     => 'nullable|date',
+            'max_return_date' => 'required|date',
+            // 'date_back'     => 'nullable|date|after_or_equal:date_borrow',
+            // 'max_return_date' => 'required|date|after_or_equal:date_borrow',
             'status'        => 'required',
             'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ], [
@@ -207,6 +226,11 @@ class BorrowController extends Controller
                 'status'        => $request->status,
                 'img_borrow'    => $data->img_borrow
             ]);
+
+            if ($request-> status == 'Dikembalikan'){
+                $inventaris->is_borrow = 0;
+                $inventaris->save();
+            }
 
             DB::commit();
             return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil diperbarui');

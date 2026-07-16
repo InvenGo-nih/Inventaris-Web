@@ -39,16 +39,18 @@
                 </div>
                 <div class="mb-3">
                     <label for="inventaris_id" class="form-label">Barang</label>
-                    <select name="inventaris_id" class="form-control" id="inventaris_id" onchange="updateAvailableQuantity()">
+                    <select name="inventaris_id" class="form-control" id="inventaris_id" onchange="updateAvailableQuantity()" {{request()->route('id') ? 'disabled' : ''}}>
                         <option value="" selected disabled>Pilih Barang</option>
                         @foreach ($inventaris as $item)
                             <option value="{{ $item->id }}"
                                 data-quantity="{{ $item->quantity }}"
                                 {{ isset($data) && $data->inventaris_id == $item->id ? 'selected' : '' }}>
-                                {{ $item->name }} | {{ $item->type }} | {{ $item->location }}
+                                {{ $item->name }} | {{ $item->location }}
                             </option>
                         @endforeach
                     </select>
+
+                    <input type="hidden" name="inventaris_id" value="{{ old('inventaris_id', $data->inventaris_id) }}">
                 </div>
                 {{-- <div class="mb-3">
                     <label for="quantity" class="form-label">Jumlah Pinjam</label>
@@ -71,9 +73,14 @@
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
                     <select name="status" class="form-control" id="status" onchange="toggleDateBack()">
-                        <option value="" selected disabled>Pilih Status</option>
-                        <option value="Dipinjam" {{ isset($data) && $data->status == 'Dipinjam' ? 'selected' : '' }}>Dipinjam</option>
-                        <option value="Dikembalikan" {{ isset($data) && $data->status == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                        <option value="Dipinjam"
+                            {{ old('status', $data->status ?? 'Dipinjam') == 'Dipinjam' ? 'selected' : '' }}>
+                            Dipinjam
+                        </option>
+                        <option value="Dikembalikan"
+                            {{ old('status', $data->status ?? 'Dipinjam') == 'Dikembalikan' ? 'selected' : '' }}>
+                            Dikembalikan
+                        </option>
                     </select>
                 </div>
                 <div class="mb-3" id="dateBackContainer" style="display: {{ isset($data) && $data->status == 'Dikembalikan' ? 'block' : 'none' }};">
