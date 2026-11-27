@@ -51,6 +51,7 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'DELETE_LOCATION_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Hapus Lokasi Inventaris'],
             ['name' => 'VIEW_CEK', 'permission_group' => 'cek', 'alias' => 'Lihat Pengecekan'],
             ['name' => 'PROCESS_CEK', 'permission_group' => 'cek', 'alias' => 'Proses Pengecekan'],
+            ['name' => 'VIEW_CHATBOT', 'permission_group' => 'chatbot', 'alias' => 'Lihat Chatbot'],
         ];
 
         foreach ($permissions as $permission) {

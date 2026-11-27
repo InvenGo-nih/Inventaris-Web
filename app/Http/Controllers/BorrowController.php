@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBorrowRequest;
 use App\Http\Requests\UpdateBorrowRequest;
 use App\Models\Borrow;
 use App\Models\Inventaris;
+use App\Services\InventoryContextService;
 use App\Services\SupabaseService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -243,5 +244,6 @@ class BorrowController extends Controller
     {
         Cache::forget('dashboard:chart');
         Cache::forget('borrows:overdue_count');
+        InventoryContextService::forgetFor(auth()->user());
     }
 }

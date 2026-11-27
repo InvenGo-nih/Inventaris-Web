@@ -147,6 +147,8 @@
 
     @include('components.form-modal')
 
+    @include('components.chatbot-widget')
+
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"

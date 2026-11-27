@@ -41,6 +41,15 @@
     </li>
     @endhasPermission
 
+    @hasPermission('VIEW_CHATBOT')
+    <li class="menu-item {{ request()->routeIs('chatbot.index') ? 'active' : '' }}">
+      <a href="{{ route('chatbot.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-bot"></i>
+        <div class="text-truncate">Chatbot AI</div>
+      </a>
+    </li>
+    @endhasPermission
+
     @hasPermission('VIEW_CEK')
     <li class="menu-item {{ request()->routeIs('cek.index') ? 'active' : '' }}">
       <a href="{{ route('cek.index') }}" class="menu-link">

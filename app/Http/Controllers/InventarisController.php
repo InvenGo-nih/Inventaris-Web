@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateInventarisRequest;
 use App\Models\GroupInventaris;
 use App\Models\Inventaris;
 use App\Models\InventarisLocation;
+use App\Services\InventoryContextService;
 use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -94,6 +95,7 @@ class InventarisController extends Controller
 
         Cache::forget("inventaris:stats:{$data->group_inventaris_id}");
         Cache::forget('dashboard:chart');
+        InventoryContextService::forgetFor($request->user());
 
         return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('success', 'Inventaris berhasil disimpan');
     }
@@ -151,6 +153,7 @@ class InventarisController extends Controller
 
         Cache::forget("inventaris:stats:{$data->group_inventaris_id}");
         Cache::forget('dashboard:chart');
+        InventoryContextService::forgetFor($request->user());
 
         return redirect()->route('inventaris.inventaris', $data->group_inventaris_id)->with('success', 'Inventaris berhasil diperbarui');
     }
@@ -188,6 +191,7 @@ class InventarisController extends Controller
 
             Cache::forget("inventaris:stats:{$group}");
             Cache::forget('dashboard:chart');
+            InventoryContextService::forgetFor(auth()->user());
 
             return redirect()->route('inventaris.inventaris', $group)->with('success', 'Inventaris berhasil dihapus');
         } catch (\Throwable $e) {

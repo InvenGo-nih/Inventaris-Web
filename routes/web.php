@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\CekController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\DasboardController;
 use App\Http\Controllers\GroupInventarisController;
 use App\Http\Controllers\InventarisController;
@@ -13,7 +14,9 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+$chatbotMinuteLimit = max(1, (int) config('services.gemini.minute_limit', 10));
+
+Route::middleware('auth')->group(function () use ($chatbotMinuteLimit) {
     Route::get('/qr/{id}', [InventarisController::class, 'showQr'])
         ->name('test_qr')
         ->middleware('permission:SHOW_INVENTARIS');
@@ -24,6 +27,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/chart_data', [DasboardController::class, 'chartData'])
         ->middleware('permission:VIEW_DASHBOARD')
         ->name('chart_data');
+
+    Route::get('/chatbot', [ChatbotController::class, 'index'])
+        ->name('chatbot.index')
+        ->middleware('permission:VIEW_CHATBOT');
+    Route::post('/chatbot/ask', [ChatbotController::class, 'ask'])
+        ->name('chatbot.ask')
+        ->middleware(['permission:VIEW_CHATBOT', "throttle:{$chatbotMinuteLimit},1"]);
+    Route::get('/chatbot/usage', [ChatbotController::class, 'usage'])
+        ->name('chatbot.usage')
+        ->middleware(['permission:VIEW_CHATBOT', 'throttle:60,1']);
 
     Route::get('/scan', [QrCodeController::class, 'showScanPage'])
         ->name('qr.scan')

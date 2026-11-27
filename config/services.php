@@ -43,4 +43,13 @@ return [
         'image_max_dimension' => (int) env('SUPABASE_IMAGE_MAX_DIMENSION', 1920),
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+        'timeout' => (int) env('GEMINI_TIMEOUT', 20),
+        'enabled' => env('CHATBOT_ENABLED', true),
+        'daily_limit' => (int) env('CHATBOT_DAILY_LIMIT', 200),
+        'minute_limit' => (int) env('CHATBOT_MINUTE_LIMIT', 10),
+    ],
+
 ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\CekDataTable;
 use App\Http\Requests\UpdateCekRequest;
 use App\Models\Inventaris;
+use App\Services\InventoryContextService;
 use App\Services\SupabaseService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -71,6 +72,7 @@ class CekController extends Controller
 
         Cache::forget("inventaris:stats:{$data->group_inventaris_id}");
         Cache::forget('dashboard:chart');
+        InventoryContextService::forgetFor($request->user());
 
         return redirect()->route('cek.index')->with('success', 'Pengecekan berhasil disimpan');
     }
