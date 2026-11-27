@@ -22,18 +22,18 @@
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_URL": "https://siar.vercel.app",
-        "APP_KEY": "base64:euGvf7FTZUVjgZeDXxZt2tFTkP7KB54jCDYsVokvC8I=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
         "APP_ROUTES_CACHE": "/tmp/routes.php",
         "APP_SERVICES_CACHE": "/tmp/services.php",
         "VIEW_COMPILED_PATH": "/tmp/views",
-        "CACHE_DRIVER": "array",
+        "CACHE_STORE": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
+        "SESSION_SECURE_COOKIE": "true",
         "DB_CONNECTION": "pgsql"
     }
 }

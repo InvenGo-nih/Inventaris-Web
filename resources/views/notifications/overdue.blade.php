@@ -36,29 +36,34 @@
                         <tbody>
                             @foreach($overdueBorrows as $index => $borrow)
                                 @php
-                                    $maxReturnDate = \Carbon\Carbon::parse($borrow->max_return_date)->startOfDay();
-                                    $today = \Carbon\Carbon::now()->startOfDay();
-                                    $daysLate = (int) $today->floatDiffInDays($maxReturnDate);
+                                    $maxReturnDate = $borrow->max_return_date->copy()->startOfDay();
+                                    $today = now()->startOfDay();
+                                    $daysLate = (int) $maxReturnDate->diffInDays($today, true);
                                 @endphp
                                 <tr class="table-danger">
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $overdueBorrows->firstItem() + $index }}</td>
                                     <td>{{ $borrow->borrow_by }}</td>
-                                    <td>{{ $borrow->inventaris->name }}</td>
+                                    <td>{{ $borrow->inventaris?->name ?? '-' }}</td>
                                     <td>{{ $borrow->quantity }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($borrow->date_borrow)->format('d/m/Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($borrow->max_return_date)->format('d/m/Y') }}</td>
+                                    <td>{{ $borrow->date_borrow?->format('d/m/Y') }}</td>
+                                    <td>{{ $borrow->max_return_date?->format('d/m/Y') }}</td>
                                     <td>
-                                        {{ abs($daysLate) }} hari
+                                        {{ $daysLate }} hari
                                     </td>
                                     <td>
-                                        <a href="{{ route('borrow.form', $borrow->id) }}" class="btn btn-sm btn-warning">
-                                            <i class="bx bx-edit me-1"></i>Update
-                                        </a>
+                                        @hasPermission('EDIT_BORROW')
+                                            <a href="{{ route('borrow.form', $borrow->id) }}" class="btn btn-sm btn-warning">
+                                                <i class="bx bx-edit me-1"></i>Update
+                                            </a>
+                                        @endhasPermission
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $overdueBorrows->links('pagination::bootstrap-5') }}
                 </div>
             @endif
         </div>

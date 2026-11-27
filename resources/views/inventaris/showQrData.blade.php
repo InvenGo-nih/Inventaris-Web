@@ -10,7 +10,7 @@
 <body>
     <div class="container my-5">
         <div class="card">
-            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $data->image }}" class="mx-auto" width="400" alt="{{ $data->name }}">
+            <img src="{{ \App\Services\SupabaseService::publicUrl($data->image) }}" class="mx-auto" width="400" alt="{{ $data->name }}">
             <div class="card-body">
                 <p class="mb-2 border-bottom"><strong>Nama:</strong> <span class="float-end">{{ $data->name }}</span></p>
                 {{-- <p class="mb-2 border-bottom"><strong>Tipe:</strong> <span class="float-end">{{ $data->type }}</span></p> --}}

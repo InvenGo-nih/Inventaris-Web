@@ -5,10 +5,12 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('roles.update', ['role' => $role->id]) }}" method="POST">
+    <form action="{{ $role->exists ? route('roles.update', ['role' => $role->id]) : route('roles.store') }}" method="POST">
         @csrf
-        @method('PUT')
-        <input type="text" name="name" value="{{ $role->name }}" class="form-control mb-3">
+        @if ($role->exists)
+            @method('PUT')
+        @endif
+        <input type="text" name="name" value="{{ old('name', $role->name) }}" class="form-control mb-3" required>
         <button type="button" class="btn btn-secondary mb-3" id="checkAll">Pilih Semua</button>
         <button type="button" class="btn btn-secondary mb-3" id="closeAll">Hapus Semua</button>
         @foreach ($permissions as $group => $groupPermissions)
@@ -18,7 +20,7 @@
                     <div class="form-check ms-2">
                         <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" class="form-check-input"
                             id="perm_{{ $permission->id }}"
-                            {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                            {{ $role->exists && $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                         <label class="form-check-label" for="perm_{{ $permission->id }}">
                             {{ ucfirst($permission->alias) }}
                         </label>
@@ -27,7 +29,7 @@
             </div>
             <hr>
         @endforeach
-        <button type="submit" class="btn btn-primary mt-2">Perbarui Hak Akses</button>
+        <button type="submit" class="btn btn-primary mt-2">{{ $role->exists ? 'Perbarui Hak Akses' : 'Simpan Jabatan' }}</button>
     </form>
 
     <script>

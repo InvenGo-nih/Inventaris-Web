@@ -35,7 +35,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Jumlah Barang Normal
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="borrow-count">{{ $jumlahNormal }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="normal-count">{{ $jumlahNormal }}</div>
                         </div>
                         <div>
                             <i class="fas fa-fw fa-solid fa-hand-holding fa-2x text-gray-300"></i>
@@ -53,7 +53,7 @@
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                 Jumlah Barang Rusak
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="borrow-count">{{ $jumlahRusak }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="rusak-count">{{ $jumlahRusak }}</div>
                         </div>
                         <div>
                             <i class="fas fa-fw fa-solid fa-hand-holding fa-2x text-gray-300"></i>
@@ -79,8 +79,8 @@
             @endhasPermission
         </div>
         <!-- Form Search -->
-        <form action="{{ route('inventaris.index') }}" method="get" class="d-flex gap-2">
-            <input type="text" class="form-control" placeholder="Cari" name="search">
+        <form action="{{ route('inventaris.inventaris', $id) }}" method="get" class="d-flex gap-2">
+            <input type="text" class="form-control" placeholder="Cari" name="search" value="{{ request('search') }}">
             <button class="btn btn-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
         </form>
     </div>
@@ -91,7 +91,7 @@
                     <div class="d-flex align-items-center">
                         <!-- Gambar -->
                         <div class="me-3">
-                            <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
+                            <img src="{{ \App\Services\SupabaseService::publicUrl($item->image) }}"
                                 alt="{{ $item->name }}" class="rounded" width="60" height="60">
                         </div>
                         <!-- Detail Laptop -->
@@ -105,7 +105,7 @@
                     </div>
                     <!-- QR Code -->
                     <div>
-                        {!! QrCode::size(50)->generate($item->qr_link) !!}
+                        {!! QrCode::size(config('inventaris.qr_size', 50))->generate($item->qr_link ?: route('test_qr', $item->id)) !!}
                     </div>
                 </div>
             </div>

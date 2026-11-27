@@ -2,132 +2,149 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GroupInventarisRequest;
 use App\Models\GroupInventaris;
 use App\Services\SupabaseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class GroupInventarisController extends Controller
 {
-    protected $supabase;
+    public function __construct(protected SupabaseService $supabase) {}
 
-    public function __construct(SupabaseService $supabase)
-    {
-        $this->supabase = $supabase;
-    }
     public function index(Request $request)
     {
-        if (request()->has('search')) {
+        $query = GroupInventaris::withCount([
+            'inventaris as jumlah',
+            'inventaris as normal' => fn ($q) => $q->where('condition', 'Normal'),
+            'inventaris as rusak' => fn ($q) => $q->where('condition', 'Rusak'),
+        ]);
+
+        if ($request->filled('search')) {
             $search = $request->input('search');
-
-            $data = GroupInventaris::where('name', 'like', "%$search%")
-                ->orWhere('type', 'like', "%$search%")
-                ->latest()->paginate(8);
-
-            return view('groupInventaris.index', compact('data'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%");
+            });
         }
-        $data = GroupInventaris::latest()->paginate(8);
+
+        $data = $query->latest()->paginate(config('inventaris.groups_per_page', 8));
+
         return view('groupInventaris.index', compact('data'));
     }
 
-    public function form(Request $request, $id = null)
+    public function form($id = null)
     {
-        $data = $id ? GroupInventaris::findorFail($request->id) : new GroupInventaris();
+        $data = $id ? GroupInventaris::findOrFail($id) : new GroupInventaris;
+
         return view('groupInventaris.form', compact('data'));
     }
 
-    public function store(Request $request)
+    public function store(GroupInventarisRequest $request)
     {
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'type' => 'required'
-        ], [
-            'name.required' => 'Nama barang harus diisi.',
-            'image.required' => 'Gambar harus diunggah.',
-            'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            'type.required' => 'Tipe barang harus diisi.'
-        ]);
+        $validated = $request->validated();
+        $file = $request->file('image');
+        $filePath = 'inventaris_images/'.Str::uuid().'.'.$file->extension();
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        try {
+            $this->supabase->uploadFile($file, $filePath);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()->back()->withInput()->with('error', 'Gagal mengunggah gambar grup inventaris.');
         }
 
-        $file = $request->file('image');
-        $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
-        $this->supabase->uploadFile($file, $filePath);
+        try {
+            GroupInventaris::create([
+                'name' => $validated['name'],
+                'image' => $filePath,
+                'type' => $validated['type'],
+            ]);
+        } catch (\Throwable $e) {
+            $this->supabase->deleteFile($filePath);
+            report($e);
 
-        $data = new GroupInventaris();
-        $data->name = $request->name;
-        $data->image = $filePath; // Hanya menyimpan nama file
-        $data->type = $request->type;
-        $data->save();
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan grup inventaris.');
+        }
 
-        return redirect()->route('inventaris.index')->with('success', value: 'Barang berhasil ditambah');
+        Cache::forget('dashboard:chart');
+
+        return redirect()->route('inventaris.index')->with('success', 'Grup barang berhasil ditambah');
     }
 
-    public function update(Request $request, $id)
+    public function update(GroupInventarisRequest $request, $id)
     {
-        // Validasi data yang diterima
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'type' => 'required'
-        ], [
-            'name.required' => 'Nama barang harus diisi.',
-            'image.required' => 'Gambar harus diunggah.',
-            'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            'type.required' => 'Tipe barang harus diisi.'
-        ]);
+        $validated = $request->validated();
+        $data = GroupInventaris::findOrFail($id);
+        $oldImage = $data->image;
+        $newImage = null;
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $newImage = 'inventaris_images/'.Str::uuid().'.'.$file->extension();
+
+            try {
+                $this->supabase->uploadFile($file, $newImage);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return redirect()->back()->withInput()->with('error', 'Gagal mengunggah gambar grup inventaris.');
+            }
         }
 
-        $data = GroupInventaris::findOrFail($id);
-        $data->name = $request->name;
+        $data->name = $validated['name'];
+        $data->type = $validated['type'];
 
-        // Periksa apakah ada file gambar baru
-        if ($request->hasFile('image')) {
-            if ($data->image) {
-                $this->supabase->deleteFile($data->image);
+        if ($newImage) {
+            $data->image = $newImage;
+        }
+
+        try {
+            $data->save();
+        } catch (\Throwable $e) {
+            if ($newImage) {
+                $this->supabase->deleteFile($newImage);
             }
 
-            $file = $request->file('image');
-            $filePath = 'inventaris_images/' . time() . '_' . $file->getClientOriginalName();
-            $this->supabase->uploadFile($file, $filePath);
-            $data->image = $filePath;
+            report($e);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui grup inventaris.');
         }
 
-        $data->type = $request->type;
-        $data->save();
+        if ($newImage && $oldImage) {
+            $this->supabase->deleteFile($oldImage);
+        }
 
-        return redirect()->route('inventaris.index')->with('success', 'Barang berhasil diperbarui');
+        Cache::forget('dashboard:chart');
+
+        return redirect()->route('inventaris.index')->with('success', 'Grup barang berhasil diperbarui');
     }
 
     public function destroy($id)
     {
+        $data = GroupInventaris::findOrFail($id);
+
+        if ($data->inventaris()->withTrashed()->exists()) {
+            return redirect()->route('inventaris.index')
+                ->with('error', 'Grup barang tidak dapat dihapus karena masih memiliki barang.');
+        }
+
         try {
-            $data = GroupInventaris::findOrFail($id);
-
-            // Hapus gambar jika ada
-            if ($data->img_borrow) {
-                $this->supabase->deleteFile($data->img_borrow);
-            }
-
-            // Hapus data inventaris
+            $image = $data->image;
             $data->delete();
 
-            return redirect()->route('inventaris.index')->with('success', 'Barang berhasil dihapus');
-        } catch (\Illuminate\Database\QueryException $e) {
-            if ($e->getCode() === '23000') {
-                return redirect()->route('inventaris.index')->with('error', 'Grup barang tidak dapat dihapus karena masih dipinjam atau masih memiliki barang. ');
+            if ($image) {
+                $this->supabase->deleteFile($image);
             }
-            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus Barang');
+
+            Cache::forget('dashboard:chart');
+
+            return redirect()->route('inventaris.index')->with('success', 'Grup barang berhasil dihapus');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return redirect()->route('inventaris.index')->with('error', 'Terjadi kesalahan saat menghapus grup barang');
         }
     }
 }

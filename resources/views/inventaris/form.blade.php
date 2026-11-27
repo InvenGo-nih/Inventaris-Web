@@ -71,7 +71,7 @@
                 </div> --}}
                 <div class="mb-3">
                     <label for="image" class="form-label">Gambar</label>
-                    <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}">
+                    <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp" value="{{ $data->image ?? '' }}">
                 </div>
             </div>
 

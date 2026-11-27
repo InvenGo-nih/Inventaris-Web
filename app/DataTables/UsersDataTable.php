@@ -6,10 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class UsersDataTable extends DataTable
@@ -17,7 +14,7 @@ class UsersDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param  QueryBuilder  $query  Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -43,25 +40,26 @@ class UsersDataTable extends DataTable
                 $buttons = '';
                 if (hasPermission('EDIT_USERS')) {
                     $buttons .= '
-                        <a href="' . $editUrl . '" class="btn btn-warning">
+                        <a href="'.$editUrl.'" class="btn btn-warning">
                             <i class="fas fa-edit"></i>
                         </a>';
                 }
 
                 if (hasPermission('DELETE_USERS')) {
                     $buttons .= '                        
-                        <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus pengguna ini?\');">
-                            ' . $csrf . '
-                            ' . $method . '
+                        <form action="'.$deleteUrl.'" method="POST" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus pengguna ini?\');">
+                            '.$csrf.'
+                            '.$method.'
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
                     ';
                 }
+
                 return '
                     <div class="d-flex justify-content-center gap-2">
-                        ' . $buttons . '
+                        '.$buttons.'
                     </div>';
             })
             ->rawColumns(['action']) // Penting untuk memastikan HTML pada kolom aksi tidak di-escape.
@@ -74,8 +72,8 @@ class UsersDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         return $model->newQuery()
-        ->select('users.*', 'roles.name as role_name')
-        ->leftJoin('roles', 'users.role_id', '=', 'roles.id');
+            ->select('users.*', 'roles.name as role_name')
+            ->leftJoin('roles', 'users.role_id', '=', 'roles.id');
     }
 
     /**
@@ -84,28 +82,28 @@ class UsersDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('users-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
+            ->setTableId('users-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
                     // ->dom('Bfrtip')
-                    ->orderBy(0 , 'asc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3"Bf>rt<"d-flex justify-content-end align-items-center"p>',
-                        'pageLength' => 10,
-                        'buttons' => array_filter([
-                            hasPermission('CREATE_USERS') ? [
-                                'text' => '<i class="fas fa-plus"></i> Tambah Pengguna',
-                                'className' => 'btn btn-primary',
-                                'action' => 'function ( e, dt, node, config ) {
-                                    window.location.href = "' . route('users.form') . '";
+            ->orderBy(0, 'asc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3"Bf>rt<"d-flex justify-content-end align-items-center"p>',
+                'pageLength' => 10,
+                'buttons' => array_filter([
+                    hasPermission('CREATE_USERS') ? [
+                        'text' => '<i class="fas fa-plus"></i> Tambah Pengguna',
+                        'className' => 'btn btn-primary',
+                        'action' => 'function ( e, dt, node, config ) {
+                                    window.location.href = "'.route('users.form').'";
                                 }',
-                            ] : null,
-                        ]),
-                        'responsive' => true,
-                        'autoWidth' => false,
-                        'language' => ['url' => asset('js/id.json')]
-                    ]);
+                    ] : null,
+                ]),
+                'responsive' => true,
+                'autoWidth' => false,
+                'language' => ['url' => asset('js/id.json')],
+            ]);
     }
     // Keterangan untuk DataTables:
     // l = Length dropdown (Show entries)
@@ -128,7 +126,7 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         $hasActions = hasPermission(['EDIT_USERS', 'DELETE_USERS']);
-        if (!$hasActions) {
+        if (! $hasActions) {
             return [
                 Column::make('name')
                     ->title('Nama'), // Mengubah header kolom menjadi 'Nama'.
@@ -139,6 +137,7 @@ class UsersDataTable extends DataTable
                     ->orderable(true),   // 👈 WAJIB untuk bisa diurutkan
             ];
         }
+
         return [
             Column::make('name')
                 ->title('Nama'), // Mengubah header kolom menjadi 'Nama'.
@@ -148,9 +147,9 @@ class UsersDataTable extends DataTable
                 ->searchable(true)   // 👈 WAJIB untuk bisa disearch
                 ->orderable(true),   // 👈 WAJIB untuk bisa diurutkan
             Column::computed('action')
-                  ->title('Aksi')
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->title('Aksi')
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 
@@ -159,6 +158,6 @@ class UsersDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Users_' . date('YmdHis');
+        return 'Users_'.date('YmdHis');
     }
 }

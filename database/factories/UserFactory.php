@@ -5,22 +5,15 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -29,12 +22,23 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role_id' => fn () => Role::firstOrCreate(
+                ['name' => 'admin', 'guard_name' => config('auth.defaults.guard', 'web')]
+            )->id,
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function ($user) {
+            $role = Role::find($user->role_id);
+
+            if ($role) {
+                $user->syncRoles([$role]);
+            }
+        });
+    }
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

@@ -2,14 +2,11 @@
 
 namespace App\DataTables;
 
-use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class RolesDataTable extends DataTable
@@ -17,7 +14,7 @@ class RolesDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param  QueryBuilder  $query  Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -31,25 +28,26 @@ class RolesDataTable extends DataTable
                 $buttons = '';
                 if (hasPermission('EDIT_ROLES')) {
                     $buttons .= '                        
-                        <a href="' . $editUrl . '" class="btn btn-warning">
+                        <a href="'.$editUrl.'" class="btn btn-warning">
                             <i class="fas fa-edit"></i>
                         </a>';
                 }
 
                 if (hasPermission('DELETE_ROLES')) {
                     $buttons .= '
-                        <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus pengguna ini?\');">
-                            ' . $csrf . '
-                            ' . $method . '
+                        <form action="'.$deleteUrl.'" method="POST" onsubmit="return confirm(\'Apakah Anda yakin ingin menghapus jabatan ini?\');">
+                            '.$csrf.'
+                            '.$method.'
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
                     ';
                 }
+
                 return '
                     <div class="d-flex justify-content-center gap-2">
-                        ' . $buttons . '
+                        '.$buttons.'
                     </div>';
             })
             ->rawColumns(['action']) // Penting untuk memastikan HTML pada kolom aksi tidak di-escape.
@@ -70,29 +68,29 @@ class RolesDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('roles-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(0 , 'asc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3"Bf>rt<"d-flex justify-content-end align-items-center"p>',
-                        'pageLength' => 10,
-                        'buttons' => array_filter([
-                            hasPermission('CREATE_ROLES') ? [
-                                'text' => '<i class="fas fa-plus"></i> Tambah Jabatan',
-                                'className' => 'btn btn-primary',
-                                'action' => 'function ( e, dt, node, config ) {
+            ->setTableId('roles-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+                    // ->dom('Bfrtip')
+            ->orderBy(0, 'asc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-between align-items-center mb-3"Bf>rt<"d-flex justify-content-end align-items-center"p>',
+                'pageLength' => 10,
+                'buttons' => array_filter([
+                    hasPermission('CREATE_ROLES') ? [
+                        'text' => '<i class="fas fa-plus"></i> Tambah Jabatan',
+                        'className' => 'btn btn-primary',
+                        'action' => 'function ( e, dt, node, config ) {
                                     $(node).attr("data-bs-toggle", "modal");
                                     $(node).attr("data-bs-target", "#createRoleModal");
                                 }',
-                            ] : null,
-                        ]),
-                        'responsive' => true,
-                        'autoWidth' => false,
-                        'language' => ['url' => asset('js/id.json')]
-                    ]);
+                    ] : null,
+                ]),
+                'responsive' => true,
+                'autoWidth' => false,
+                'language' => ['url' => asset('js/id.json')],
+            ]);
     }
 
     /**
@@ -101,17 +99,18 @@ class RolesDataTable extends DataTable
     public function getColumns(): array
     {
         $hasAction = hasPermission(['EDIT_ROLES', 'DELETE_ROLES']);
-        if (!$hasAction) {
+        if (! $hasAction) {
             return [
                 Column::make('name')->title('Jabatan'),
             ];
         }
+
         return [
             Column::make('name')->title('Jabatan'),
             Column::computed('action')
-                  ->title('Aksi')
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->title('Aksi')
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 
@@ -120,6 +119,6 @@ class RolesDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Roles_' . date('YmdHis');
+        return 'Roles_'.date('YmdHis');
     }
 }

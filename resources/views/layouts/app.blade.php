@@ -5,9 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    @production
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    @endproduction
     <title>{{ config('app.name', 'InvenGo') }}</title>
 
+    @laravelPWA
 
     {{-- Bootstrap 5.3 --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -36,8 +39,6 @@
 
     {{-- <!-- Aos scroll animate--> --}}
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- KALAU MAU PAKAI TAILWIND -->
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -65,19 +66,6 @@
             margin: 0;
         }
     </style>
-    @laravelPWA
-
-    <!-- Nonaktifkan PWA untuk sementara -->
-    <script>
-        // Unregister service worker untuk menghindari duplikasi
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
-            });
-        }
-    </script>
 </head>
 
 <body id="page-top">
@@ -112,6 +100,15 @@
                                     <div class="alert alert-danger">{{ $error }}</div>
                                 @endforeach --}}
                                 {{-- <div class="alert alert-danger">{{ session('error') }}</div> --}}
+                            @endif
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             @endif
                             @yield('content')
                         </div>
@@ -159,20 +156,11 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
     @stack('scripts')
-    <!-- Bootstrap 4 Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous">
-    </script>
-
-    {{-- <!-- Bootstrap 5 Bundle (untuk komponen lain) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script> --}}
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     {{-- <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script> --}}
-    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
-    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
     <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
     <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>

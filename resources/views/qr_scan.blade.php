@@ -5,13 +5,20 @@
 @endsection
 
 @section('content')
+    @error('qr_data')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
     <div id="reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
-    
+
     <form id="qrForm" method="POST" action="{{ route('qr.process') }}">
         @csrf
         <input type="hidden" name="qr_data" id="qrData">
     </form>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.7/html5-qrcode.min.js"></script>
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite('resources/js/qr-scan.js')
+    @else
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    @endif
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             if (typeof Html5Qrcode === "undefined") {

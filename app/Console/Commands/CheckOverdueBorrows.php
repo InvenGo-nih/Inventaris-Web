@@ -8,41 +8,34 @@ use Illuminate\Support\Facades\Log;
 
 class CheckOverdueBorrows extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'borrows:check-overdue';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Check for overdue borrows and log them';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $today = now()->format('Y-m-d');
-        
-        $overdueBorrows = Borrow::where('status', 'Dipinjam')
-            ->where('max_return_date', '<', $today)
-            ->get();
+        $today = now()->startOfDay();
+        $total = 0;
 
-        foreach ($overdueBorrows as $borrow) {
-            Log::warning('Peminjaman terlambat', [
-                'id' => $borrow->id,
-                'borrow_by' => $borrow->borrow_by,
-                'inventaris_id' => $borrow->inventaris_id,
-                'max_return_date' => $borrow->max_return_date,
-                'days_overdue' => now()->diffInDays($borrow->max_return_date)
-            ]);
-        }
+        Borrow::where('status', 'Dipinjam')
+            ->whereNotNull('max_return_date')
+            ->where('max_return_date', '<', $today->toDateString())
+            ->chunkById(500, function ($borrows) use ($today, &$total) {
+                foreach ($borrows as $borrow) {
+                    $total++;
 
-        $this->info('Pengecekan peminjaman terlambat selesai. Total: ' . $overdueBorrows->count());
+                    $dueDate = $borrow->max_return_date->copy()->startOfDay();
+
+                    Log::warning('Peminjaman terlambat', [
+                        'id' => $borrow->id,
+                        'borrow_by' => $borrow->borrow_by,
+                        'inventaris_id' => $borrow->inventaris_id,
+                        'max_return_date' => $dueDate->toDateString(),
+                        'days_overdue' => (int) $dueDate->diffInDays($today, true),
+                    ]);
+                }
+            });
+
+        $this->info('Pengecekan peminjaman terlambat selesai. Total: '.$total);
     }
 }

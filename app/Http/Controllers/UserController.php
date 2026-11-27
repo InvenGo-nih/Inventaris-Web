@@ -3,110 +3,85 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\UsersDataTable;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index(UsersDataTable $dataTable)
     {
-        $users = User::with('role')->get();
-
-        return $dataTable->render('permission.users', compact('users'));
-        // return view('permission.users', compact('users'));
+        return $dataTable->render('permission.users');
     }
 
-    public function form(Request $request, $id = null)
+    public function form($id = null)
     {
-        $data = $id ? User::findorFail($request->id) : new User();
+        $data = $id ? User::findOrFail($id) : new User;
         $roles = Role::all();
+
         return view('permission.users-form', compact('data', 'roles'));
     }
 
-    // Update Role User
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        // Validasi input
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'role_id' => 'required',
-            'password' => 'nullable|min:8' // Password opsional saat memperbarui
-        ], [
-            'name.required' => 'Nama harus diisi.',
-            'email.required' => 'Email harus diisi.',
-            'role_id.required' => 'Jabatan harus dipilih.',
-            'password.min' => 'Password minimal 8 karakter.'
-        ]);
+        $validated = $request->validated();
+        $role = Role::findOrFail($validated['role_id']);
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
+        DB::transaction(function () use ($id, $validated, $role) {
+            $user = User::findOrFail($id);
 
-        // Mencari pengguna berdasarkan ID
-        $user = User::findOrFail($id);
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->role_id = $role->id;
 
-        // Memperbarui data pengguna
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role_id = $request->role_id;
+            if (! empty($validated['password'])) {
+                $user->password = $validated['password'];
+            }
 
-        // Hanya memperbarui password jika diisi
-        if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
-        }
-
-        $user->save();
+            $user->save();
+            $user->syncRoles([$role]);
+        });
 
         return redirect()->route('users.index')->with('success', 'Data pengguna berhasil diperbarui');
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'role_id' => 'required',
-            'password' => 'required|min:8'
-        ], [
-            'name.required' => 'Nama harus diisi.',
-            'email.required' => 'Email harus diisi.',
-            'role_id.required' => 'Jabatan harus dipilih.',
-            'password.required' => 'Password harus diisi.',
-            'password.min' => 'Password minimal 8 karakter.'
-        ]);
+        $validated = $request->validated();
+        $role = Role::findOrFail($validated['role_id']);
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
+        DB::transaction(function () use ($validated, $role) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'role_id' => $role->id,
+                'password' => $validated['password'],
+            ]);
 
-        $data = new User();
-        $data->name = $request->name;
-        $data->email = $request->email;
-        $data->role_id = $request->role_id;
-        $data->password = bcrypt($request->password);
-        $data->save();
+            $user->assignRole($role);
+        });
 
         return redirect()->route('users.index')->with('success', 'Data pengguna berhasil disimpan');
     }
 
     public function destroy($id)
     {
-        // Mencari pengguna berdasarkan ID
+        if ((int) Auth::id() === (int) $id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
         $user = User::find($id);
 
-        // Memastikan pengguna ditemukan
-        if (!$user) {
+        if (! $user) {
             return redirect()->back()->with('error', 'Pengguna tidak ditemukan');
         }
 
-        // Menghapus pengguna
+        $user->syncRoles([]);
         $user->delete();
 
-        // Mengembalikan respons sukses
         return redirect()->route('users.index')->with('success', 'Data pengguna berhasil dihapus');
     }
 }

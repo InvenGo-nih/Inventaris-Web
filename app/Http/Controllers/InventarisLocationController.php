@@ -3,54 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\InventarisLocationDataTable;
+use App\Http\Requests\InventarisLocationRequest;
 use App\Models\InventarisLocation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class InventarisLocationController extends Controller
 {
-    public function index(InventarisLocationDataTable $dataTable, Request $request, $id = null)
+    public function index(InventarisLocationDataTable $dataTable)
     {
-        // $data = InventarisLocation::paginate(10);
-        // $form = $id ? InventarisLocation::findorFail($request->id) : new InventarisLocation();
-        // return view('inventaris_location.index', compact(['data', 'form']));
         return $dataTable->render('inventaris_location.index');
     }
 
-    public function store(Request $request)
+    public function store(InventarisLocationRequest $request)
     {
-        $validate = Validator::make($request->all(), [
-            'location' => 'required',
-        ], [
-            'location.required' => 'Lokasi harus diisi.',
-        ]);
-
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
-
-        $data = new InventarisLocation();
-        $data->location = $request->location;
-        $data->save();
+        InventarisLocation::create($request->validated());
 
         return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil disimpan');
     }
 
-    public function update(Request $request, $id)
+    public function update(InventarisLocationRequest $request, $id)
     {
-        $validate = Validator::make($request->all(), [
-            'location' => 'required',
-        ], [
-            'location.required' => 'Lokasi harus diisi.',
-        ]);
-
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
-
         $data = InventarisLocation::findOrFail($id);
-        $data->location = $request->location;
-        $data->save();  
+        $data->update($request->validated());
 
         return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil diperbarui');
     }
@@ -59,6 +32,7 @@ class InventarisLocationController extends Controller
     {
         $data = InventarisLocation::findOrFail($id);
         $data->delete();
+
         return redirect()->route('inventaris.location.index')->with('success', 'Lokasi inventaris berhasil dihapus');
     }
 }

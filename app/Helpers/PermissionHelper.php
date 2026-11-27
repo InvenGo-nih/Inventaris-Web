@@ -1,26 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
-if (!function_exists('hasPermission')) {
+if (! function_exists('hasPermission')) {
     function hasPermission($permissions): bool
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return false;
         }
 
         $user = Auth::user();
-        $roleId = DB::table('users')->where('id', $user->id)->value('role_id');
+        $requested = array_values(array_unique(array_map('strval', (array) $permissions)));
+        sort($requested);
 
-        if (!$roleId) {
-            return false;
+        static $memo = [];
+        $key = $user->getAuthIdentifier().'|'.implode(',', $requested);
+
+        if (array_key_exists($key, $memo)) {
+            return $memo[$key];
         }
 
-        return DB::table('role_has_permissions')
-            ->join('permissions', 'role_has_permissions.permission_id', '=', 'permissions.id')
-            ->where('role_has_permissions.role_id', $roleId)
-            ->whereIn('permissions.name', (array) $permissions)
-            ->exists();
+        try {
+            return $memo[$key] = (bool) $user->hasAnyPermission($requested);
+        } catch (\Throwable $e) {
+            return $memo[$key] = false;
+        }
     }
 }

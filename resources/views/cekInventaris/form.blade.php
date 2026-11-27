@@ -12,11 +12,6 @@
 
         <div class="row">
             <div class="col-md-6">
-                {{-- <div class="mb-3"> --}}
-                    {{-- <label for="name" class="form-label">Nama</label> --}}
-                    <input type="text" name="name" class="form-control" value="{{ $data->name ?? '' }}"
-                        placeholder="Masukkan Nama Inventaris" hidden>
-                {{-- </div> --}}
                 <div class="mb-3">
                     <label for="condition" class="form-label">Kondisi Inventaris</label>
                     <select name="condition" class="form-control" id="condition" onchange="toggleBrokenDescription()">
@@ -40,24 +35,9 @@
                     </select>
                 </div> --}}
                 <div class="mb-3">
-                    {{-- <label for="location" class="form-label">Lokasi</label> --}}
-                    <select name="location" id="location" class="form-control" hidden>
-                        <option value="" selected disabled>Pilih Lokasi</option>
-                        @foreach ($location as $item)
-                            <option value="{{ $item->location }}"
-                                {{ isset($data) && $data->location == $item->location ? 'selected' : '' }}>
-                                {{ $item->location }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                {{-- <div class="mb-3">
-                    <label for="quantity" class="form-label">Jumlah Barang</label>
-                    <input type="number" name="quantity" class="form-control" value="{{ $data->quantity ?? 1 }}"
-                        min="1" placeholder="Masukkan Jumlah Barang">
-                </div> --}}
-                <div class="mb-3">
-                    {{-- <label for="image" class="form-label">Gambar</label> --}}
-                    <input type="file" name="image" class="form-control" value="{{ $data->image ?? '' }}" hidden>
+                    <label for="image" class="form-label">Gambar (opsional)</label>
+                    <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/webp">
+                    <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar.</small>
                 </div>
             </div>
 
@@ -82,7 +62,7 @@
                 </div> --}}
                 <div class="mb-3">
                     <label for="specification" class="form-label">Spesifikasi</label>
-                    <textarea name="specification" class="form-control" style="height: 8em;" placeholder="Masukkan Spesifikasi">{{ $data->specification ?? '' }}</textarea>
+                    <textarea name="specification" class="form-control" style="height: 8em;" readonly>{{ $data->specification ?? '' }}</textarea>
                 </div>
 
                 <div class="mb-3" id="brokenDescriptionContainer"
@@ -104,10 +84,6 @@
                 {{ request()->route('id') ? 'Perbarui' : 'Tambah' }}
             </button>
         </div>
-        @php
-            $id = request()->route('group_inventaris_id');
-        @endphp
-        <input type="text" id="group_inventaris_id" name="group_inventaris_id" value="{{ $id }}" hidden>
     </form>
 
     <script>

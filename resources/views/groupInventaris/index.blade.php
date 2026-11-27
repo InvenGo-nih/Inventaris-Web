@@ -51,19 +51,14 @@
                         <!-- Gambar dan Detail -->
                         <a href="{{ route('inventaris.inventaris', $item->id) }}" class="text-decoration-none">
                             <div class="text-center mt-3 mb-3">
-                                <img src="https://ztbemybejhgwbftpryqs.supabase.co/storage/v1/object/public/invengo2/upload/{{ $item->image }}"
+                                <img src="{{ \App\Services\SupabaseService::publicUrl($item->image) }}"
                                     alt="{{ $item->name }}" class="rounded" style="width: 150px; height: 150px; object-fit: cover;">
                             </div>
-                            @php
-                                $jumlah = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->count();
-                                $broken = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Rusak')->count();
-                                $normal = \App\Models\Inventaris::where('group_inventaris_id', $item->id)->where('condition', 'Normal')->count();
-                            @endphp
                             <!-- Detail Laptop -->
                             <div class="mt-3">
                                 <h6 class="mb-2 fw-bold text-center text-dark">{{ $item->name }}</h6>
                                 <p class="mb-2 text-muted small">Tipe : {{ $item->type }}</p>
-                                <div class="mb-2 text-muted small d-flex justify-content-between"><span class="badge bg-label-success">{{ $normal }} Normal</span> | <span class="badge bg-label-danger">{{ $broken }} Rusak</span></div>
+                                <div class="mb-2 text-muted small d-flex justify-content-between"><span class="badge bg-label-success">{{ $item->normal }} Normal</span> | <span class="badge bg-label-danger">{{ $item->rusak }} Rusak</span></div>
                             </div>
                         </a>
                     </div>

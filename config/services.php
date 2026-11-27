@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'supabase' => [
+        'url' => env('SUPABASE_URL'),
+        'key' => env('SUPABASE_SERVICE_ROLE_KEY'),
+        'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+        'image_max_bytes' => (int) env('SUPABASE_IMAGE_MAX_BYTES', 5 * 1024 * 1024 - 102400),
+        'image_max_dimension' => (int) env('SUPABASE_IMAGE_MAX_DIMENSION', 1920),
+    ],
+
 ];

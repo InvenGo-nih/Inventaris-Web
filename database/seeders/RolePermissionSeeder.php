@@ -2,56 +2,26 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Nonaktifkan foreign key checks (HIDUPKAN JIKA MENGGUNAKAN DATABASE LOKAL)
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        $guard = config('auth.defaults.guard', 'web');
 
-        // Hapus data lama agar tidak duplikat
-        DB::table('model_has_permissions')->truncate();
-        DB::table('role_has_permissions')->truncate();
-        DB::table('permissions')->truncate();
-        DB::table('roles')->truncate();
+        $roles = collect(['admin', 'teknisi', 'guru'])
+            ->mapWithKeys(fn ($name) => [
+                $name => Role::updateOrCreate(
+                    ['name' => $name, 'guard_name' => $guard],
+                    ['guard_name' => $guard]
+                ),
+            ]);
 
-        // Aktifkan kembali foreign key checks (HIDUPKAN JIKA MENGGUNAKAN DATABASE LOKAL)
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        // Buat Role
-        Role::updateOrCreate(['name' => 'admin'], ['guard_name' => 'web']);
-        Role::updateOrCreate(['name' => 'teknisi'], ['guard_name' => 'web']);
-        Role::updateOrCreate(['name' => 'guru'], ['guard_name' => 'web']);
-
-        // Tambahkan pengguna baru
-        DB::table('users')->updateOrInsert(
-            ['email' => 'rifkiadi348@gmail.com'], // Kriteria pencarian
-            [
-                'name' => 'rifki',
-                'password' => bcrypt('11111111'), // Bcrypt password
-                'role_id' => 1, // ID untuk role 'admin'
-            ]
-        );
-
-        DB::table('users')->updateOrInsert(
-            ['email' => 'zami123@gmail.com'], // Kriteria pencarian
-            [
-                'name' => 'zami',
-                'password' => bcrypt('11111111'), // Bcrypt password
-                'role_id' => 1, // ID untuk role 'admin'
-            ]
-        );
-
-        // Buat Permissions CRUD Inventaris
         $permissions = [
             ['name' => 'VIEW_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Lihat Inventaris'],
             ['name' => 'CREATE_INVENTARIS', 'permission_group' => 'inventaris', 'alias' => 'Buat Inventaris'],
@@ -82,20 +52,46 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'VIEW_CEK', 'permission_group' => 'cek', 'alias' => 'Lihat Pengecekan'],
             ['name' => 'PROCESS_CEK', 'permission_group' => 'cek', 'alias' => 'Proses Pengecekan'],
         ];
-    
-            foreach ($permissions as $perm) {
-                Permission::updateOrCreate(['name' => $perm['name']], ['permission_group' => $perm['permission_group'], 'alias' => $perm['alias']]);
-            }
 
-        // Tambahkan seeder untuk role_has_permissions
-        $roleId = 1; // ID untuk role 'admin'
-        $permissions = DB::table('permissions')->pluck('id'); // Ambil semua permission_id
+        foreach ($permissions as $permission) {
+            Permission::updateOrCreate(
+                ['name' => $permission['name'], 'guard_name' => $guard],
+                [
+                    'permission_group' => $permission['permission_group'],
+                    'alias' => $permission['alias'],
+                ]
+            );
+        }
 
-        foreach ($permissions as $permissionId) {
-            DB::table('role_has_permissions')->insert([
-                'role_id' => $roleId,
-                'permission_id' => $permissionId,
-            ]);
+        $roles['admin']->syncPermissions(collect($permissions)->pluck('name')->all());
+
+        User::query()
+            ->whereNotNull('role_id')
+            ->orderBy('id')
+            ->chunkById(500, function ($users) use ($roles) {
+                foreach ($users as $user) {
+                    $role = $roles->first(fn (Role $role) => $role->id === (int) $user->role_id);
+
+                    if ($role) {
+                        $user->syncRoles([$role]);
+                    }
+                }
+            });
+
+        $adminEmail = env('ADMIN_EMAIL');
+        $adminPassword = env('ADMIN_PASSWORD');
+
+        if ($adminEmail && $adminPassword) {
+            $admin = User::updateOrCreate(
+                ['email' => $adminEmail],
+                [
+                    'name' => env('ADMIN_NAME', 'Administrator'),
+                    'password' => Hash::make($adminPassword),
+                    'role_id' => $roles['admin']->id,
+                ]
+            );
+
+            $admin->syncRoles([$roles['admin']]);
         }
     }
 }

@@ -3,267 +3,245 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\BorrowDataTable;
+use App\Http\Requests\StoreBorrowRequest;
+use App\Http\Requests\UpdateBorrowRequest;
 use App\Models\Borrow;
 use App\Models\Inventaris;
-use App\Models\User;
 use App\Services\SupabaseService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class BorrowController extends Controller
 {
-    protected $supabase;
-
-    public function __construct(SupabaseService $supabase)
-    {
-        $this->supabase = $supabase;
-    }
+    public function __construct(protected SupabaseService $supabase) {}
 
     public function index(BorrowDataTable $dataTable)
     {
-        $data = Borrow::with('inventaris')->latest()->paginate(10);
-        // return view('borrow.index', compact('data'));
-        return $dataTable->render('borrow.index', compact('data'));
+        return $dataTable->render('borrow.index');
     }
 
     public function form($id = null)
     {
-        $data = $id ? Borrow::findOrFail($id) : new Borrow();
-        $users = User::all();
+        $data = $id ? Borrow::findOrFail($id) : new Borrow;
 
         if ($id) {
-            $inventaris = Inventaris::where('is_borrow', 0)
-                ->orWhere('id', $data->inventaris_id)
-                ->get();
+            $inventaris = Inventaris::where(function ($query) use ($data) {
+                $query->where('is_borrow', 0);
+
+                if ($data->inventaris_id) {
+                    $query->orWhere('id', $data->inventaris_id);
+                }
+            })->get();
         } else {
             $inventaris = Inventaris::where('is_borrow', 0)->get();
         }
 
-        return view('borrow.form', compact('data', 'inventaris', 'users'));
+        return view('borrow.form', compact('data', 'inventaris'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBorrowRequest $request)
     {
-        // dd($request->all());
-        $validate = Validator::make($request->all(), [
-            'borrow_by'     => 'required',
-            'inventaris_id' => 'required|exists:inventaris,id',
-            // 'quantity'      => 'nullable|integer|min:1',
-            'date_borrow'   => 'required|date',
-            'date_back'     => 'nullable|date',
-            'max_return_date' => 'required|date',
-            // 'date_back'     => 'nullable|date|after_or_equal:date_borrow',
-            // 'max_return_date' => 'required|date|after_or_equal:date_borrow',
-            'status'        => 'required',
-            'img_borrow'    => 'required|image|mimes:jpeg,png,jpg|max:2048'
-        ] ,[
-            'borrow_by.required' => 'Nama peminjam harus diisi',
-            'inventaris_id.required' => 'Barang harus diisi',
-            'inventaris_id.exists' => 'Barang tersebut tidak ada',
-            'date_borrow.required' => 'Tanggal peminjam harus diisi',
-            'date_borrow.date' => 'Tanggal peminjam harus berupa tanggal',
-            'date_back.required' => 'Tanggal kembali harus diisi',
-            'date_back.date' => 'Tanggal kembali harus berupa tanggal',
-            'date_back.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
-            'max_return_date.required' => 'Tanggal kembali harus diisi',
-            'max_return_date.date' => 'Tanggal kembali harus berupa tanggal',
-            'max_return_date.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
-            'status.required' => 'Status peminjaman harus diisi',
-            'img_borrow.required' => 'Gambar peminjam harus diisi',
-            'img_borrow.image' => 'Gambar peminjam harus berupa gambar',
-            'img_borrow.mimes' => 'Format gambar harus jpeg, png, atau jpg',
-            'img_borrow.max' => 'Ukuran gambar maksimal 2MB',
-        ]);
+        $validated = $request->validated();
+        $quantity = (int) ($validated['quantity'] ?? 1);
+        $file = $request->file('img_borrow');
+        $filePath = 'borrow_images/'.Str::uuid().'.'.$file->extension();
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
-        }
-
-        // Cek ketersediaan jumlah barang
-        // $inventaris = Inventaris::findOrFail($request->inventaris_id);
-        // $requestedQuantity = $request->quantity ?? 1;
-
-        // if ($requestedQuantity > $inventaris->quantity) {
-        //     return redirect()->back()
-        //         ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
-        //         ->withInput();
-        // }
-
-        DB::beginTransaction();
         try {
-            $data = new Borrow();
-            $data->borrow_by = $request->borrow_by;
-            $data->inventaris_id = $request->inventaris_id;
-            // $data->quantity = $requestedQuantity;
-            $data->date_borrow = $request->date_borrow;
-            $data->date_back = $request->date_back;
-            $data->max_return_date = $request->max_return_date;
-            $data->status = $request->status;
-
-            // Upload gambar dengan nama yang di-hash
-            $file = $request->file('img_borrow');
-            $extension = $file->getClientOriginalExtension();
-            $hashedName = md5($file->getClientOriginalName() . time()) . '.' . $extension;
-            $filePath = 'borrow_images/' . $hashedName;
             $this->supabase->uploadFile($file, $filePath);
-            $data->img_borrow = $filePath;
+        } catch (\Throwable $e) {
+            report($e);
 
-
-            $data->save();
-
-            // Update jumlah barang yang tersedia
-            // $inventaris->quantity -= $requestedQuantity;
-            // $inventaris->save();
-
-            //update is_borrow jadi 1 (udh kepinjam)
-            $inventaris = Inventaris::find($request->inventaris_id);
-            $inventaris->is_borrow = 1;
-            $inventaris->save();
-
-
-            DB::commit();
-            return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data');
-        }
-    }
-
-    public function update(Request $request, $id)
-    {
-        $data = Borrow::findOrFail($id);
-        $inventaris = Inventaris::findOrFail($request->inventaris_id);
-
-        $validate = Validator::make($request->all(), [
-            'borrow_by'     => 'required',
-            'inventaris_id' => 'required|exists:inventaris,id',
-            // 'quantity'      => 'nullable|integer|min:1',
-            'date_borrow'   => 'required|date',
-            'date_back'     => 'nullable|date',
-            'max_return_date' => 'required|date',
-            // 'date_back'     => 'nullable|date|after_or_equal:date_borrow',
-            // 'max_return_date' => 'required|date|after_or_equal:date_borrow',
-            'status'        => 'required',
-            'img_borrow'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ], [
-            'borrow_by.required' => 'Nama peminjam harus diisi',
-            'inventaris_id.required' => 'Barang harus diisi',
-            'inventaris_id.exists' => 'Barang tersebut tidak ada',
-            'date_borrow.required' => 'Tanggal peminjam harus diisi',
-            'date_borrow.date' => 'Tanggal peminjam harus berupa tanggal',
-            'date_back.required' => 'Tanggal kembali harus diisi',
-            'date_back.date' => 'Tanggal kembali harus berupa tanggal',
-            'date_back.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
-            'max_return_date.required' => 'Tanggal kembali harus diisi',
-            'max_return_date.date' => 'Tanggal kembali harus berupa tanggal',
-            'max_return_date.after_or_equal' => 'Tanggal kembali harus hari ini dan seterusnya',
-            'status.required' => 'Status peminjaman harus diisi',
-            'img_borrow.image' => 'Gambar peminjam harus berupa gambar',
-            'img_borrow.mimes' => 'Format gambar harus jpeg, png, atau jpg',
-            'img_borrow.max' => 'Ukuran gambar maksimal 2MB',
-        ]);
-
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
+            return redirect()->back()->withInput()->with('error', 'Gagal mengunggah gambar peminjaman.');
         }
 
-        // $requestedQuantity = $request->quantity ?? 1;
-        // $quantityDifference = $requestedQuantity - $data->quantity;
-
-        // Cek ketersediaan jumlah barang jika ada perubahan jumlah
-        // if ($quantityDifference > 0 && $quantityDifference > $inventaris->quantity) {
-        //     return redirect()->back()
-        //         ->withErrors(['quantity' => 'Jumlah yang diminta melebihi stok yang tersedia'])
-        //         ->withInput();
-        // }
-
-        DB::beginTransaction();
         try {
-            // Hapus gambar lama jika ada gambar baru
-            if ($request->hasFile('img_borrow')) {
-                if ($data->img_borrow) {
-                    $this->supabase->deleteFile($data->img_borrow);
+            DB::transaction(function () use ($validated, $quantity, $filePath) {
+                $item = Inventaris::withTrashed()
+                    ->whereKey($validated['inventaris_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($item->trashed()) {
+                    throw ValidationException::withMessages([
+                        'inventaris_id' => 'Barang sudah dihapus dan tidak dapat dipinjam.',
+                    ]);
                 }
 
-                // Upload gambar baru dengan nama yang di-hash
-                $file = $request->file('img_borrow');
-                $extension = $file->getClientOriginalExtension();
-                $hashedName = md5($file->getClientOriginalName() . time()) . '.' . $extension;
-                $filePath = 'borrow_images/' . $hashedName;
-                $this->supabase->uploadFile($file, $filePath);
-                $data->img_borrow = $filePath;
-            }
+                if ($validated['status'] === 'Dipinjam') {
+                    $available = (int) ($item->quantity ?? 1);
 
-            // Logika untuk mengembalikan stok ketika status diubah menjadi Dikembalikan
-            // if ($data->status == 'Dipinjam' && $request->status == 'Dikembalikan') {
-            //     // Kembalikan stok ke inventaris
-            //     $inventaris->quantity += $data->quantity;
-            //     $inventaris->save();
-            // }
-            // // Logika untuk mengurangi stok ketika status diubah dari Dikembalikan menjadi Dipinjam
-            // else if ($data->status == 'Dikembalikan' && $request->status == 'Dipinjam') {
-            //     // Kurangi stok dari inventaris
-            //     if ($inventaris->quantity < $requestedQuantity) {
-            //         throw new \Exception('Stok tidak mencukupi untuk dipinjam kembali');
-            //     }
-            //     $inventaris->quantity -= $requestedQuantity;
-            //     $inventaris->save();
-            // }
-            // // Logika untuk perubahan jumlah pinjaman
-            // else if ($request->status == 'Dipinjam') {
-            //     // Jika status masih Dipinjam, hitung selisih jumlah
-            //     $inventaris->quantity -= $quantityDifference;
-            //     $inventaris->save();
-            // }
+                    if ($item->is_borrow || $available < $quantity) {
+                        throw ValidationException::withMessages([
+                            'inventaris_id' => 'Barang tidak tersedia atau stok tidak mencukupi.',
+                        ]);
+                    }
 
-            $data->update([
-                'borrow_by'     => $request->borrow_by,
-                'inventaris_id' => $request->inventaris_id,
-                // 'quantity'      => $requestedQuantity,
-                'date_borrow'   => $request->date_borrow,
-                'date_back'     => $request->date_back,
-                'max_return_date' => $request->max_return_date,
-                'status'        => $request->status,
-                'img_borrow'    => $data->img_borrow
-            ]);
+                    $item->decrement('quantity', $quantity);
+                    $item->is_borrow = true;
+                    $item->save();
+                }
 
-            if ($request-> status == 'Dikembalikan'){
-                $inventaris->is_borrow = 0;
-                $inventaris->save();
-            }
+                $dateBack = $validated['date_back'] ?? null;
 
-            DB::commit();
-            return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil diperbarui');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                if ($validated['status'] === 'Dikembalikan' && ! $dateBack) {
+                    $dateBack = now()->toDateString();
+                }
+
+                Borrow::create([
+                    'borrow_by' => $validated['borrow_by'],
+                    'inventaris_id' => $item->id,
+                    'quantity' => $quantity,
+                    'date_borrow' => $validated['date_borrow'],
+                    'date_back' => $dateBack,
+                    'max_return_date' => $validated['max_return_date'],
+                    'status' => $validated['status'],
+                    'img_borrow' => $filePath,
+                ]);
+            });
+        } catch (ValidationException $e) {
+            $this->supabase->deleteFile($filePath);
+            throw $e;
+        } catch (\Throwable $e) {
+            $this->supabase->deleteFile($filePath);
+            report($e);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
+
+        $this->forgetDashboardCache();
+
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil disimpan');
+    }
+
+    public function update(UpdateBorrowRequest $request, $id)
+    {
+        $validated = $request->validated();
+        $data = Borrow::findOrFail($id);
+        $oldImage = $data->img_borrow;
+        $newImage = null;
+
+        if ($request->hasFile('img_borrow')) {
+            $file = $request->file('img_borrow');
+            $newImage = 'borrow_images/'.Str::uuid().'.'.$file->extension();
+
+            try {
+                $this->supabase->uploadFile($file, $newImage);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return redirect()->back()->withInput()->with('error', 'Gagal mengunggah gambar peminjaman.');
+            }
+        }
+
+        try {
+            DB::transaction(function () use ($id, $validated, $newImage) {
+                $borrow = Borrow::whereKey($id)->lockForUpdate()->firstOrFail();
+                $item = Inventaris::withTrashed()
+                    ->whereKey($borrow->inventaris_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                $oldStatus = $borrow->status;
+                $newStatus = $validated['status'];
+
+                if ($oldStatus === 'Dipinjam' && $newStatus === 'Dikembalikan') {
+                    if ($item) {
+                        $item->quantity = (int) ($item->quantity ?? 0) + (int) $borrow->quantity;
+                        $item->is_borrow = false;
+                        $item->save();
+                    }
+                } elseif ($oldStatus === 'Dikembalikan' && $newStatus === 'Dipinjam') {
+                    if (! $item || $item->trashed()) {
+                        throw ValidationException::withMessages([
+                            'status' => 'Barang sudah dihapus dan tidak dapat dipinjam kembali.',
+                        ]);
+                    }
+
+                    $available = (int) ($item->quantity ?? 0);
+
+                    if ($item->is_borrow || $available < (int) $borrow->quantity) {
+                        throw ValidationException::withMessages([
+                            'status' => 'Barang sudah dipinjam pihak lain atau stok tidak mencukupi.',
+                        ]);
+                    }
+
+                    $item->decrement('quantity', (int) $borrow->quantity);
+                    $item->is_borrow = true;
+                    $item->save();
+                }
+
+                $dateBack = $validated['date_back'] ?? null;
+
+                if ($newStatus === 'Dikembalikan' && ! $dateBack) {
+                    $dateBack = now()->toDateString();
+                }
+
+                $borrow->fill([
+                    'borrow_by' => $validated['borrow_by'],
+                    'date_borrow' => $validated['date_borrow'],
+                    'date_back' => $dateBack,
+                    'max_return_date' => $validated['max_return_date'],
+                    'status' => $newStatus,
+                ]);
+
+                if ($newImage) {
+                    $borrow->img_borrow = $newImage;
+                }
+
+                $borrow->save();
+            });
+        } catch (ValidationException $e) {
+            if ($newImage) {
+                $this->supabase->deleteFile($newImage);
+            }
+
+            throw $e;
+        } catch (\Throwable $e) {
+            if ($newImage) {
+                $this->supabase->deleteFile($newImage);
+            }
+
+            report($e);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data.');
+        }
+
+        if ($newImage && $oldImage) {
+            $this->supabase->deleteFile($oldImage);
+        }
+
+        $this->forgetDashboardCache();
+
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil diperbarui');
     }
 
     public function destroy($id)
     {
         $data = Borrow::findOrFail($id);
-        $inventaris = Inventaris::findOrFail($data->inventaris_id);
 
-        DB::beginTransaction();
-        try {
-            // Hapus gambar jika ada
-            if ($data->img_borrow) {
-                $this->supabase->deleteFile($data->img_borrow);
-            }
-
-            // Kembalikan jumlah barang
-            $inventaris->quantity += $data->quantity;
-            $inventaris->save();
-
-            $data->delete();
-
-            DB::commit();
-            return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dihapus');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus data');
+        if ($data->status === 'Dipinjam') {
+            return redirect()->back()->with('error', 'Selesaikan peminjaman (ubah status menjadi Dikembalikan) sebelum menghapus data.');
         }
+
+        DB::transaction(function () use ($id) {
+            $borrow = Borrow::whereKey($id)->lockForUpdate()->firstOrFail();
+            $borrow->delete();
+        });
+
+        if ($data->img_borrow) {
+            $this->supabase->deleteFile($data->img_borrow);
+        }
+
+        $this->forgetDashboardCache();
+
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dihapus');
+    }
+
+    private function forgetDashboardCache(): void
+    {
+        Cache::forget('dashboard:chart');
+        Cache::forget('borrows:overdue_count');
     }
 }

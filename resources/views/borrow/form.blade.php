@@ -39,7 +39,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="inventaris_id" class="form-label">Barang</label>
-                    <select name="inventaris_id" class="form-control" id="inventaris_id" onchange="updateAvailableQuantity()" {{request()->route('id') ? 'disabled' : ''}}>
+                    <select name="inventaris_id" class="form-control" id="inventaris_id" {{request()->route('id') ? 'disabled' : ''}}>
                         <option value="" selected disabled>Pilih Barang</option>
                         @foreach ($inventaris as $item)
                             <option value="{{ $item->id }}"
@@ -86,11 +86,12 @@
                 </div>
                 <div class="mb-3" id="dateBackContainer" style="display: {{ isset($data) && $data->status == 'Dikembalikan' ? 'block' : 'none' }};">
                     <label for="date_back" class="form-label">TANGGAL KEMBALI</label>
-                    <input type="date" class="form-control" id="date_back" name="date_back" value="{{ old('date_back', $data->date_back) }}">
+                    <input type="date" class="form-control" id="date_back" name="date_back" value="{{ old('date_back', $data->date_back?->format('Y-m-d')) }}">
                 </div>
                 <div class="mb-3">
                     <label for="img_borrow" class="form-label">Gambar</label>
-                    <input type="file" name="img_borrow" class="form-control">
+                    <input type="file" name="img_borrow" class="form-control" accept="image/jpeg,image/png,image/webp">
+                    <small class="text-muted">Gambar akan dikompres otomatis sebelum diunggah.</small>
                 </div>
                 <div class="mb-3">
                     <label for="max_return_date" class="form-label">BATAS WAKTU PENGEMBALIAN</label>
@@ -109,36 +110,17 @@
     </form>
 
     <script>
-        function updateAvailableQuantity() {
-            const select = document.getElementById('inventaris_id');
-            const option = select.options[select.selectedIndex];
-            const quantity = option.getAttribute('data-quantity');
-            document.getElementById('available_quantity').textContent = quantity;
-        }
-
         function toggleDateBack() {
-            const status = document.getElementById('status').value;
+            const status = document.getElementById('status');
             const dateBackContainer = document.getElementById('dateBackContainer');
-            const quantityInput = document.getElementById('quantity');
 
-            if (status === 'Dikembalikan') {
-                dateBackContainer.style.display = 'block';
-                // Jika dalam mode edit, set quantity ke nilai awal
-                if (document.querySelector('input[name="_method"]')) {
-                    const originalQuantity = "{{ $data->quantity ?? 1 }}";
-                    quantityInput.value = originalQuantity;
-                    quantityInput.readOnly = true;
-                }
-            } else {
-                dateBackContainer.style.display = 'none';
-                quantityInput.readOnly = false;
+            if (!status || !dateBackContainer) {
+                return;
             }
+
+            dateBackContainer.style.display = status.value === 'Dikembalikan' ? 'block' : 'none';
         }
 
-        // Panggil fungsi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAvailableQuantity();
-            toggleDateBack();
-        });
+        document.addEventListener('DOMContentLoaded', toggleDateBack);
     </script>
 @endsection

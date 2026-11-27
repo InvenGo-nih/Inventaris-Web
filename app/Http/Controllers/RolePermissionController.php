@@ -3,77 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\RolesDataTable;
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRolePermissionsRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolePermissionController extends Controller
 {
-    // Halaman Kelola Role & Permission
     public function manageRoles(RolesDataTable $dataTable)
     {
-        $roles = Role::with('permissions')->get();
-        $permissions = Permission::all()->groupBy('permission_group');
-        // return view('permission.role', compact(['roles', 'permissions']));
-        return $dataTable->render('permission.role', compact(['roles', 'permissions']));
+        return $dataTable->render('permission.role');
     }
 
-    public function form(Request $request, $id = null) 
+    public function form($id = null)
     {
-        // $role = $id ? Role::with('permissions')->findOrFail($request->id) : new Role();
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = $id ? Role::with('permissions')->findOrFail($id) : new Role;
         $permissions = Permission::all()->groupBy('permission_group');
+
         return view('permission.role-form', compact('role', 'permissions'));
     }
-    
-    public function store(Request $request)
+
+    public function store(StoreRoleRequest $request)
     {
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-        ], [
-            'name.required' => 'Nama jabatan harus diisi.',
+        $role = Role::create([
+            'name' => $request->validated('name'),
+            'guard_name' => config('auth.defaults.guard', 'web'),
         ]);
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
-
-        $data = new Role();
-        $data->name = $request->name;
-        $data->guard_name = "web";
-        $data->save();
+        $role->syncPermissions($request->validated('permissions') ?? []);
 
         return redirect()->route('roles.index')->with('success', 'Jabatan berhasil disimpan');
     }
 
-    // Update Permission dari Role
-    public function updateRolePermissions(Request $request, Role $role)
+    public function updateRolePermissions(UpdateRolePermissionsRequest $request, Role $role)
     {
-        $validate = Validator::make($request->all(), [
-            'name' => 'required',
-        ], [
-            'name.required' => 'Nama jabatan harus diisi.',
-        ]);
+        $validated = $request->validated();
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
-        }
-        
-        // Perbarui nama role
-        $role->name = $request->name;
-        $role->save(); // Tambahkan tanda kurung agar perubahan disimpan
+        DB::transaction(function () use ($role, $validated) {
+            $role->name = $validated['name'];
+            $role->save();
 
-        $role->syncPermissions($request->permissions);
+            $role->syncPermissions($validated['permissions'] ?? []);
+        });
 
         return redirect()->route('roles.index')->with('success', 'Hak akses berhasil diperbarui');
     }
 
     public function destroy(Role $role)
     {
+        if (User::where('role_id', $role->id)->exists()) {
+            return redirect()->back()->with('error', 'Jabatan tidak dapat dihapus karena masih digunakan pengguna.');
+        }
+
         $role->delete();
+
         return redirect()->route('roles.index')->with('success', 'Jabatan berhasil dihapus');
     }
 }

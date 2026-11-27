@@ -2,15 +2,11 @@
 
 namespace App\DataTables;
 
-use App\Models\Cek;
 use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class CekDataTable extends DataTable
@@ -18,7 +14,7 @@ class CekDataTable extends DataTable
     /**
      * Build the DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
+     * @param  QueryBuilder  $query  Results from query() method.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
@@ -30,16 +26,16 @@ class CekDataTable extends DataTable
 
                 if (hasPermission('PROCESS_CEK')) {
                     $buttons .= '
-                        <a href="' . $editUrl . '" class="btn btn-info">
+                        <a href="'.$editUrl.'" class="btn btn-info">
                             Periksa
                         </a>';
                 }
-            
+
                 if ($buttons == '') {
                     return null; // tidak menampilkan kolom action
                 }
-            
-                return '<div class="d-flex justify-content-center gap-2">' . $buttons . '</div>';
+
+                return '<div class="d-flex justify-content-center gap-2">'.$buttons.'</div>';
             })
             ->rawColumns(['action']) // 👈 penting: agar <img>, status dan <form> tidak di-escape
             ->setRowId('id');
@@ -59,19 +55,19 @@ class CekDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('cek-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    //->dom('Bfrtip')
-                    ->orderBy(2, 'asc')
-                    ->selectStyleSingle()
-                    ->parameters([
-                        'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-end align-items-center mb-3"f>rt<"d-flex justify-content-end align-items-center"p>',
-                        'pageLength' => 10,
-                        'responsive' => true,
-                        'autoWidth' => false,
-                        'language' => ['url' => asset('js/id.json')]
-                    ]);
+            ->setTableId('cek-table')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+                    // ->dom('Bfrtip')
+            ->orderBy(2, 'asc')
+            ->selectStyleSingle()
+            ->parameters([
+                'dom' => '<"datatable-toolbar d-flex flex-wrap justify-content-end align-items-center mb-3"f>rt<"d-flex justify-content-end align-items-center"p>',
+                'pageLength' => 10,
+                'responsive' => true,
+                'autoWidth' => false,
+                'language' => ['url' => asset('js/id.json')],
+            ]);
     }
 
     /**
@@ -80,7 +76,7 @@ class CekDataTable extends DataTable
     public function getColumns(): array
     {
         $hasAction = hasPermission(['PROCESS_CEK']);
-        if (!$hasAction) {
+        if (! $hasAction) {
             return [
                 Column::make('name')->title('Nama Barang')->addClass('white-space text-nowrap'),
                 Column::make('specification')->title('Spesifikasi')->addClass('white-space text-nowrap'),
@@ -89,6 +85,7 @@ class CekDataTable extends DataTable
                 Column::make('broken_description')->title('Keterangan Rusak')->addClass('white-space text-nowrap'),
             ];
         }
+
         return [
             Column::make('name')->title('Nama Barang')->addClass('white-space text-nowrap'),
             Column::make('specification')->title('Spesifikasi')->addClass('white-space text-nowrap'),
@@ -96,11 +93,11 @@ class CekDataTable extends DataTable
             Column::make('condition')->title('Kondisi')->addClass('white-space text-nowrap'),
             Column::make('broken_description')->title('Keterangan Rusak')->addClass('white-space text-nowrap'),
             Column::computed('action')
-                  ->title('Aksi')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+                ->title('Aksi')
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 
@@ -109,6 +106,6 @@ class CekDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Cek_' . date('YmdHis');
+        return 'Cek_'.date('YmdHis');
     }
 }

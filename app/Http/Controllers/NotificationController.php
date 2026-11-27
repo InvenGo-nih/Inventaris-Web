@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrow;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
     public function overdueNotifications()
     {
-        $today = Carbon::now()->startOfDay();
-        
-        $overdueBorrows = Borrow::with(['inventaris'])
+        $today = now()->startOfDay();
+
+        $overdueBorrows = Borrow::with(['inventaris' => fn ($query) => $query->withTrashed()])
             ->where('status', 'Dipinjam')
-            ->where('max_return_date', '<', $today)
-            ->latest()
-            ->get();
+            ->whereNotNull('max_return_date')
+            ->where('max_return_date', '<', $today->toDateString())
+            ->orderBy('max_return_date')
+            ->paginate(config('inventaris.overdue_per_page', 20));
 
         return view('notifications.overdue', compact('overdueBorrows'));
     }

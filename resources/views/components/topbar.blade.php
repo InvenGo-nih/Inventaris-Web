@@ -27,21 +27,28 @@
         </li> --}}
 
             <!-- Notification -->
-            <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1 ">
-                <a class="nav-link dropdown-toggle hide-arrow position-relative"
-                    href="{{ route('notifications.overdue') }}">
-                    <i class="bx bx-bell bx-sm"></i>
-                    @php
-                        $overdueCount = \App\Models\Borrow::where('status', 'Dipinjam')
-                            ->where('max_return_date', '<', now()->format('Y-m-d'))
-                            ->count();
-                    @endphp
-                    @if ($overdueCount > 0)
-                        <span
-                            class="badge bg-danger rounded-pill badge-notifications position-absolute top-0 end-0">{{ $overdueCount }}</span>
-                    @endif
-                </a>
-            </li>
+            @hasPermission('VIEW_BORROW')
+                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1 ">
+                    <a class="nav-link dropdown-toggle hide-arrow position-relative"
+                        href="{{ route('notifications.overdue') }}">
+                        <i class="bx bx-bell bx-sm"></i>
+                        @php
+                            $overdueCount = \Illuminate\Support\Facades\Cache::remember(
+                                'borrows:overdue_count',
+                                now()->addMinute(),
+                                fn () => \App\Models\Borrow::where('status', 'Dipinjam')
+                                    ->whereNotNull('max_return_date')
+                                    ->where('max_return_date', '<', now()->toDateString())
+                                    ->count()
+                            );
+                        @endphp
+                        @if ($overdueCount > 0)
+                            <span
+                                class="badge bg-danger rounded-pill badge-notifications position-absolute top-0 end-0">{{ $overdueCount }}</span>
+                        @endif
+                    </a>
+                </li>
+            @endhasPermission
             <!--/ Notification -->
 
             <!-- User -->
@@ -62,8 +69,8 @@
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-0">{{ ucfirst(Auth::user()->name) }}</h6>
-                                    <small class="text-body-secondary">{{ ucfirst(Auth::user()->role->name) }}</small>
+                                    <h6 class="mb-0">{{ ucfirst(Auth::user()?->name ?? '-') }}</h6>
+                                    <small class="text-body-secondary">{{ ucfirst(Auth::user()?->role?->name ?? '-') }}</small>
                                 </div>
                             </div>
                         </a>

@@ -5,6 +5,15 @@
 @endsection
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
 @php
     $url = '';
@@ -36,15 +45,22 @@
         <div class="col-md-6">
             <div class="mb-3">
                 <label for="role_id" class="form-label">Jabatan</label>
-                 <select name="role_id" class="form-control">
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
+                <select name="role_id" class="form-control">
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ (string) old('role_id', $data->role_id ?? '') === (string) $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control">
+                <input type="password" name="password" class="form-control" autocomplete="new-password">
+                @if (request()->route('id'))
+                    <small class="text-muted">Kosongkan jika password tidak diubah.</small>
+                @endif
+            </div>
+            <div class="mb-3">
+                <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                <input type="password" name="password_confirmation" class="form-control" autocomplete="new-password">
             </div>
         </div>
     </div>

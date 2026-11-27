@@ -3,61 +3,75 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\CekDataTable;
+use App\Http\Requests\UpdateCekRequest;
 use App\Models\Inventaris;
-use App\Models\InventarisLocation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Services\SupabaseService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class CekController extends Controller
 {
+    public function __construct(protected SupabaseService $supabase) {}
 
     public function index(CekDataTable $dataTable)
     {
-        // return view('cekInventaris.index');
         return $dataTable->render('cekInventaris.index');
     }
 
-    public function cek(Request $request, $id)
-    {   
-        $data = Inventaris::findorFail($id);
-        $location = InventarisLocation::all();
-        return view('cekInventaris.form', compact('data', 'location'));
+    public function cek($id)
+    {
+        $data = Inventaris::findOrFail($id);
+
+        return view('cekInventaris.form', compact('data'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCekRequest $request, $id)
     {
-        // Validasi data yang diterima
-        $validate = Validator::make($request->all(), [
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048', // Gambar tidak wajib saat update
-            // 'specification' => 'required',
-            'condition' => 'required',
-        ], [
-            'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.mimes' => 'Gambar harus berformat jpeg, png, atau jpg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-            // 'specification.required' => 'Spesifikasi harus diisi.',
-            'condition.required' => 'Kondisi harus diisi.',
-        ]);
+        $validated = $request->validated();
+        $data = Inventaris::findOrFail($id);
+        $oldImage = $data->image;
+        $newImage = null;
 
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput()->with('error', $validate->errors()->all());
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $newImage = 'inventaris_images/'.Str::uuid().'.'.$file->extension();
+
+            try {
+                $this->supabase->uploadFile($file, $newImage);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return redirect()->back()->withInput()->with('error', 'Gagal mengunggah gambar inventaris.');
+            }
         }
 
-        $data = Inventaris::findOrFail($id);
-        $data->name = $request->name;
+        $data->condition = $validated['condition'];
+        $data->broken_description = $validated['broken_description'] ?? null;
+        $data->qr_link = route('test_qr', ['id' => $data->id]);
 
-        $data->specification = $request->specification;
-        $data->condition = $request->condition;
-        // $data->status = $request->status;
-        $data->location = $request->location;
-        $data->qr_link = route('test_qr', ['id' => $data->id]); // Perbarui qr_link
-        $data->broken_description = $request->broken_description;
-        $data->type = $request->type;
-        $data->quantity = $request->quantity;
-        $data->group_inventaris_id = $request->group_inventaris_id;
-        $data->save();
+        if ($newImage) {
+            $data->image = $newImage;
+        }
+
+        try {
+            $data->save();
+        } catch (\Throwable $e) {
+            if ($newImage) {
+                $this->supabase->deleteFile($newImage);
+            }
+
+            report($e);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan pengecekan.');
+        }
+
+        if ($newImage && $oldImage) {
+            $this->supabase->deleteFile($oldImage);
+        }
+
+        Cache::forget("inventaris:stats:{$data->group_inventaris_id}");
+        Cache::forget('dashboard:chart');
 
         return redirect()->route('cek.index')->with('success', 'Pengecekan berhasil disimpan');
     }
-
 }
